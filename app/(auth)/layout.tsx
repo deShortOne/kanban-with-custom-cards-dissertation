@@ -1,6 +1,4 @@
-
-
-import Provider from "../context/Provider"
+import Provider from "./context/Provider"
 
 export default function RootLayout({
     children,
