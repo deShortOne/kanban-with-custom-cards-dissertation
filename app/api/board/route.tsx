@@ -1,8 +1,7 @@
 import { PrismaClient, Role, User } from "@prisma/client"
 import { getServerSession } from 'next-auth/next'
 import { OPTIONS } from '@/app/api/auth/[...nextauth]/route'
-
-const prisma = new PrismaClient()
+import prisma from "@/lib/prisma"
 
 export async function POST(request: Request) {
   const formData = await request.formData()
