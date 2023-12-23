@@ -1,12 +1,16 @@
 import Provider from "./context/Provider"
+import { PrismaClient } from '@prisma/client'
 
-export default function RootLayout({
+const prisma = new PrismaClient()
+
+export default async function RootLayout({
     children,
   }: {
     children: React.ReactNode
   }) {
+
     return (
-        <Provider>
+        <Provider session={-1}>
             {children}
         </Provider>
     )
