@@ -11,17 +11,20 @@ datasource db {
   relationMode = "prisma"
 }
 
-
 model User {
-  id      Int              @id @default(autoincrement())
-  email   String           @unique
+  id    Int    @id @default(autoincrement())
+  email String @unique
+
   kanbans UserRoleKanban[] @relation("AvailableKanbans")
 }
 
 model Kanban {
   id    Int              @id @default(autoincrement())
-  title String           @unique
+  title String           
   users UserRoleKanban[] @relation("KanbanHasUsers")
+
+  KanbanColumns   KanbanColumn[]
+  KanbanSwimLanes KanbanSwimLane[]
 }
 
 enum Role {
@@ -41,4 +44,43 @@ model UserRoleKanban {
   @@index([kanbanId])
 }
 
+model KanbanColumn {
+  id    Int    @id @default(autoincrement())
+  title String
+  order Int
 
+  boardId Int
+  board   Kanban @relation(fields: [boardId], references: [id])
+
+  cards Card[]
+
+  @@index([boardId])
+}
+
+model KanbanSwimLane {
+  id    Int    @id @default(autoincrement())
+  title String
+  order Int
+
+  boardId Int
+  board   Kanban @relation(fields: [boardId], references: [id])
+
+  cards Card[]
+
+  @@index([boardId])
+}
+
+model Card {
+  id          Int     @id @default(autoincrement())
+  title       String
+  order       Int
+  description String? @db.Text
+
+  columnId   Int
+  column     KanbanColumn   @relation(fields: [columnId], references: [id])
+  swimLaneId Int
+  swimLane   KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+
+  @@index([columnId])
+  @@index([swimLaneId])
+}
