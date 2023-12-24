@@ -1,10 +1,14 @@
 import prisma from "@/lib/prisma"
+import { redirect } from "next/navigation"
 
 const SelectKanbanPage = async ({
     params
 } : {
     params: { id: string }
 }) => {
+    if (!params.id) {
+        redirect("/select-board")
+    }
 
     const kanban = await prisma.kanban.findUnique({
         where:{
