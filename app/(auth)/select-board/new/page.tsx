@@ -43,8 +43,14 @@ const NewKanbanPage = () => {
         },
       })
       const dataa = await response.json()
+      if (dataa.status == false) {
+        setFormSuccessMessage("Failed to create as user does not exist")
+      } else {
+        setFormSuccessMessage("Successfully created")
+        window.location.href = "http://localhost:3000/board/" + dataa.kanban.id;
+      }
       setFormSuccess(true)
-      setFormSuccessMessage("Successfully created")
+      
     } catch (error) {
       console.log("-fetch error-------------")
       console.error(error) //statement 2
@@ -57,7 +63,7 @@ const NewKanbanPage = () => {
       {formSuccess ?
         <div>{formSuccessMessage}</div>
         :
-        
+
         <form method="POST" onSubmit={submitForm}>
           <div className="px-6 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow-2xl dark:bg-gray-800 dark:border-gray-700">
             <h5 className="items-center justify-center w-full mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -84,7 +90,7 @@ const NewKanbanPage = () => {
               <button type="submit" className="py-2.5 px-6 rounded-lg text-sm font-medium text-white bg-teal-600">Confirm</button>
             </div>
 
-            <input type="hidden" value=""/>
+            <input type="hidden" value="" />
           </div>
         </form>
       }

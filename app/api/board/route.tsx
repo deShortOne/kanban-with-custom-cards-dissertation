@@ -13,9 +13,8 @@ export async function POST(request: Request) {
   })
 
   const id = await getUserId();
-
   if (id == -1) {
-    return  Response.json({ statue: false })
+    return Response.json({ status: false })
   }
   
   await prisma.userRoleKanban.create({
@@ -26,7 +25,7 @@ export async function POST(request: Request) {
     }
   })
 
-  return Response.json({ statue: true })
+  return Response.json({ kanban })
 }
 
 async function getUserId() {
