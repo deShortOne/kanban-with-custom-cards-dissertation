@@ -6,7 +6,7 @@ interface CardProps {
     text: string
 }
 
-const Card: React.FC<CardProps> = ({ id, text }) => {
+const CardInfo: React.FC<CardProps> = ({ id, text }) => {
     const [, drag] = useDrag({
         type: 'div',
         item: { id },
@@ -19,4 +19,4 @@ const Card: React.FC<CardProps> = ({ id, text }) => {
     )
 }
 
-export default Card;
+export default CardInfo;

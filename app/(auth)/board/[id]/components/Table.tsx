@@ -3,7 +3,7 @@ import { Kanban } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
-import Card from './Card'
+import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 
 interface TableInformationProps {
@@ -40,14 +40,14 @@ export const Table = ({
                             <TableCell onDrop={(item) => handleDrop(item.id, 1)}>
                                 {divs.map((div) =>
                                     div.cellId === 1 ? (
-                                        <Card {...div} />
+                                        <CardInfo {...div} />
                                     ) : null
                                 )}
                             </TableCell>
                             <TableCell onDrop={(item) => handleDrop(item.id, 2)}>
                                 {divs.map((div) =>
                                     div.cellId === 2 ? (
-                                        <Card {...div} />
+                                        <CardInfo {...div} />
                                     ) : null
                                 )}
                             </TableCell>
@@ -56,7 +56,7 @@ export const Table = ({
                             <TableCell onDrop={(item) => handleDrop(item.id, 3)}>
                                 {divs.map((div) =>
                                     div.cellId === 3 ? (
-                                        <Card {...div} />
+                                        <CardInfo {...div} />
                                     ) : null
                                 )}
                             </TableCell>
