@@ -1,14 +1,13 @@
+import Provider from "./context/Provider"
 
-
-import Provider from "../context/Provider"
-
-export default function RootLayout({
+export default async function RootLayout({
     children,
   }: {
     children: React.ReactNode
   }) {
+
     return (
-        <Provider>
+        <Provider session={-1}>
             {children}
         </Provider>
     )

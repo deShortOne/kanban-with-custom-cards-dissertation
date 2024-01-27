@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import type { NextAuthOptions } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
+import prisma from "@/lib/prisma"
 
 export const OPTIONS: NextAuthOptions = {
     providers: [
@@ -17,6 +18,21 @@ export const OPTIONS: NextAuthOptions = {
                 token.accessToken = account.accessToken
                 token.id = profile.id
             }
+
+            let user = await prisma.user.findUnique({
+                where: {
+                    email: token.email! // must include !????
+                }
+            })
+            if (!user) {
+                await prisma.user.create({
+                    data:
+                    {
+                        email: token.email!
+                    },
+                })
+            }
+
             return token
         },
         async session({ session, token }) {
@@ -31,4 +47,4 @@ export const OPTIONS: NextAuthOptions = {
 
 const handler = NextAuth(OPTIONS)
 
-export { handler as GET, handler as POST}
+export { handler as GET, handler as POST }

@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+
+  kanbans UserRoleKanban[] @relation("AvailableKanbans")
+}
+
+model Kanban {
+  id    Int              @id @default(autoincrement())
+  title String           
+  users UserRoleKanban[] @relation("KanbanHasUsers")
+
+  KanbanColumns   KanbanColumn[]
+  KanbanSwimLanes KanbanSwimLane[]
+}
+
+enum Role {
+  EDITOR
+  VIEWER
+}
+
+model UserRoleKanban {
+  userId     Int
+  user       User   @relation("AvailableKanbans", fields: [userId], references: [id])
+  kanbanId   Int
+  kanban     Kanban @relation("KanbanHasUsers", fields: [kanbanId], references: [id])
+  permission Role
+
+  @@id([userId, kanbanId])
+  @@index([userId])
+  @@index([kanbanId])
+}
+
+model KanbanColumn {
+  id    Int    @id @default(autoincrement())
+  title String
+  order Int
+
+  boardId Int
+  board   Kanban @relation(fields: [boardId], references: [id])
+
+  cards Card[]
+
+  @@index([boardId])
+}
+
+model KanbanSwimLane {
+  id    Int    @id @default(autoincrement())
+  title String
+  order Int
+
+  boardId Int
+  board   Kanban @relation(fields: [boardId], references: [id])
+
+  cards Card[]
+
+  @@index([boardId])
+}
+
+model Card {
+  id          Int     @id @default(autoincrement())
+  title       String
+  order       Int
+  description String? @db.Text
+
+  columnId   Int
+  column     KanbanColumn   @relation(fields: [columnId], references: [id])
+  swimLaneId Int
+  swimLane   KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+
+  @@index([columnId])
+  @@index([swimLaneId])
+}
