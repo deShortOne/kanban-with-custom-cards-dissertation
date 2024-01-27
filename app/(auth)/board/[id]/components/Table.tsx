@@ -1,5 +1,5 @@
 'use client'
-import { Card, Kanban, KanbanColumn, KanbanSwimLane } from "@prisma/client"
+import { Card, KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
@@ -7,20 +7,22 @@ import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 
 interface TableInformationProps {
+    columns: KanbanColumn[]
+    swimlanes: KanbanSwimLane[]
     cards: Card[]
 }
 
 interface CardProps {
-    id: number;
-    title: string;
-    order: number;
-    description: string | null;
-    columnId: number;
-    swimLaneId: number;
+    id: number
+    title: string
+    order: number
+    description: string | null
+    columnId: number
+    swimLaneId: number
 }
 
 export const Table = ({
-    cards
+    columns, swimlanes, cards
 }: TableInformationProps) => {
 
     const [cardsInfo, setCard] = useState<CardProps[]>(cards);
@@ -35,39 +37,33 @@ export const Table = ({
     return (
         <DndProvider backend={HTML5Backend}>
             <table style={{ borderCollapse: 'collapse' }}>
+                <thead>
+                    <tr>
+                        <th />
+                        {columns.map(column => (
+                            <th>
+                                {column.title}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <TableCell onDrop={(item) => handleCardDrop(item.id, 0, 0)}>
-                            {cardsInfo.map((card) =>
-                                card.columnId === 0 && card.swimLaneId === 0 ? (
-                                    <CardInfo {...card} />
-                                ) : null
-                            )}
-                        </TableCell>
-                        <TableCell onDrop={(item) => handleCardDrop(item.id, 1, 0)}>
-                            {cardsInfo.map((card) =>
-                                card.columnId === 1 && card.swimLaneId === 0 ? (
-                                    <CardInfo {...card} />
-                                ) : null
-                            )}
-                        </TableCell>
-                    </tr>
-                    <tr>
-                        <TableCell onDrop={(item) => handleCardDrop(item.id, 0, 1)}>
-                            {cardsInfo.map((card) =>
-                                card.columnId === 0 && card.swimLaneId === 1 ? (
-                                    <CardInfo {...card} />
-                                ) : null
-                            )}
-                        </TableCell>
-                        <TableCell onDrop={(item) => handleCardDrop(item.id, 1, 1)}>
-                            {cardsInfo.map((card) =>
-                                card.columnId === 1 && card.swimLaneId === 1 ? (
-                                    <CardInfo {...card} />
-                                ) : null
-                            )}
-                        </TableCell>
-                    </tr>
+                    {swimlanes.map((swimLane, indexSwimLane) => (
+                        <tr>
+                            <td>
+                                {swimLane.title}
+                            </td>
+                            {columns.map((_, indexColumn) => (
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, indexColumn, indexSwimLane)}>
+                                    {cardsInfo.map((card) =>
+                                        card.columnId === indexColumn && card.swimLaneId === indexSwimLane ? (
+                                            <CardInfo {...card} />
+                                        ) : null
+                                    )}
+                                </TableCell>
+                            ))}
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </DndProvider>
