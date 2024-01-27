@@ -1,5 +1,5 @@
 'use client'
-import { Kanban } from "@prisma/client"
+import { Card, Kanban, KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
@@ -7,62 +7,69 @@ import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 
 interface TableInformationProps {
-    kanban: Kanban,
+    cards: Card[]
 }
 
-interface Div {
-    id: number
-    text: string
-    cellId: number
+interface CardProps {
+    id: number;
+    title: string;
+    order: number;
+    description: string | null;
+    columnId: number;
+    swimLaneId: number;
 }
 
 export const Table = ({
-    kanban
+    cards
 }: TableInformationProps) => {
-    const [divs, setDivs] = useState<Div[]>([
-        { id: 1, text: 'Div 1', cellId: 1 },
-        { id: 2, text: 'Div 2', cellId: 2 },
-        { id: 3, text: 'Div 3', cellId: 2 },
-    ]);
 
-    const handleDrop = (divId: number, id: number) => {
-        const updatedDivs = divs.map((div) =>
-            div.id === divId ? { ...div, cellId: id } : div
+    const [cardsInfo, setCard] = useState<CardProps[]>(cards);
+
+    const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
+        const updatedCard = cardsInfo.map((card) =>
+            card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
         )
-        setDivs(updatedDivs)
+        setCard(updatedCard)
     }
 
     return (
         <DndProvider backend={HTML5Backend}>
-                <table style={{ borderCollapse: 'collapse' }}>
-                    <tbody>
-                        <tr>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 1)}>
-                                {divs.map((div) =>
-                                    div.cellId === 1 ? (
-                                        <CardInfo {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 2)}>
-                                {divs.map((div) =>
-                                    div.cellId === 2 ? (
-                                        <CardInfo {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                        </tr>
-                        <tr>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 3)}>
-                                {divs.map((div) =>
-                                    div.cellId === 3 ? (
-                                        <CardInfo {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                        </tr>
-                    </tbody>
-                </table>
-            </DndProvider>
+            <table style={{ borderCollapse: 'collapse' }}>
+                <tbody>
+                    <tr>
+                        <TableCell onDrop={(item) => handleCardDrop(item.id, 0, 0)}>
+                            {cardsInfo.map((card) =>
+                                card.columnId === 0 && card.swimLaneId === 0 ? (
+                                    <CardInfo {...card} />
+                                ) : null
+                            )}
+                        </TableCell>
+                        <TableCell onDrop={(item) => handleCardDrop(item.id, 1, 0)}>
+                            {cardsInfo.map((card) =>
+                                card.columnId === 1 && card.swimLaneId === 0 ? (
+                                    <CardInfo {...card} />
+                                ) : null
+                            )}
+                        </TableCell>
+                    </tr>
+                    <tr>
+                        <TableCell onDrop={(item) => handleCardDrop(item.id, 0, 1)}>
+                            {cardsInfo.map((card) =>
+                                card.columnId === 0 && card.swimLaneId === 1 ? (
+                                    <CardInfo {...card} />
+                                ) : null
+                            )}
+                        </TableCell>
+                        <TableCell onDrop={(item) => handleCardDrop(item.id, 1, 1)}>
+                            {cardsInfo.map((card) =>
+                                card.columnId === 1 && card.swimLaneId === 1 ? (
+                                    <CardInfo {...card} />
+                                ) : null
+                            )}
+                        </TableCell>
+                    </tr>
+                </tbody>
+            </table>
+        </DndProvider>
     )
 }

@@ -3,10 +3,10 @@ import { useDrag } from 'react-dnd'
 
 interface CardProps {
     id: number
-    text: string
+    title: string
 }
 
-const CardInfo: React.FC<CardProps> = ({ id, text }) => {
+const CardInfo: React.FC<CardProps> = ({ id, title }) => {
     const [, drag] = useDrag({
         type: 'div',
         item: { id },
@@ -14,7 +14,7 @@ const CardInfo: React.FC<CardProps> = ({ id, text }) => {
 
     return (
         <div ref={drag} style={{ border: '1px solid #ccc', padding: '8px', cursor: 'move' }}>
-            {text}
+            {title}
         </div>
     )
 }

@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import React, { useState } from 'react'
 import { Table } from "./components/Table"
-import { Kanban } from ".prisma/client"
+import { Card, Kanban } from ".prisma/client"
 
 const SelectKanbanPage = async ({
     params
@@ -13,15 +13,29 @@ const SelectKanbanPage = async ({
         redirect("/select-board")
     }
 
-    const kanban = await prisma.kanban.findUnique({
-        where:{
-            id: parseInt(params.id)
-        }
-    }) as Kanban
+    // const kanban = await prisma.kanban.findUnique({
+    //     where:{
+    //         id: parseInt(params.id)
+    //     },
+    //     include: {
+    //         KanbanColumns: {
+    //             include: {
+    //                 cards: true
+    //             }
+    //         },
+    //         KanbanSwimLanes: {
+    //             include: {
+    //                 cards: true
+    //             }
+    //         },
+    //     }
+    // }) as Kanban
+
+    const cards = await prisma.card.findMany() as Card[]
 
     return (
         <main className="">
-            <Table kanban={kanban}></Table>
+            <Table cards={cards}></Table>
         </main>
     )
 }
