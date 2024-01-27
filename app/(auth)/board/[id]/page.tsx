@@ -1,20 +1,10 @@
-"use client"
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
-import Card from './components/Card'
-import TableCell from './components/TableCell'
+import { Table } from "./components/Table"
+import { Kanban } from ".prisma/client"
 
-
-interface Div {
-    id: number
-    text: string
-    cellId: number
-}
-
-const SelectKanbanPage = ({
+const SelectKanbanPage = async ({
     params
 }: {
     params: { id: string }
@@ -23,52 +13,15 @@ const SelectKanbanPage = ({
         redirect("/select-board")
     }
 
-    const [divs, setDivs] = useState<Div[]>([
-        { id: 1, text: 'Div 1', cellId: 1 },
-        { id: 2, text: 'Div 2', cellId: 2 },
-        { id: 3, text: 'Div 3', cellId: 2 },
-    ]);
-
-    const handleDrop = (divId: number, id: number) => {
-        const updatedDivs = divs.map((div) =>
-            div.id === divId ? { ...div, cellId: id } : div
-        )
-        setDivs(updatedDivs)
-    }
+    const kanban = await prisma.kanban.findUnique({
+        where:{
+            id: parseInt(params.id)
+        }
+    }) as Kanban
 
     return (
         <main className="">
-            <DndProvider backend={HTML5Backend}>
-                <table style={{ borderCollapse: 'collapse' }}>
-                    <tbody>
-                        <tr>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 1)}>
-                                {divs.map((div) =>
-                                    div.cellId === 1 ? (
-                                        <Card {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 2)}>
-                                {divs.map((div) =>
-                                    div.cellId === 2 ? (
-                                        <Card {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                        </tr>
-                        <tr>
-                            <TableCell onDrop={(item) => handleDrop(item.id, 3)}>
-                                {divs.map((div) =>
-                                    div.cellId === 3 ? (
-                                        <Card {...div} />
-                                    ) : null
-                                )}
-                            </TableCell>
-                        </tr>
-                    </tbody>
-                </table>
-            </DndProvider>
+            <Table kanban={kanban}></Table>
         </main>
     )
 }
