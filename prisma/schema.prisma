@@ -25,6 +25,7 @@ model Kanban {
 
   KanbanColumns   KanbanColumn[]
   KanbanSwimLanes KanbanSwimLane[]
+  Cards           Card[]
 }
 
 enum Role {
@@ -80,7 +81,10 @@ model Card {
   column     KanbanColumn   @relation(fields: [columnId], references: [id])
   swimLaneId Int
   swimLane   KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+  kanbanId   Int
+  kanban     Kanban @relation(fields: [kanbanId], references: [id])
 
   @@index([columnId])
   @@index([swimLaneId])
+  @@index([kanbanId])
 }

@@ -45,14 +45,16 @@ async function main() {
         {
             title: 'card 1 2', 
             order: 1, 
-            columnId: 0, // yikes constant!
-            swimLaneId: 1, // yikes constant!
+            columnId: 0,
+            swimLaneId: 1,
+            kanbanId: 1,
         },
         {
-            title: 'card 2, 1', 
+            title: 'card 2 1', 
             order: 1, 
-            columnId: 1, // yikes constant!
-            swimLaneId: 0, // yikes constant!
+            columnId: 1,
+            swimLaneId: 0,
+            kanbanId: 1,
         },
     ]
     const cards = await prisma.card.createMany({
