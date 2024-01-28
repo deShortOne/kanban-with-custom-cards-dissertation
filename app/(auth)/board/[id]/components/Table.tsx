@@ -73,13 +73,15 @@ export const Table = ({
                 </thead>
                 <tbody>
                     {stateSwimLanes.map((swimLane, index) => (
-                        <tr>
+                        <tr key={swimLane.id}>
                             <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
                             {stateColumns.map((cell) => (
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}>
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)} 
+                                    key={cell.id + " " + swimLane.id}
+                                >
                                     {cardsInfo.map((card) =>
                                         card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
-                                            <CardInfo {...card} />
+                                            <CardInfo {...card} key={card.id}/>
                                         ) : null
                                     )}
                                 </TableCell>
