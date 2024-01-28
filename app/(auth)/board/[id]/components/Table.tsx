@@ -5,6 +5,8 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
 import CardInfo from './CardInfo'
 import TableCell from './TableCell'
+import { DraggableColumn } from "./DraggableColumn"
+import { DraggableSwimLane } from "./DraggableSwimLane"
 
 interface TableInformationProps {
     columns: KanbanColumn[]
@@ -24,7 +26,31 @@ interface CardProps {
 export const Table = ({
     columns, swimlanes, cards
 }: TableInformationProps) => {
+    // columns
+    const [stateColumns, setColumns] = useState(columns);
 
+    const moveColumn = (dragIndex: number, hoverIndex: number) => {
+        const draggedColumn = stateColumns[dragIndex];
+        const newColumns = [...stateColumns];
+        newColumns.splice(dragIndex, 1);
+        newColumns.splice(hoverIndex, 0, draggedColumn);
+
+        setColumns(newColumns);
+    };
+
+    //swimlanes
+    const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
+
+    const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
+        const draggedSwimLane = stateSwimLanes[dragIndex];
+        const newSwimLanes = [...stateSwimLanes];
+        newSwimLanes.splice(dragIndex, 1);
+        newSwimLanes.splice(hoverIndex, 0, draggedSwimLane);
+
+        setSwimLanes(newSwimLanes);
+    };
+
+    // cards
     const [cardsInfo, setCard] = useState<CardProps[]>(cards);
 
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
@@ -40,23 +66,19 @@ export const Table = ({
                 <thead>
                     <tr>
                         <th />
-                        {columns.map(column => (
-                            <th>
-                                {column.title}
-                            </th>
+                        {stateColumns.map((column, index) => (
+                            <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} />
                         ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {swimlanes.map((swimLane, indexSwimLane) => (
+                    {stateSwimLanes.map((swimLane, index) => (
                         <tr>
-                            <td>
-                                {swimLane.title}
-                            </td>
-                            {columns.map((_, indexColumn) => (
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, indexColumn, indexSwimLane)}>
+                            <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
+                            {stateColumns.map((cell) => (
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}>
                                     {cardsInfo.map((card) =>
-                                        card.columnId === indexColumn && card.swimLaneId === indexSwimLane ? (
+                                        card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
                                             <CardInfo {...card} />
                                         ) : null
                                     )}

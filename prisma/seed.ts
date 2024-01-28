@@ -45,15 +45,15 @@ async function main() {
         {
             title: 'card 1 2', 
             order: 1, 
-            columnId: 0,
-            swimLaneId: 1,
+            columnId: 1,
+            swimLaneId: 2,
             kanbanId: 1,
         },
         {
             title: 'card 2 1', 
             order: 1, 
-            columnId: 1,
-            swimLaneId: 0,
+            columnId: 2,
+            swimLaneId: 1,
             kanbanId: 1,
         },
     ]
