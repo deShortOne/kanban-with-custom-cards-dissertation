@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
 
-const EditableText = ({ initialText, type, id }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [text, setText] = useState(initialText);
+interface prop {
+    headerItem: header,
+    type: string
+}
+
+type header = {
+    id: number;
+    title: string;
+    order: number;
+    boardId: number;
+}
+
+const EditableText = ({ headerItem, type }: prop) => {
+    const [isEditing, setIsEditing] = useState(headerItem.id === -1);
+    const [text, setText] = useState(headerItem.title);
 
     const handleDoubleClick = () => {
         setIsEditing(true);
@@ -20,7 +32,9 @@ const EditableText = ({ initialText, type, id }) => {
             body: JSON.stringify({
                 newText: text,
                 type: type,
-                id: id
+                id: headerItem.id,
+                order: headerItem.order,
+                boardId: headerItem.boardId
             }),
         });
     }

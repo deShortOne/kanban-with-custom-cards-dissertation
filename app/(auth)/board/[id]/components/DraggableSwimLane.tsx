@@ -1,14 +1,10 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import EditableText from './EditableText';
-
-interface SwimLaneHeader {
-    id: number;
-    title: string;
-}
+import { KanbanSwimLane } from '@prisma/client';
 
 interface DraggableSwimLaneProps {
-    swimLane: SwimLaneHeader;
+    swimLane: KanbanSwimLane;
     index: number;
     moveSwimLane: (dragIndex: number, hoverIndex: number) => void;
 }
@@ -37,7 +33,7 @@ export const DraggableSwimLane: React.FC<DraggableSwimLaneProps> = ({ swimLane, 
 
     return (
         <td ref={(node) => ref(drop(node))}>
-            <EditableText initialText={swimLane.title} type="SWIMLANE" id={swimLane.id} />
+            <EditableText headerItem={swimLane} type="SWIMLANE" />
         </td>
     );
 };

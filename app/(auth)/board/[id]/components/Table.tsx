@@ -38,6 +38,17 @@ export const Table = ({
         setColumns(newColumns);
     };
 
+    const addColumn = () => {
+        const newColumns = [...stateColumns];
+        newColumns.push({
+            id: -1,
+            title: "New Column",
+            order: newColumns.length + 1,
+            boardId: newColumns[0].boardId,
+        } as KanbanColumn)
+        setColumns(newColumns)
+    }
+
     //swimlanes
     const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
 
@@ -49,6 +60,17 @@ export const Table = ({
 
         setSwimLanes(newSwimLanes);
     };
+
+    const addSwimLane = () => {
+        const draggedSwimLane = [...stateSwimLanes];
+        draggedSwimLane.push({
+            id: -1,
+            title: "New Swimlane",
+            order: draggedSwimLane.length + 1,
+            boardId: draggedSwimLane[0].boardId,
+        } as KanbanColumn)
+        setSwimLanes(draggedSwimLane)
+    }
 
     // cards
     const [cardsInfo, setCard] = useState<CardProps[]>(cards);
@@ -69,6 +91,14 @@ export const Table = ({
                         {stateColumns.map((column, index) => (
                             <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} />
                         ))}
+                        <th>
+                            <button
+                                type="button"
+                                onClick={addColumn}
+                            >
+                                Add new
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,18 +106,28 @@ export const Table = ({
                         <tr key={swimLane.id}>
                             <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
                             {stateColumns.map((cell) => (
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)} 
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
                                     key={cell.id + " " + swimLane.id}
                                 >
                                     {cardsInfo.map((card) =>
                                         card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
-                                            <CardInfo {...card} key={card.id}/>
+                                            <CardInfo {...card} key={card.id} />
                                         ) : null
                                     )}
                                 </TableCell>
                             ))}
                         </tr>
                     ))}
+                    <tr>
+                        <td>
+                        <button
+                            type="button"
+                            onClick={addSwimLane}
+                        >
+                            Add new
+                        </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </DndProvider>
