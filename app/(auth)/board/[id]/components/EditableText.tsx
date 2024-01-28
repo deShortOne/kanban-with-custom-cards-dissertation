@@ -1,4 +1,3 @@
-import prisma from '@/lib/prisma';
 import React, { useState } from 'react';
 
 const EditableText = ({ initialText, type, id }) => {
@@ -13,7 +12,17 @@ const EditableText = ({ initialText, type, id }) => {
     }
     const handleBlur = async () => {
         setIsEditing(false);
-        // Save changes to db
+        await fetch('/api/updateHeaders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                newText: text,
+                type: type,
+                id: id
+            }),
+        });
     }
 
     return (
