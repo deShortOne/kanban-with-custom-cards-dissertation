@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 import { DraggableColumn } from "./DraggableColumn"
+import { DraggableSwimLane } from "./DraggableSwimLane"
 
 interface TableInformationProps {
     columns: KanbanColumn[]
@@ -37,6 +38,18 @@ export const Table = ({
         setColumns(newColumns);
     };
 
+    //swimlanes
+    const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
+
+    const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
+        const draggedSwimLane = stateSwimLanes[dragIndex];
+        const newSwimLanes = [...stateSwimLanes];
+        newSwimLanes.splice(dragIndex, 1);
+        newSwimLanes.splice(hoverIndex, 0, draggedSwimLane);
+
+        setSwimLanes(newSwimLanes);
+    };
+
     // cards
     const [cardsInfo, setCard] = useState<CardProps[]>(cards);
 
@@ -59,11 +72,9 @@ export const Table = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {swimlanes.map((swimLane) => (
+                    {stateSwimLanes.map((swimLane, index) => (
                         <tr>
-                            <td>
-                                {swimLane.title}
-                            </td>
+                            <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
                             {stateColumns.map((cell) => (
                                 <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}>
                                     {cardsInfo.map((card) =>
