@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import EditableText from './EditableText';
 
 interface SwimLaneHeader {
     id: number;
@@ -36,7 +37,7 @@ export const DraggableSwimLane: React.FC<DraggableSwimLaneProps> = ({ swimLane, 
 
     return (
         <td ref={(node) => ref(drop(node))}>
-            {swimLane.title}
+            <EditableText initialText={swimLane.title} type="SWIMLANE" id={swimLane.id} />
         </td>
     );
 };

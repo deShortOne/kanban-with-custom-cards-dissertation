@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import EditableText from './EditableText';
 
 interface ColumnHeader {
     id: number;
@@ -36,7 +37,7 @@ export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index,
 
     return (
         <th ref={(node) => ref(drop(node))}>
-            {column.title}
+            <EditableText initialText={column.title} type="COLUMN" id={column.id} />
         </th>
     );
 };
