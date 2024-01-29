@@ -24,7 +24,7 @@ const EditableText = ({ headerItem, type }: prop) => {
     }
     const handleBlur = async () => {
         setIsEditing(false);
-        await fetch('/api/updateHeaders', {
+        await fetch('/api/headers/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
