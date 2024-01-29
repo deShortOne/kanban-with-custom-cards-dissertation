@@ -41,7 +41,7 @@ export const Table = ({
     // add column
     const [columnId, setColumnId] = useState(-1);
     const addColumn = () => {
-        fetch('/api/newHeaders', {
+        fetch('/api/headers/new', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export const Table = ({
     // add swim lane
     const [swimLaneId, setSwimLaneId] = useState(-1);
     const addSwimLane = () => {
-        fetch('/api/newHeaders', {
+        fetch('/api/headers/new', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
