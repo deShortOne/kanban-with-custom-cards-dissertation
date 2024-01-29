@@ -39,9 +39,8 @@ export const Table = ({
     };
 
     // add column
-    const [columnId, setColumnId] = useState(-1);
-    const addColumn = () => {
-        fetch('/api/headers/new', {
+    const addColumn = async () => {
+        const response = await fetch('/api/headers/new', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,13 +50,11 @@ export const Table = ({
                 order: stateColumns.length + 1,
                 boardId: stateColumns[0].boardId
             }),
-        }).then(async (response) => {
-            setColumnId(await response.json())
         })
 
         const newColumns = [...stateColumns];
         newColumns.push({
-            id: columnId,
+            id: await response.json(),
             title: "New Column",
             order: newColumns.length + 1,
             boardId: newColumns[0].boardId,
@@ -78,9 +75,8 @@ export const Table = ({
     };
 
     // add swim lane
-    const [swimLaneId, setSwimLaneId] = useState(-1);
-    const addSwimLane = () => {
-        fetch('/api/headers/new', {
+    const addSwimLane = async () => {
+        const response = await fetch('/api/headers/new', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -90,13 +86,11 @@ export const Table = ({
                 order: stateSwimLanes.length + 1,
                 boardId: stateSwimLanes[0].boardId
             }),
-        }).then(async (response) => {
-            setSwimLaneId(await response.json())
         })
 
         const draggedSwimLane = [...stateSwimLanes];
         draggedSwimLane.push({
-            id: swimLaneId,
+            id: await response.json(),
             title: "New Swimlane",
             order: draggedSwimLane.length + 1,
             boardId: draggedSwimLane[0].boardId,
