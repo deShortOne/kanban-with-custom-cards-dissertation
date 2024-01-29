@@ -6,32 +6,22 @@ export async function POST(req, res) {
 
   let toUpdate;
   if (data.type === "COLUMN") {
-    toUpdate = await prisma.kanbanColumn.upsert({
+    toUpdate = await prisma.kanbanColumn.update({
       where: {
         id: data.id,
       },
-      update: {
+      data: {
         title: data.newText,
       },
-      create: {
-        title: data.newText,
-        order: data.order,
-        boardId: data.boardId
-      }
     })
   } else {
-    toUpdate = await prisma.kanbanSwimLane.upsert({
+    toUpdate = await prisma.kanbanSwimLane.update({
       where: {
         id: data.id,
       },
-      update: {
+      data: {
         title: data.newText,
       },
-      create: {
-        title: data.newText,
-        order: data.order,
-        boardId: data.boardId
-      }
     })
   }
 
