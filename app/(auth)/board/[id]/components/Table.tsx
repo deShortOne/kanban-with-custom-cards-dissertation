@@ -26,9 +26,9 @@ interface CardProps {
 export const Table = ({
     columns, swimlanes, cards
 }: TableInformationProps) => {
-    // columns
+    /* COLUMN */
+    // move column
     const [stateColumns, setColumns] = useState(columns);
-
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex];
         const newColumns = [...stateColumns];
@@ -38,10 +38,26 @@ export const Table = ({
         setColumns(newColumns);
     };
 
+    // add column
+    const [columnId, setColumnId] = useState(-1);
     const addColumn = () => {
+        fetch('/api/newHeaders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "COLUMN",
+                order: stateColumns.length + 1,
+                boardId: stateColumns[0].boardId
+            }),
+        }).then(async (response) => {
+            setColumnId(await response.json())
+        })
+
         const newColumns = [...stateColumns];
         newColumns.push({
-            id: -1,
+            id: columnId,
             title: "New Column",
             order: newColumns.length + 1,
             boardId: newColumns[0].boardId,
@@ -49,9 +65,9 @@ export const Table = ({
         setColumns(newColumns)
     }
 
-    //swimlanes
+    /* SWIM LANE */
+    // move swim lane
     const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
-
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex];
         const newSwimLanes = [...stateSwimLanes];
@@ -61,10 +77,26 @@ export const Table = ({
         setSwimLanes(newSwimLanes);
     };
 
+    // add swim lane
+    const [swimLaneId, setSwimLaneId] = useState(-1);
     const addSwimLane = () => {
+        fetch('/api/newHeaders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "SWIMLANE",
+                order: stateSwimLanes.length + 1,
+                boardId: stateSwimLanes[0].boardId
+            }),
+        }).then(async (response) => {
+            setSwimLaneId(await response.json())
+        })
+
         const draggedSwimLane = [...stateSwimLanes];
         draggedSwimLane.push({
-            id: -1,
+            id: swimLaneId,
             title: "New Swimlane",
             order: draggedSwimLane.length + 1,
             boardId: draggedSwimLane[0].boardId,
@@ -72,9 +104,9 @@ export const Table = ({
         setSwimLanes(draggedSwimLane)
     }
 
-    // cards
+    /* CARD */
+    // move card
     const [cardsInfo, setCard] = useState<CardProps[]>(cards);
-
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
         const updatedCard = cardsInfo.map((card) =>
             card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
