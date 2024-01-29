@@ -26,9 +26,9 @@ interface CardProps {
 export const Table = ({
     columns, swimlanes, cards
 }: TableInformationProps) => {
-    // columns
+    /* COLUMN */
+    // move column
     const [stateColumns, setColumns] = useState(columns);
-
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex];
         const newColumns = [...stateColumns];
@@ -38,9 +38,36 @@ export const Table = ({
         setColumns(newColumns);
     };
 
-    //swimlanes
-    const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
+    // add column
+    const [columnId, setColumnId] = useState(-1);
+    const addColumn = () => {
+        fetch('/api/newHeaders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "COLUMN",
+                order: stateColumns.length + 1,
+                boardId: stateColumns[0].boardId
+            }),
+        }).then(async (response) => {
+            setColumnId(await response.json())
+        })
 
+        const newColumns = [...stateColumns];
+        newColumns.push({
+            id: columnId,
+            title: "New Column",
+            order: newColumns.length + 1,
+            boardId: newColumns[0].boardId,
+        } as KanbanColumn)
+        setColumns(newColumns)
+    }
+
+    /* SWIM LANE */
+    // move swim lane
+    const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex];
         const newSwimLanes = [...stateSwimLanes];
@@ -50,9 +77,36 @@ export const Table = ({
         setSwimLanes(newSwimLanes);
     };
 
-    // cards
-    const [cardsInfo, setCard] = useState<CardProps[]>(cards);
+    // add swim lane
+    const [swimLaneId, setSwimLaneId] = useState(-1);
+    const addSwimLane = () => {
+        fetch('/api/newHeaders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "SWIMLANE",
+                order: stateSwimLanes.length + 1,
+                boardId: stateSwimLanes[0].boardId
+            }),
+        }).then(async (response) => {
+            setSwimLaneId(await response.json())
+        })
 
+        const draggedSwimLane = [...stateSwimLanes];
+        draggedSwimLane.push({
+            id: swimLaneId,
+            title: "New Swimlane",
+            order: draggedSwimLane.length + 1,
+            boardId: draggedSwimLane[0].boardId,
+        } as KanbanColumn)
+        setSwimLanes(draggedSwimLane)
+    }
+
+    /* CARD */
+    // move card
+    const [cardsInfo, setCard] = useState<CardProps[]>(cards);
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
         const updatedCard = cardsInfo.map((card) =>
             card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
@@ -69,6 +123,14 @@ export const Table = ({
                         {stateColumns.map((column, index) => (
                             <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} />
                         ))}
+                        <th>
+                            <button
+                                type="button"
+                                onClick={addColumn}
+                            >
+                                Add new
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,18 +138,28 @@ export const Table = ({
                         <tr key={swimLane.id}>
                             <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
                             {stateColumns.map((cell) => (
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)} 
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
                                     key={cell.id + " " + swimLane.id}
                                 >
                                     {cardsInfo.map((card) =>
                                         card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
-                                            <CardInfo {...card} key={card.id}/>
+                                            <CardInfo {...card} key={card.id} />
                                         ) : null
                                     )}
                                 </TableCell>
                             ))}
                         </tr>
                     ))}
+                    <tr>
+                        <td>
+                        <button
+                            type="button"
+                            onClick={addSwimLane}
+                        >
+                            Add new
+                        </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </DndProvider>

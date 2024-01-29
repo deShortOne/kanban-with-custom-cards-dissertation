@@ -1,13 +1,10 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-
-interface ColumnHeader {
-    id: number;
-    title: string;
-}
+import EditableText from './EditableText';
+import { KanbanColumn } from '@prisma/client';
 
 interface DraggableColumnProps {
-    column: ColumnHeader;
+    column: KanbanColumn;
     index: number;
     moveColumn: (dragIndex: number, hoverIndex: number) => void;
 }
@@ -36,7 +33,7 @@ export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index,
 
     return (
         <th ref={(node) => ref(drop(node))}>
-            {column.title}
+            <EditableText headerItem={column} type="COLUMN" />
         </th>
     );
 };
