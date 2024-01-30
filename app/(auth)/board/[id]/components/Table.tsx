@@ -28,15 +28,26 @@ export const Table = ({
 }: TableInformationProps) => {
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState(columns);
+    const [stateColumns, setColumns] = useState(columns)
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
-        const draggedColumn = stateColumns[dragIndex];
-        const newColumns = [...stateColumns];
-        newColumns.splice(dragIndex, 1);
-        newColumns.splice(hoverIndex, 0, draggedColumn);
+        const draggedColumn = stateColumns[dragIndex]
+        const newColumns = [...stateColumns]
+        newColumns.splice(dragIndex, 1)
+        newColumns.splice(hoverIndex, 0, draggedColumn)
 
-        setColumns(newColumns);
-    };
+        setColumns(newColumns)
+
+        fetch('/api/headers/reorder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "COLUMN",
+                headers: newColumns.map(cell => cell.id)
+            }),
+        })
+    }
 
     // add column
     const addColumn = async () => {
@@ -64,15 +75,26 @@ export const Table = ({
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState(swimlanes);
+    const [stateSwimLanes, setSwimLanes] = useState(swimlanes)
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
-        const draggedSwimLane = stateSwimLanes[dragIndex];
-        const newSwimLanes = [...stateSwimLanes];
-        newSwimLanes.splice(dragIndex, 1);
-        newSwimLanes.splice(hoverIndex, 0, draggedSwimLane);
+        const draggedSwimLane = stateSwimLanes[dragIndex]
+        const newSwimLanes = [...stateSwimLanes]
+        newSwimLanes.splice(dragIndex, 1)
+        newSwimLanes.splice(hoverIndex, 0, draggedSwimLane)
 
         setSwimLanes(newSwimLanes);
-    };
+
+        fetch('/api/headers/reorder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "SWIMLANE",
+                headers: newSwimLanes.map(cell => cell.id)
+            }),
+        })
+    }
 
     // add swim lane
     const addSwimLane = async () => {
@@ -146,12 +168,12 @@ export const Table = ({
                     ))}
                     <tr>
                         <td>
-                        <button
-                            type="button"
-                            onClick={addSwimLane}
-                        >
-                            Add new
-                        </button>
+                            <button
+                                type="button"
+                                onClick={addSwimLane}
+                            >
+                                Add new
+                            </button>
                         </td>
                     </tr>
                 </tbody>
