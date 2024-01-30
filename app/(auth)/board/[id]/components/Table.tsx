@@ -75,10 +75,19 @@ export const Table = ({
     }
 
     // remove column
-    const removeColumn = async (columnId: number) => {
-        const newColumns = [...stateColumns]
-        newColumns.splice(columnId, 1)
-        setColumns(newColumns)
+    const removeColumn = async (columnId: number, columnOrder: number) => {
+        console.log(cardsInfo)
+        console.log(columnId)
+
+        let hasNoCards = cardsInfo.findIndex(card => card.columnId === columnId) === -1
+        if (hasNoCards) {
+            const newColumns = [...stateColumns]
+
+            newColumns.splice(columnOrder, 1)
+            setColumns(newColumns)
+        } else {
+            alert("Remove all cards from this column")
+        }        
     }
 
     /* SWIM LANE */

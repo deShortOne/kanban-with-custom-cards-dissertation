@@ -7,7 +7,7 @@ interface DraggableColumnProps {
     column: KanbanColumn,
     index: number,
     moveColumn: (dragIndex: number, hoverIndex: number) => void,
-    removeColumn: (columnId: number) => void,
+    removeColumn: (columnId: number, columnOrder: number) => void,
 }
 
 export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index, moveColumn, removeColumn }) => {
@@ -36,8 +36,7 @@ export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index,
         <th ref={(node) => ref(drop(node))}>
             <div className="flex">
                 <EditableText headerItem={column} type="COLUMN" />
-
-                <button onClick={() => removeColumn(index)}>
+                <button onClick={() => removeColumn(column.id, index)}>
                     <img src="/delete.svg" />
                 </button>
             </div>
