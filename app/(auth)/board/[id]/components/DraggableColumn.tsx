@@ -1,39 +1,46 @@
-import React from 'react';
-import { useDrag, useDrop } from 'react-dnd';
-import EditableText from './EditableText';
-import { KanbanColumn } from '@prisma/client';
+import React from 'react'
+import { useDrag, useDrop } from 'react-dnd'
+import EditableText from './EditableText'
+import { KanbanColumn } from '@prisma/client'
 
 interface DraggableColumnProps {
-    column: KanbanColumn;
-    index: number;
-    moveColumn: (dragIndex: number, hoverIndex: number) => void;
+    column: KanbanColumn,
+    index: number,
+    moveColumn: (dragIndex: number, hoverIndex: number) => void,
+    removeColumn: (columnId: number) => void,
 }
 
-export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index, moveColumn }) => {
+export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index, moveColumn, removeColumn }) => {
     const [, ref] = useDrag({
         type: 'COLUMN',
         item: { index },
-    });
+    })
 
     const [, drop] = useDrop({
         accept: 'COLUMN',
         hover: (item: { index: number }) => {
-            const dragIndex = item.index;
-            const hoverIndex = index;
+            const dragIndex = item.index
+            const hoverIndex = index
 
             if (dragIndex === hoverIndex) {
                 return;
             }
 
-            moveColumn(dragIndex, hoverIndex);
+            moveColumn(dragIndex, hoverIndex)
 
             item.index = hoverIndex;
         },
-    });
+    })
 
     return (
         <th ref={(node) => ref(drop(node))}>
-            <EditableText headerItem={column} type="COLUMN" />
+            <div className="flex">
+                <EditableText headerItem={column} type="COLUMN" />
+
+                <button onClick={() => removeColumn(index)}>
+                    <img src="/delete.svg" />
+                </button>
+            </div>
         </th>
-    );
-};
+    )
+}

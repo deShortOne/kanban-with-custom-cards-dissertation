@@ -74,6 +74,13 @@ export const Table = ({
         setColumns(newColumns)
     }
 
+    // remove column
+    const removeColumn = async (columnId: number) => {
+        const newColumns = [...stateColumns]
+        newColumns.splice(columnId, 1)
+        setColumns(newColumns)
+    }
+
     /* SWIM LANE */
     // move swim lane
     const [stateSwimLanes, setSwimLanes] = useState(swimlanes)
@@ -139,7 +146,7 @@ export const Table = ({
                     <tr>
                         <th />
                         {stateColumns.map((column, index) => (
-                            <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} />
+                            <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} removeColumn={removeColumn}/>
                         ))}
                         <th>
                             <button
