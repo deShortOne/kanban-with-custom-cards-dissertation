@@ -26,6 +26,8 @@ interface CardProps {
 export const Table = ({
     columns, swimlanes, cards
 }: TableInformationProps) => {
+    const boardId = cards[0].kanbanId
+
     /* COLUMN */
     // move column
     const [stateColumns, setColumns] = useState(columns)
@@ -43,7 +45,7 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                boardId: stateColumns[0].boardId,
+                boardId: boardId,
                 type: "COLUMN",
                 headers: newColumns.map(cell => cell.id)
             }),
@@ -60,7 +62,7 @@ export const Table = ({
             body: JSON.stringify({
                 type: "COLUMN",
                 order: stateColumns.length + 1,
-                boardId: stateColumns[0].boardId
+                boardId: boardId,
             }),
         })
 
@@ -69,7 +71,7 @@ export const Table = ({
             id: await response.json(),
             title: "New Column",
             order: newColumns.length + 1,
-            boardId: newColumns[0].boardId,
+            boardId: boardId,
         } as KanbanColumn)
         setColumns(newColumns)
     }
@@ -91,6 +93,7 @@ export const Table = ({
                 body: JSON.stringify({
                     id: columnId,
                     type: "COLUMN",
+                    boardId: boardId,
                 }),
             })    
         } else {
@@ -115,7 +118,7 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                boardId: stateColumns[0].boardId,
+                boardId: boardId,
                 type: "SWIMLANE",
                 headers: newSwimLanes.map(cell => cell.id)
             }),
@@ -132,7 +135,7 @@ export const Table = ({
             body: JSON.stringify({
                 type: "SWIMLANE",
                 order: stateSwimLanes.length + 1,
-                boardId: stateSwimLanes[0].boardId
+                boardId: boardId,
             }),
         })
 
@@ -141,7 +144,7 @@ export const Table = ({
             id: await response.json(),
             title: "New Swimlane",
             order: draggedSwimLane.length + 1,
-            boardId: draggedSwimLane[0].boardId,
+            boardId: boardId,
         } as KanbanColumn)
         setSwimLanes(draggedSwimLane)
     }
@@ -163,6 +166,7 @@ export const Table = ({
                 body: JSON.stringify({
                     id: swimLaneId,
                     type: "SWIMLANE",
+                    boardId: boardId,
                 }),
             })    
         } else {
