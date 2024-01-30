@@ -76,15 +76,23 @@ export const Table = ({
 
     // remove column
     const removeColumn = async (columnId: number, columnOrder: number) => {
-        console.log(cardsInfo)
-        console.log(columnId)
-
         let hasNoCards = cardsInfo.findIndex(card => card.columnId === columnId) === -1
         if (hasNoCards) {
             const newColumns = [...stateColumns]
 
             newColumns.splice(columnOrder, 1)
             setColumns(newColumns)
+
+            fetch('/api/headers/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: columnId,
+                    type: "COLUMN",
+                }),
+            })    
         } else {
             alert("Remove all cards from this column")
         }        
