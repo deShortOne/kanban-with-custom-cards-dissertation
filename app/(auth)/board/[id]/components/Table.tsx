@@ -43,6 +43,7 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                boardId: stateColumns[0].boardId,
                 type: "COLUMN",
                 headers: newColumns.map(cell => cell.id)
             }),
@@ -90,6 +91,7 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                boardId: stateColumns[0].boardId,
                 type: "SWIMLANE",
                 headers: newSwimLanes.map(cell => cell.id)
             }),
