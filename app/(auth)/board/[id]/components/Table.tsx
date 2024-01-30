@@ -64,7 +64,7 @@ export const Table = ({
             }),
         })
 
-        const newColumns = [...stateColumns];
+        const newColumns = [...stateColumns]
         newColumns.push({
             id: await response.json(),
             title: "New Column",
@@ -107,7 +107,7 @@ export const Table = ({
         newSwimLanes.splice(dragIndex, 1)
         newSwimLanes.splice(hoverIndex, 0, draggedSwimLane)
 
-        setSwimLanes(newSwimLanes);
+        setSwimLanes(newSwimLanes)
 
         fetch('/api/headers/reorder', {
             method: 'POST',
@@ -136,7 +136,7 @@ export const Table = ({
             }),
         })
 
-        const draggedSwimLane = [...stateSwimLanes];
+        const draggedSwimLane = [...stateSwimLanes]
         draggedSwimLane.push({
             id: await response.json(),
             title: "New Swimlane",
@@ -146,9 +146,33 @@ export const Table = ({
         setSwimLanes(draggedSwimLane)
     }
 
+    // remove swim lane
+    const removeSwimLane = async (swimLaneId: number, swimLaneOrder: number) => {
+        let hasNoCards = cardsInfo.findIndex(card => card.swimLaneId === swimLaneId) === -1
+        if (hasNoCards) {
+            const newSwimLane = [...stateSwimLanes]
+
+            newSwimLane.splice(swimLaneOrder, 1)
+            setSwimLanes(newSwimLane)
+
+            fetch('/api/headers/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: swimLaneId,
+                    type: "SWIMLANE",
+                }),
+            })    
+        } else {
+            alert("Remove all cards from this swim lane")
+        }        
+    }
+
     /* CARD */
     // move card
-    const [cardsInfo, setCard] = useState<CardProps[]>(cards);
+    const [cardsInfo, setCard] = useState<CardProps[]>(cards)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
         const updatedCard = cardsInfo.map((card) =>
             card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
@@ -178,7 +202,7 @@ export const Table = ({
                 <tbody>
                     {stateSwimLanes.map((swimLane, index) => (
                         <tr key={swimLane.id}>
-                            <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} />
+                            <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane}/>
                             {stateColumns.map((cell) => (
                                 <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
                                     key={cell.id + " " + swimLane.id}
