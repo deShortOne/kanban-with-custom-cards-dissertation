@@ -182,6 +182,16 @@ export const Table = ({
             card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
         )
         setCard(updatedCard)
+
+        fetch('/api/card/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                card: updatedCard.find(element => element.id == cardId)
+            }),
+        })
     }
 
     return (
