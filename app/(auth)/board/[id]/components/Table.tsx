@@ -1,5 +1,5 @@
 'use client'
-import { Card, KanbanColumn, KanbanSwimLane } from "@prisma/client"
+import { Card, KanbanColumn, KanbanSwimLane, User } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
@@ -18,6 +18,7 @@ interface CardProps {
     id: number
     title: string
     order: number
+    developer: User
     description: string | null
     columnId: number
     swimLaneId: number
@@ -95,10 +96,10 @@ export const Table = ({
                     type: "COLUMN",
                     boardId: boardId,
                 }),
-            })    
+            })
         } else {
             alert("Remove all cards from this column")
-        }        
+        }
     }
 
     /* SWIM LANE */
@@ -168,10 +169,10 @@ export const Table = ({
                     type: "SWIMLANE",
                     boardId: boardId,
                 }),
-            })    
+            })
         } else {
             alert("Remove all cards from this swim lane")
-        }        
+        }
     }
 
     /* CARD */
@@ -194,54 +195,106 @@ export const Table = ({
         })
     }
 
+    // new card
+    const addCard = async () => {
+        const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
+        const response = await fetch('/api/card/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                order: orderPos,
+                boardId: boardId,
+            }),
+        })
+
+        const updatedCards = [...cardsInfo]
+        updatedCards.push({
+            id: await response.json(),
+            title: "To be updated",
+            order: orderPos,
+            description: null,
+            columnId: -1,
+            swimLaneId: -1,
+            kanbanId: boardId,
+        } as Card)
+        setCard(updatedCards)
+    }
+
     return (
         <DndProvider backend={HTML5Backend}>
-            <table style={{ borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr>
-                        <th />
-                        {stateColumns.map((column, index) => (
-                            <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} removeColumn={removeColumn}/>
-                        ))}
-                        <th>
-                            <button
-                                type="button"
-                                onClick={addColumn}
-                            >
-                                Add new
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {stateSwimLanes.map((swimLane, index) => (
-                        <tr key={swimLane.id}>
-                            <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane}/>
-                            {stateColumns.map((cell) => (
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
-                                    key={cell.id + " " + swimLane.id}
+            <div className="flex">
+                <div className="h-full">
+                    <button
+                        type="button"
+                        onClick={addCard}
+                    >
+                        Add new card
+                    </button>
+                    <table style={{ borderCollapse: 'collapse' }}>
+                        <tbody>
+                            <tr>
+                                <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                    key={"-1 -1"}
                                 >
                                     {cardsInfo.map((card) =>
-                                        card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                        card.columnId === -1 && card.swimLaneId === -1 ? (
                                             <CardInfo {...card} key={card.id} />
                                         ) : null
                                     )}
                                 </TableCell>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table style={{ borderCollapse: 'collapse' }}>
+                    <thead>
+                        <tr>
+                            <th />
+                            {stateColumns.map((column, index) => (
+                                <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} removeColumn={removeColumn} />
                             ))}
+                            <th>
+                                <button
+                                    type="button"
+                                    onClick={addColumn}
+                                >
+                                    Add new
+                                </button>
+                            </th>
                         </tr>
-                    ))}
-                    <tr>
-                        <td>
-                            <button
-                                type="button"
-                                onClick={addSwimLane}
-                            >
-                                Add new
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {stateSwimLanes.map((swimLane, index) => (
+                            <tr key={swimLane.id}>
+                                <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane} />
+                                {stateColumns.map((cell) => (
+                                    <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                        key={cell.id + " " + swimLane.id}
+                                    >
+                                        {cardsInfo.map((card) =>
+                                            card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                                <CardInfo {...card} key={card.id} />
+                                            ) : null
+                                        )}
+                                    </TableCell>
+                                ))}
+                            </tr>
+                        ))}
+                        <tr>
+                            <td>
+                                <button
+                                    type="button"
+                                    onClick={addSwimLane}
+                                >
+                                    Add new
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </DndProvider>
     )
 }

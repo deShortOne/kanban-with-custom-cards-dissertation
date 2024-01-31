@@ -5,12 +5,12 @@ const prisma = new PrismaClient();
 
 async function main() {
     const person = await prisma.user.create({
-        data: {email: 'jingshianggu@gmail.com'}
+        data: { email: 'jingshianggu@gmail.com' }
     })
 
-    
+
     const kanban = await prisma.kanban.create({
-        data: {title: 'kanban board 1'}
+        data: { title: 'kanban board 1' }
     })
 
     const userRoleKanban = await prisma.userRoleKanban.create({
@@ -22,8 +22,8 @@ async function main() {
     })
 
     const kanbanColumnsData = [
-        {title: 'column 1', order: 1, boardId: kanban.id},
-        {title: 'column 2 - empty', order: 2, boardId: kanban.id},
+        { title: 'column 1', order: 1, boardId: kanban.id },
+        { title: 'column 2 - empty', order: 2, boardId: kanban.id },
     ]
     const kanbanColumns = await prisma.kanbanColumn.createMany({
         data: kanbanColumnsData,
@@ -32,8 +32,8 @@ async function main() {
     console.log("All columns added: ", kanbanColumnsData.length == kanbanColumns.count)
 
     const kanbanSwimLanesData = [
-        {title: 'swim lane 1 - empty', order: 1, boardId: kanban.id},
-        {title: 'swim lane 2', order: 2, boardId: kanban.id},
+        { title: 'swim lane 1 - empty', order: 1, boardId: kanban.id },
+        { title: 'swim lane 2', order: 2, boardId: kanban.id },
     ]
     const kanbanSwimLanes = await prisma.kanbanSwimLane.createMany({
         data: kanbanSwimLanesData,
@@ -43,15 +43,17 @@ async function main() {
 
     const cardsData = [
         {
-            title: 'card 1 2', 
-            order: 1, 
+            title: 'card 1 2',
+            order: 1,
+            developerId: 1,
             columnId: 1,
             swimLaneId: 2,
             kanbanId: 1,
         },
         {
-            title: 'card 2 1', 
-            order: 1, 
+            title: 'card 2 1',
+            order: 1,
+            developerId: 1,
             columnId: 2,
             swimLaneId: 1,
             kanbanId: 1,
@@ -65,11 +67,11 @@ async function main() {
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    .then(async () => {
+        await prisma.$disconnect()
+    })
+    .catch(async (e) => {
+        console.error(e)
+        await prisma.$disconnect()
+        process.exit(1)
+    })

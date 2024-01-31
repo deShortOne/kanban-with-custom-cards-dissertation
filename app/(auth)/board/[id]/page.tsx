@@ -27,12 +27,19 @@ const SelectKanbanPage = async ({
                     order: "asc"
                 }
             },
-            Cards: true
+            Cards: {
+                include: {
+                    developer: true
+                }
+            }
         }
     }) as Kanban
 
     return (
         <main className="">
+            <h1 className="text-left">
+                Hello world!
+            </h1>
             <Table
                 columns={kanban.KanbanColumns}
                 swimlanes={kanban.KanbanSwimLanes}
