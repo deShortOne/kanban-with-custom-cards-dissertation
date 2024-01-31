@@ -1,5 +1,5 @@
 'use client'
-import { Card, KanbanColumn, KanbanSwimLane } from "@prisma/client"
+import { Card, KanbanColumn, KanbanSwimLane, User } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useState } from 'react'
@@ -18,6 +18,7 @@ interface CardProps {
     id: number
     title: string
     order: number
+    developer: User
     description: string | null
     columnId: number
     swimLaneId: number
