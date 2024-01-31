@@ -16,11 +16,12 @@ model User {
   email String @unique
 
   kanbans UserRoleKanban[] @relation("AvailableKanbans")
+  Cards   Card[]
 }
 
 model Kanban {
   id    Int              @id @default(autoincrement())
-  title String           
+  title String
   users UserRoleKanban[] @relation("KanbanHasUsers")
 
   KanbanColumns   KanbanColumn[]
@@ -77,13 +78,16 @@ model Card {
   order       Int
   description String? @db.Text
 
-  columnId   Int
-  column     KanbanColumn   @relation(fields: [columnId], references: [id])
-  swimLaneId Int
-  swimLane   KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
-  kanbanId   Int
-  kanban     Kanban @relation(fields: [kanbanId], references: [id])
+  developerId Int?
+  developer   User?          @relation(fields: [developerId], references: [id])
+  columnId    Int
+  column      KanbanColumn   @relation(fields: [columnId], references: [id])
+  swimLaneId  Int
+  swimLane    KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+  kanbanId    Int
+  kanban      Kanban         @relation(fields: [kanbanId], references: [id])
 
+  @@index([developerId])
   @@index([columnId])
   @@index([swimLaneId])
   @@index([kanbanId])
