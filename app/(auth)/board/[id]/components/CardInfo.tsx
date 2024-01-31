@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDrag } from 'react-dnd'
+import { useCardModal } from './card-modal/useDialog'
 
 interface CardProps {
     id: number
@@ -12,10 +13,16 @@ const CardInfo: React.FC<CardProps> = ({ id, title }) => {
         item: { id },
     })
 
+    const cardModal = useCardModal();
+
     return (
-        <div ref={drag} style={{ border: '1px solid #ccc', padding: '8px', cursor: 'move' }}>
+        <button 
+            onClick={() => cardModal.onOpen(id)} 
+            ref={drag} 
+            style={{ border: '1px solid #ccc', padding: '8px', cursor: 'move' }}
+        >
             {title}
-        </div>
+        </button>
     )
 }
 
