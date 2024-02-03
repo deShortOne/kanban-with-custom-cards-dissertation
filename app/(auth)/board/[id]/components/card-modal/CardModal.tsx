@@ -12,6 +12,7 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextField, TextArea } from "./field-type/Basic";
 import { DatePicker } from "./field-type/DatePicker";
+import { CheckboxMultiple } from "./field-type/CheckBox";
 
 export const CardModal = () => {
     const id = useCardModal(state => state.id)
@@ -89,6 +90,11 @@ export const CardModal = () => {
                                             fieldTypeData={field.data}
                                             defaultValues={defaultValues}
                                             name={"a" + field.id} />
+                                    case 'Check boxes':
+                                        return <CheckboxMultiple form={form}
+                                            fieldTypeData={field.data}
+                                            defaultValues={defaultValues}
+                                            name={"a" + field.id}  />
                                 }
                                 return <p></p>
                             })}
@@ -111,6 +117,10 @@ function fieldTypeToZodType(fieldType: string) {
             return z.string()
         case 'Date picker':
             return z.date()
+        case 'Check boxes':
+            return z.array(z.string()).refine((value) => value.some((item) => item), {
+                message: "You have to select at least one item.",
+            })
         default:
             return z.string() // should probs be returning error instead
     }
