@@ -103,6 +103,8 @@ function fieldTypeToZodType(fieldType: string) {
         case 'Text field':
         case 'Text area':
             return z.string()
+        case 'Date picker':
+            return z.date()
         default:
             return z.string() // should probs be returning error instead
     }
