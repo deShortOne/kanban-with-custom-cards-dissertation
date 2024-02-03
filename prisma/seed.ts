@@ -70,7 +70,11 @@ async function main() {
         {
             cardTypeId: 1,
             version: 1,
-        }
+        },
+        {
+            cardTypeId: 2,
+            version: 1,
+        },
     ]
     const cardTemplate = await prisma.cardTemplate.createMany({
         data: cardTemplateData,
@@ -85,7 +89,22 @@ async function main() {
             cardTemplateId: 1,
             sizeX: 1,
             sizeY: 2,
-        }
+        },
+        {
+            name: 'tab1 for card 2',
+            order: 1,
+            cardTemplateId: 2,
+            sizeX: 1,
+            sizeY: 3,
+        },
+        {
+            name: 'tab2 for card 2 - bug',
+            order: 2,
+            cardTemplateId: 2,
+            sizeX: 3,
+            sizeY: 3,
+        },
+
     ]
     const cardTemplateTab = await prisma.cardTemplateTab.createMany({
         data: cardTemplateTabData,
@@ -106,6 +125,76 @@ async function main() {
             posX: 1,
             posY: 2,
             cardTemplateTabId: 1,
+            fieldTypeId: 2,
+        },
+        {
+            data: "Datepicker label;",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 2,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Checkboxes label;key1:value1,key2:value2,key 3:value 3",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 2,
+            fieldTypeId: 6,
+        },
+        {
+            data: "Drop down label;drop1:value,drop2:value2,drop 3:value 3",
+            posX: 1,
+            posY: 3,
+            cardTemplateTabId: 2,
+            fieldTypeId: 7,
+        },
+        {
+            data: "Severity;1:critical,2:major,3:minor",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 3,
+            fieldTypeId: 7,
+        },
+        {
+            data: "Affected areas;1:dev,2:staging,3:production",
+            posX: 2,
+            posY: 1,
+            cardTemplateTabId: 3,
+            fieldTypeId: 6,
+        },
+        {
+            data: "Deadline;",
+            posX: 3,
+            posY: 1,
+            cardTemplateTabId: 3,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Client name",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 3,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Client contact information",
+            posX: 1,
+            posY: 3,
+            cardTemplateTabId: 3,
+            fieldTypeId: 2,
+        },
+        {
+            data: "Description of bug",
+            posX: 2,
+            posY: 2,
+            cardTemplateTabId: 3,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Steps to reproduce bug, expected and actual results",
+            posX: 2,
+            posY: 3,
+            cardTemplateTabId: 3,
             fieldTypeId: 2,
         },
     ]
@@ -132,7 +221,7 @@ async function main() {
             columnId: 2,
             swimLaneId: 1,
             kanbanId: 1,
-            cardTemplateId: 1,
+            cardTemplateId: 2,
         },
     ]
     const cards = await prisma.card.createMany({
@@ -150,6 +239,56 @@ async function main() {
         {
             data: 'Something super duper long that will be in the multiline text area input',
             cardId: 1,
+            cardTemplateTabFieldId: 2
+        },
+        {
+            data: '3/2/2024',
+            cardId: 2,
+            cardTemplateTabFieldId: 3
+        },
+        {
+            data: 'key1,key 3',
+            cardId: 2,
+            cardTemplateTabFieldId: 4
+        },
+        {
+            data: 'drop 3',
+            cardId: 2,
+            cardTemplateTabFieldId: 5
+        },
+        {
+            data: '1',
+            cardId: 2,
+            cardTemplateTabFieldId: 6
+        },
+        {
+            data: '1,2,3',
+            cardId: 2,
+            cardTemplateTabFieldId: 4
+        },
+        {
+            data: '4/26/2024',
+            cardId: 2,
+            cardTemplateTabFieldId: 3
+        },
+        {
+            data: 'J',
+            cardId: 2,
+            cardTemplateTabFieldId: 1
+        },
+        {
+            data: 'email: jingshianggu@',
+            cardId: 2,
+            cardTemplateTabFieldId: 2
+        },
+        {
+            data: 'Dissertation',
+            cardId: 2,
+            cardTemplateTabFieldId: 1
+        },
+        {
+            data: 'Dissertation, something v v long',
+            cardId: 2,
             cardTemplateTabFieldId: 2
         },
     ]
