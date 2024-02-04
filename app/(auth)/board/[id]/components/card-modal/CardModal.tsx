@@ -14,6 +14,7 @@ import { TextField, TextArea } from "./field-type/Basic";
 import { DatePicker } from "./field-type/DatePicker";
 import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const CardModal = () => {
     const id = useCardModal(state => state.id)
@@ -74,36 +75,47 @@ export const CardModal = () => {
                     </div>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            {cardData.cardTemplate.tabs[0].tabFields.map(field => {
-                                switch (field.fieldType.name) {
-                                    case 'Text field':
-                                        return <TextField form={form}
-                                            fieldTypeData={field.data}
-                                            defaultValues={defaultValues}
-                                            name={"a" + field.id} />
-                                    case 'Text area':
-                                        return <TextArea form={form}
-                                            fieldTypeData={field.data}
-                                            defaultValues={defaultValues}
-                                            name={"a" + field.id} />
-                                    case 'Date picker':
-                                        return <DatePicker form={form}
-                                            fieldTypeData={field.data}
-                                            defaultValues={defaultValues}
-                                            name={"a" + field.id} />
-                                    case 'Check boxes':
-                                        return <CheckboxMultiple form={form}
-                                            fieldTypeData={field.data}
-                                            defaultValues={defaultValues}
-                                            name={"a" + field.id} />
-                                    case 'Drop down':
-                                        return <ComboboxForm form={form}
-                                            fieldTypeData={field.data}
-                                            defaultValues={defaultValues}
-                                            name={"a" + field.id} />
-                                }
-                                return <p></p>
-                            })}
+                            <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} className="w-[400px]">
+                                <TabsList>
+                                    {cardData.cardTemplate.tabs.map(tab => {
+                                        return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
+                                    })}
+                                </TabsList>
+                                {cardData.cardTemplate.tabs.map(tab => {
+                                    return <TabsContent value={tab.name}>
+                                        {tab.tabFields.map(field => {
+                                            switch (field.fieldType.name) {
+                                                case 'Text field':
+                                                    return <TextField form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Text area':
+                                                    return <TextArea form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Date picker':
+                                                    return <DatePicker form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Check boxes':
+                                                    return <CheckboxMultiple form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Drop down':
+                                                    return <ComboboxForm form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                            }
+                                            return <p></p>
+                                        })}
+                                    </TabsContent>
+                                })}
+                            </Tabs>
                             <Button type="submit">Submit</Button>
                         </form>
                     </Form>
@@ -112,7 +124,7 @@ export const CardModal = () => {
                     </button>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }
 
