@@ -22,8 +22,8 @@ import {
 import { FieldTypeProp } from "./Base"
 
 export function DatePicker({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) {
-    if (!form.getValues()[name])
-        form.setValue(name, defaultValues[name])
+    if (!form.getValues()[name]) 
+        form.setValue(name, new Date(defaultValues[name]))
 
     const data = fieldTypeData.split(";")
 

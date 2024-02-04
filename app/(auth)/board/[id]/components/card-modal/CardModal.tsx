@@ -57,7 +57,18 @@ export const CardModal = () => {
         // Do something with the form values.
         // âœ… This will be type-safe and validated.
         console.log(values);
+        fetch("/api/card/update/content", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...values,
+            }),
+        })
     }
+
+    const onError = (errors, e) => console.log(errors, e)
 
     if (!cardData)
         return <p>No card open</p>
@@ -69,7 +80,7 @@ export const CardModal = () => {
         >
             <DialogContent className="h-[90vh] min-w-[90vw]">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
                         <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} defaultValues="" />
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
