@@ -10,7 +10,7 @@ import { useCardModal } from "./useDialog"
 import { CardData } from "./field-type/Base"
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { TextField, TextArea } from "./field-type/Basic";
+import { TextField, TextArea, Title } from "./field-type/Basic";
 import { DatePicker } from "./field-type/DatePicker";
 import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
@@ -34,15 +34,17 @@ export const CardModal = () => {
         }).then((res) => res.json()))
     })
 
-    const formSchema = z.object(
-        cardData ? cardData.cardTemplate
-            .tabs
-            .flatMap(i => i.tabFields)
-            .map(i => ({ key: i.id, value: i.fieldType.name }))
-            .reduce((obj, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
-            : { empty: -1 }
-    )
+    const schemaForFields = cardData ? cardData.cardTemplate
+        .tabs
+        .flatMap(i => i.tabFields)
+        .map(i => ({ key: i.id, value: i.fieldType.name }))
+        .reduce((obj, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
+        : { empty: -1 }
+    schemaForFields["title" + cardData?.id] = z.string()
 
+    const formSchema = z.object(
+        schemaForFields
+    )
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -50,8 +52,6 @@ export const CardModal = () => {
     const defaultValues = cardData ? cardData.allTabsFieldInformation
         .reduce((obj, item) => (obj["a" + item.id] = item.data, obj), {})
         : { empty: -1 }
-
-    console.log(defaultValues);
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -68,61 +68,57 @@ export const CardModal = () => {
             onOpenChange={onClose}
         >
             <DialogContent className="h-[90vh] min-w-[90vw]">
-                <div className='grid grid-cols-1 gap-4'>
-                    <div className="mb-6 border">
-                        <input type="text" id="title" className="block w-5/6 p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" value={"title here"} />
-                        <hr />
-                    </div>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} className="w-[400px]">
-                                <TabsList>
-                                    {cardData.cardTemplate.tabs.map(tab => {
-                                        return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
-                                    })}
-                                </TabsList>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} defaultValues="" />
+                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} className="w-[400px]">
+                            <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
-                                    return <TabsContent value={tab.name}>
-                                        {tab.tabFields.map(field => {
-                                            switch (field.fieldType.name) {
-                                                case 'Text field':
-                                                    return <TextField form={form}
-                                                        fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
-                                                        name={"a" + field.id} />
-                                                case 'Text area':
-                                                    return <TextArea form={form}
-                                                        fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
-                                                        name={"a" + field.id} />
-                                                case 'Date picker':
-                                                    return <DatePicker form={form}
-                                                        fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
-                                                        name={"a" + field.id} />
-                                                case 'Check boxes':
-                                                    return <CheckboxMultiple form={form}
-                                                        fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
-                                                        name={"a" + field.id} />
-                                                case 'Drop down':
-                                                    return <ComboboxForm form={form}
-                                                        fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
-                                                        name={"a" + field.id} />
-                                            }
-                                            return <p></p>
-                                        })}
-                                    </TabsContent>
+                                    return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
                                 })}
-                            </Tabs>
-                            <Button type="submit">Submit</Button>
-                        </form>
-                    </Form>
-                    <button onClick={onClose}>
-                        Close
-                    </button>
-                </div>
+                            </TabsList>
+
+                            {cardData.cardTemplate.tabs.map(tab => {
+                                return <TabsContent value={tab.name}>
+                                    {tab.tabFields.map(field => {
+                                        switch (field.fieldType.name) {
+                                            case 'Text field':
+                                                return <TextField form={form}
+                                                    fieldTypeData={field.data}
+                                                    defaultValues={defaultValues}
+                                                    name={"a" + field.id} />
+                                            case 'Text area':
+                                                return <TextArea form={form}
+                                                    fieldTypeData={field.data}
+                                                    defaultValues={defaultValues}
+                                                    name={"a" + field.id} />
+                                            case 'Date picker':
+                                                return <DatePicker form={form}
+                                                    fieldTypeData={field.data}
+                                                    defaultValues={defaultValues}
+                                                    name={"a" + field.id} />
+                                            case 'Check boxes':
+                                                return <CheckboxMultiple form={form}
+                                                    fieldTypeData={field.data}
+                                                    defaultValues={defaultValues}
+                                                    name={"a" + field.id} />
+                                            case 'Drop down':
+                                                return <ComboboxForm form={form}
+                                                    fieldTypeData={field.data}
+                                                    defaultValues={defaultValues}
+                                                    name={"a" + field.id} />
+                                        }
+                                        return <p></p>
+                                    })}
+                                </TabsContent>
+                            })}
+                        </Tabs>
+                        <Button type="submit">Submit</Button>
+                    </form>
+                </Form>
+                <button onClick={onClose}>
+                    Close
+                </button>
             </DialogContent>
         </Dialog >
     )
