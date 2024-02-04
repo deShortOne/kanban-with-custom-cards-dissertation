@@ -19,17 +19,25 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { FieldTypeProp } from "./Base"
 
-interface prop {
-    form: UseFormReturn<{}, any, {}>,
-    label: string,
-    defaultValues: {},
-    name: string
-}
-
-export function DatePickerForm({ form, label, defaultValues, name }: prop) {
+export function DatePicker({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) {
     if (!form.getValues()[name])
         form.setValue(name, defaultValues[name])
+
+    const data = fieldTypeData.split(";")
+
+    const label = data[0]
+    const itemsA: string[][] = data[1].split(",").map(i => i.split(":"))
+
+    const items: { id: string, label: string }[] = []
+    for (let i = 0; i < itemsA.length; i++) {
+        items.push({
+            id: itemsA[i][0],
+            label: itemsA[i][1]
+        })
+    }
+
     return (
         <FormField
             control={form.control}
@@ -62,7 +70,7 @@ export function DatePickerForm({ form, label, defaultValues, name }: prop) {
                                 selected={field.value}
                                 onSelect={field.onChange}
                                 disabled={(date) =>
-                                    date > new Date() || date < new Date("1900-01-01")
+                                    date < new Date()
                                 }
                                 initialFocus
                             />

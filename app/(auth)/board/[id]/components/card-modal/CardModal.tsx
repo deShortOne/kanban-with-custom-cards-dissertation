@@ -11,6 +11,7 @@ import { CardData } from "./field-type/Base"
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextField, TextArea } from "./field-type/Basic";
+import { DatePicker } from "./field-type/DatePicker";
 
 export const CardModal = () => {
     const id = useCardModal(state => state.id)
@@ -80,6 +81,11 @@ export const CardModal = () => {
                                             name={"a" + field.id} />
                                     case 'Text area':
                                         return <TextArea form={form}
+                                            fieldTypeData={field.data}
+                                            defaultValues={defaultValues}
+                                            name={"a" + field.id} />
+                                    case 'Date picker':
+                                        return <DatePicker form={form}
                                             fieldTypeData={field.data}
                                             defaultValues={defaultValues}
                                             name={"a" + field.id} />
