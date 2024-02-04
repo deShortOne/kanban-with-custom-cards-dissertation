@@ -71,7 +71,7 @@ export const CardModal = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} defaultValues="" />
-                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} className="w-[400px]">
+                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
                                     return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
@@ -79,37 +79,48 @@ export const CardModal = () => {
                             </TabsList>
 
                             {cardData.cardTemplate.tabs.map(tab => {
+                                const fields = []
+                                for (let y = 1; y <= tab.sizeY; y++) {
+                                    for (let x = 1; x <= tab.sizeX; x++) {
+                                        fields.push(tab.tabFields.find(i => i.posX === x && i.posY === y))
+                                    }
+                                }
                                 return <TabsContent value={tab.name}>
-                                    {tab.tabFields.map(field => {
-                                        switch (field.fieldType.name) {
-                                            case 'Text field':
-                                                return <TextField form={form}
-                                                    fieldTypeData={field.data}
-                                                    defaultValues={defaultValues}
-                                                    name={"a" + field.id} />
-                                            case 'Text area':
-                                                return <TextArea form={form}
-                                                    fieldTypeData={field.data}
-                                                    defaultValues={defaultValues}
-                                                    name={"a" + field.id} />
-                                            case 'Date picker':
-                                                return <DatePicker form={form}
-                                                    fieldTypeData={field.data}
-                                                    defaultValues={defaultValues}
-                                                    name={"a" + field.id} />
-                                            case 'Check boxes':
-                                                return <CheckboxMultiple form={form}
-                                                    fieldTypeData={field.data}
-                                                    defaultValues={defaultValues}
-                                                    name={"a" + field.id} />
-                                            case 'Drop down':
-                                                return <ComboboxForm form={form}
-                                                    fieldTypeData={field.data}
-                                                    defaultValues={defaultValues}
-                                                    name={"a" + field.id} />
-                                        }
-                                        return <p></p>
-                                    })}
+                                    <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
+                                        {fields.map(field => {
+                                            if (!field) {
+                                                return <div />
+                                            }
+                                            switch (field.fieldType.name) {
+                                                case 'Text field':
+                                                    return <TextField form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Text area':
+                                                    return <TextArea form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Date picker':
+                                                    return <DatePicker form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Check boxes':
+                                                    return <CheckboxMultiple form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                                case 'Drop down':
+                                                    return <ComboboxForm form={form}
+                                                        fieldTypeData={field.data}
+                                                        defaultValues={defaultValues}
+                                                        name={"a" + field.id} />
+                                            }
+                                            return <p></p>
+                                        })}
+                                    </div>
                                 </TabsContent>
                             })}
                         </Tabs>
