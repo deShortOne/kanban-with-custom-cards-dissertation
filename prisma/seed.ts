@@ -8,7 +8,6 @@ async function main() {
         data: { email: 'jingshianggu@gmail.com' }
     })
 
-
     const kanban = await prisma.kanban.create({
         data: { title: 'kanban board 1' }
     })
@@ -41,6 +40,81 @@ async function main() {
     })
     console.log("All swim lanes added: ", kanbanSwimLanesData.length == kanbanSwimLanes.count)
 
+    const fieldTypeData = [
+        { name: 'Text field' },
+        { name: 'Text area' },
+        { name: 'Date picker' },
+        { name: 'Comment' },
+        { name: 'File upload' },
+        { name: 'Check boxes' },
+        { name: 'Drop down' },
+        { name: 'Track Github branch' },
+    ]
+    const fieldTypes = await prisma.fieldType.createMany({
+        data: fieldTypeData,
+        skipDuplicates: true,
+    })
+    console.log("Field types added: ", fieldTypeData.length == fieldTypes.count)
+
+    const cardTypeData = [
+        { name: 'task' },
+        { name: 'bug' },
+    ]
+    const cardType = await prisma.cardType.createMany({
+        data: cardTypeData,
+        skipDuplicates: true,
+    })
+    console.log("Card type added: ", cardTypeData.length == cardType.count)
+
+    const cardTemplateData = [
+        {
+            cardTypeId: 1,
+            version: 1,
+        }
+    ]
+    const cardTemplate = await prisma.cardTemplate.createMany({
+        data: cardTemplateData,
+        skipDuplicates: true,
+    })
+    console.log("Card template added: ", cardTemplateData.length == cardTemplate.count)
+
+    const cardTemplateTabData = [
+        {
+            name: 'tab1',
+            order: 1,
+            cardTemplateId: 1,
+            sizeX: 1,
+            sizeY: 2,
+        }
+    ]
+    const cardTemplateTab = await prisma.cardTemplateTab.createMany({
+        data: cardTemplateTabData,
+        skipDuplicates: true,
+    })
+    console.log("Card template tab added: ", cardTemplateTabData.length == cardTemplateTab.count)
+
+    const cardTemplateTabFieldData = [
+        {
+            data: "Single line label",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 1,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Multiline label",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 1,
+            fieldTypeId: 2,
+        },
+    ]
+    const cardTemplateTabField = await prisma.cardTemplateTabField.createMany({
+        data: cardTemplateTabFieldData,
+        skipDuplicates: true,
+    })
+    console.log("Card template tab field added: ", cardTemplateTabFieldData.length == cardTemplateTabField.count)
+
     const cardsData = [
         {
             title: 'card 1 2',
@@ -49,14 +123,16 @@ async function main() {
             columnId: 1,
             swimLaneId: 2,
             kanbanId: 1,
+            cardTemplateId: 1,
         },
         {
             title: 'card 2 1',
             order: 1,
-            developerId: 1,
+            developerId: null,
             columnId: 2,
             swimLaneId: 1,
             kanbanId: 1,
+            cardTemplateId: 1,
         },
     ]
     const cards = await prisma.card.createMany({
@@ -64,6 +140,24 @@ async function main() {
         skipDuplicates: true,
     })
     console.log("All cards added: ", cardsData.length == cards.count)
+
+    const cardTabFieldData = [
+        {
+            data: 'Text in single line input',
+            cardId: 1,
+            cardTemplateTabFieldId: 1
+        },
+        {
+            data: 'Something super duper long that will be in the multiline text area input',
+            cardId: 1,
+            cardTemplateTabFieldId: 2
+        },
+    ]
+    const cardTabField = await prisma.cardTabField.createMany({
+        data: cardTabFieldData,
+        skipDuplicates: true,
+    })
+    console.log("Card template tab field added: ", cardTabFieldData.length == cardTabField.count)
 }
 
 main()

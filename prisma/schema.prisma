@@ -72,23 +72,104 @@ model KanbanSwimLane {
   @@index([boardId])
 }
 
+// e.g. text area, text field, file upload, checkboxes etc.
+model FieldType {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  a CardTemplateTabField[]
+}
+
+// e.g. task, bug
+model CardType {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  cards CardTemplate[]
+}
+
+model CardTemplate {
+  id      Int @id @default(autoincrement())
+  version Int
+
+  cardTypeId Int
+  cardType   CardType @relation(fields: [cardTypeId], references: [id])
+
+  tabs CardTemplateTab[]
+  Card Card[]
+
+  @@index([cardTypeId])
+}
+
+model CardTemplateTab {
+  id    Int    @id @default(autoincrement())
+  name  String
+  order Int
+  sizeX Int
+  sizeY Int
+
+  cardTemplateId Int
+  cardTemplate   CardTemplate @relation(fields: [cardTemplateId], references: [id])
+
+  tabFields CardTemplateTabField[]
+
+  @@unique([order, cardTemplateId])
+  @@index([cardTemplateId])
+}
+
+model CardTemplateTabField {
+  id   Int    @id @default(autoincrement())
+  data String
+  posX Int
+  posY Int
+
+  fieldTypeId       Int
+  fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id])
+  cardTemplateTabId Int
+  cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id])
+
+  cardTemplateTabField CardTabField[]
+
+  @@index([fieldTypeId])
+  @@index([cardTemplateTabId])
+}
+
+model CardTabField {
+  id   Int    @id @default(autoincrement())
+  data String
+
+  cardId                 Int
+  card                   Card                 @relation(fields: [cardId], references: [id])
+  cardTemplateTabFieldId Int
+  cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id])
+
+  @@index([cardId])
+  @@index([cardTemplateTabFieldId])
+}
+
 model Card {
   id          Int     @id @default(autoincrement())
   title       String
   order       Int
   description String? @db.Text
 
-  developerId Int?
-  developer   User?          @relation(fields: [developerId], references: [id])
-  columnId    Int
-  column      KanbanColumn   @relation(fields: [columnId], references: [id])
-  swimLaneId  Int
-  swimLane    KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
-  kanbanId    Int
-  kanban      Kanban         @relation(fields: [kanbanId], references: [id])
+  developerId    Int?
+  developer      User?          @relation(fields: [developerId], references: [id])
+  columnId       Int
+  column         KanbanColumn   @relation(fields: [columnId], references: [id])
+  swimLaneId     Int
+  swimLane       KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+  kanbanId       Int
+  kanban         Kanban         @relation(fields: [kanbanId], references: [id])
+  cardTemplateId Int
+  cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id])
+
+  allTabsFieldInformation CardTabField[]
 
   @@index([developerId])
   @@index([columnId])
   @@index([swimLaneId])
   @@index([kanbanId])
+  @@index([cardTemplateId])
 }
