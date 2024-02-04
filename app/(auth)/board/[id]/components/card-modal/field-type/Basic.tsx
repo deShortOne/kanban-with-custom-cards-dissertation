@@ -1,16 +1,9 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { UseFormReturn } from "react-hook-form"
+import { FieldTypeProp } from "./Base"
 
-interface prop {
-    form: UseFormReturn<{}, any, {}>,
-    label: string,
-    defaultValues: {},
-    name: string
-}
-
-export const TextField = ({form, label, defaultValues, name}: prop) => {
+export const TextField = ({form, fieldTypeData, defaultValues, name}: FieldTypeProp) => {
     if (!form.getValues()[name])
         form.setValue(name, defaultValues[name])
     return (
@@ -19,7 +12,7 @@ export const TextField = ({form, label, defaultValues, name}: prop) => {
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                    <FormLabel>{fieldTypeData}</FormLabel>
                     <FormControl>
                         <Input placeholder="shadcn" {...field} />
                     </FormControl>
@@ -30,7 +23,7 @@ export const TextField = ({form, label, defaultValues, name}: prop) => {
     )
 }
 
-export const TextArea = ({form, label, defaultValues, name}: prop) => {
+export const TextArea = ({form, fieldTypeData, defaultValues, name}: FieldTypeProp) => {
     if (!form.getValues()[name])
         form.setValue(name, defaultValues[name])
     return (
@@ -39,7 +32,7 @@ export const TextArea = ({form, label, defaultValues, name}: prop) => {
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                    <FormLabel>{fieldTypeData}</FormLabel>
                     <FormControl>
                         <Textarea placeholder="shadcn" {...field} />
                     </FormControl>
