@@ -12,6 +12,7 @@ export async function POST(req, res) {
       columnId: -1,
       swimLaneId: -1,
       kanbanId: data.boardId,
+      cardTemplateId: data.cardTemplateId,
     }
   })
 
