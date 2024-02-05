@@ -27,6 +27,7 @@ model Kanban {
   KanbanColumns   KanbanColumn[]
   KanbanSwimLanes KanbanSwimLane[]
   Cards           Card[]
+  CardTemplate    CardTemplate[]
 }
 
 enum Role {
@@ -95,11 +96,14 @@ model CardTemplate {
 
   cardTypeId Int
   cardType   CardType @relation(fields: [cardTypeId], references: [id])
+  kanbanId   Int
+  kanban     Kanban   @relation(fields: [kanbanId], references: [id])
 
   tabs CardTemplateTab[]
   Card Card[]
 
   @@index([cardTypeId])
+  @@index([kanbanId])
 }
 
 model CardTemplateTab {

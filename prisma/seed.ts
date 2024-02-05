@@ -70,10 +70,12 @@ async function main() {
         {
             cardTypeId: 1,
             version: 1,
+            kanbanId: 1,
         },
         {
             cardTypeId: 2,
             version: 1,
+            kanbanId: 1,
         },
     ]
     const cardTemplate = await prisma.cardTemplate.createMany({
