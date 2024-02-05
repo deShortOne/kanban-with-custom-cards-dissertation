@@ -2,7 +2,6 @@
 
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
-import { UseFormReturn } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -22,9 +21,6 @@ import {
 import { FieldTypeProp } from "./Base"
 
 export function DatePicker({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) {
-    if (!form.getValues()[name]) 
-        form.setValue(name, new Date(defaultValues[name]))
-
     const data = fieldTypeData.split(";")
 
     const label = data[0]

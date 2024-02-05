@@ -16,6 +16,10 @@ import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+// This is used to check if fields for card has already been input
+// Check is used to prevent overwriting of new user input
+const cardIdsLoaded: string[] = []
+
 export const CardModal = () => {
     const id = useCardModal(state => state.id)
     const isOpen = useCardModal(state => state.isOpen)
@@ -34,10 +38,12 @@ export const CardModal = () => {
         }).then((res) => res.json()))
     })
 
-    const schemaForFields = cardData ? cardData.cardTemplate
+    const fieldIdAndType = cardData?.cardTemplate
         .tabs
         .flatMap(i => i.tabFields)
         .map(i => ({ key: i.id, value: i.fieldType.name }))
+
+    const schemaForFields = fieldIdAndType ? fieldIdAndType
         .reduce((obj, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
@@ -52,6 +58,33 @@ export const CardModal = () => {
     const defaultValues = cardData ? cardData.allTabsFieldInformation
         .reduce((obj, item) => (obj["a" + item.id] = item.data, obj), {})
         : { empty: -1 }
+
+    if (cardData && cardIdsLoaded.find(i => i == cardData.id) === undefined) {
+        cardIdsLoaded.push(cardData.id)
+
+        cardData.allTabsFieldInformation.forEach(item => {
+            const dict = fieldIdAndType?.find(i => i.key === item.id)
+            if (dict) {
+                const id = "a" + item.id
+                switch (dict.value) {
+                    case 'Text field':
+                    case 'Text area':
+                    case 'Drop down':
+                        if (!form.getValues[id])
+                            form.setValue(id, item.data)
+                        break
+                    case 'Date picker':
+                        if (!form.getValues[id])
+                            form.setValue(id, new Date(item.data))
+                        break
+                    case 'Check boxes':
+                        if (!form.getValues[id])
+                            form.setValue(id, item.data.split(","))
+                        break
+                }
+            }
+        })
+    }
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -81,7 +114,7 @@ export const CardModal = () => {
             <DialogContent className="h-[90vh] min-w-[90vw]">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
-                        <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} defaultValues="" />
+                        <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
@@ -106,27 +139,22 @@ export const CardModal = () => {
                                                 case 'Text field':
                                                     return <TextField form={form}
                                                         fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
                                                         name={"a" + field.id} />
                                                 case 'Text area':
                                                     return <TextArea form={form}
                                                         fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
                                                         name={"a" + field.id} />
                                                 case 'Date picker':
                                                     return <DatePicker form={form}
                                                         fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
                                                         name={"a" + field.id} />
                                                 case 'Check boxes':
                                                     return <CheckboxMultiple form={form}
                                                         fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
                                                         name={"a" + field.id} />
                                                 case 'Drop down':
                                                     return <ComboboxForm form={form}
                                                         fieldTypeData={field.data}
-                                                        defaultValues={defaultValues}
                                                         name={"a" + field.id} />
                                             }
                                             return <p></p>

@@ -3,9 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { FieldTypeProp } from "./Base"
 
-export const TextField = ({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) => {
-    if (!form.getValues()[name])
-        form.setValue(name, defaultValues[name])
+export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     return (
         <FormField
             control={form.control}
@@ -23,9 +21,7 @@ export const TextField = ({ form, fieldTypeData, defaultValues, name }: FieldTyp
     )
 }
 
-export const TextArea = ({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) => {
-    if (!form.getValues()[name])
-        form.setValue(name, defaultValues[name])
+export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     return (
         <FormField
             control={form.control}

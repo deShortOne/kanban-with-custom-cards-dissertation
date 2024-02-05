@@ -10,9 +10,7 @@ import {
 } from "@/components/ui/form"
 import { FieldTypeProp } from "./Base"
 
-export const CheckboxMultiple = ({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) => {
-    if (!form.getValues()[name])
-        form.setValue(name, defaultValues[name].split(","))
+export const CheckboxMultiple = ({ form, fieldTypeData, name }: FieldTypeProp) => {
 
     const data = fieldTypeData.split(";")
 

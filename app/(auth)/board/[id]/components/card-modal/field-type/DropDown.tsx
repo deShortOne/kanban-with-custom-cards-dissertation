@@ -25,10 +25,7 @@ import {
 } from "@/components/ui/popover"
 import { FieldTypeProp } from "./Base"
 
-export const ComboboxForm = ({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) => {
-    if (!form.getValues()[name])
-        form.setValue(name, defaultValues[name])
-
+export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     const data = fieldTypeData.split(";")
 
     const label = data[0]
