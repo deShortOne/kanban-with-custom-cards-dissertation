@@ -104,7 +104,7 @@ export const CardModal = () => {
     const onError = (errors, e) => console.log(errors, e)
 
     if (!cardData)
-        return <p>No card open</p>
+        return null
 
     return (
         <Dialog
