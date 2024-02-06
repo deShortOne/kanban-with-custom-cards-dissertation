@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
-const cardIdsLoaded: string[] = []
+const cardIdsLoaded: number[] = []
 
 export const CardModal = () => {
     const id = useCardModal(state => state.id)
@@ -55,31 +55,25 @@ export const CardModal = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     })
-    const defaultValues = cardData ? cardData.allTabsFieldInformation
-        .reduce((obj, item) => (obj["a" + item.id] = item.data, obj), {})
-        : { empty: -1 }
 
-    if (cardData && cardIdsLoaded.find(i => i == cardData.id) === undefined) {
+    if (cardData && cardIdsLoaded.find(i => i === cardData.id) === undefined) {
         cardIdsLoaded.push(cardData.id)
 
         cardData.allTabsFieldInformation.forEach(item => {
-            const dict = fieldIdAndType?.find(i => i.key === item.id)
+            const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
             if (dict) {
                 const id = "a" + item.id
                 switch (dict.value) {
                     case 'Text field':
                     case 'Text area':
                     case 'Drop down':
-                        if (!form.getValues[id])
-                            form.setValue(id, item.data)
+                        form.setValue(id, item.data)
                         break
                     case 'Date picker':
-                        if (!form.getValues[id])
-                            form.setValue(id, new Date(item.data))
+                        form.setValue(id, new Date(item.data))
                         break
                     case 'Check boxes':
-                        if (!form.getValues[id])
-                            form.setValue(id, item.data.split(","))
+                        form.setValue(id, item.data.split(","))
                         break
                 }
             }
@@ -126,7 +120,18 @@ export const CardModal = () => {
                                 const fields = []
                                 for (let y = 1; y <= tab.sizeY; y++) {
                                     for (let x = 1; x <= tab.sizeX; x++) {
-                                        fields.push(tab.tabFields.find(i => i.posX === x && i.posY === y))
+                                        const field = tab.tabFields.find(i => i.posX === x && i.posY === y)
+
+                                        // updates template field id to data field id 
+                                        if (field) {
+                                            const id = cardData.allTabsFieldInformation
+                                                .find(i => i.cardTemplateTabFieldId === field.id)
+                                                ?.id
+                                            if (id) {
+                                                field.id = id
+                                            }
+                                        }
+                                        fields.push(field)
                                     }
                                 }
                                 return <TabsContent value={tab.name}>

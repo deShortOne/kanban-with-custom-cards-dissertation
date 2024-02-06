@@ -234,14 +234,14 @@ async function main() {
 
     const cardTabFieldData = [
         {
-            data: 'Text in single line input',
-            cardId: 1,
-            cardTemplateTabFieldId: 1
-        },
-        {
             data: 'Something super duper long that will be in the multiline text area input',
             cardId: 1,
             cardTemplateTabFieldId: 2
+        },
+        {
+            data: 'Text in single line input',
+            cardId: 1,
+            cardTemplateTabFieldId: 1
         },
         {
             data: '3/2/2024',
@@ -266,32 +266,32 @@ async function main() {
         {
             data: '1,2,3',
             cardId: 2,
-            cardTemplateTabFieldId: 4
+            cardTemplateTabFieldId: 7
         },
         {
             data: '4/26/2024',
             cardId: 2,
-            cardTemplateTabFieldId: 3
+            cardTemplateTabFieldId: 8
         },
         {
             data: 'J',
             cardId: 2,
-            cardTemplateTabFieldId: 1
+            cardTemplateTabFieldId: 9
         },
         {
             data: 'email: jingshianggu@',
             cardId: 2,
-            cardTemplateTabFieldId: 2
+            cardTemplateTabFieldId: 10
         },
         {
             data: 'Dissertation',
             cardId: 2,
-            cardTemplateTabFieldId: 1
+            cardTemplateTabFieldId: 11
         },
         {
             data: 'Dissertation, something v v long',
             cardId: 2,
-            cardTemplateTabFieldId: 2
+            cardTemplateTabFieldId: 12
         },
     ]
     const cardTabField = await prisma.cardTabField.createMany({
