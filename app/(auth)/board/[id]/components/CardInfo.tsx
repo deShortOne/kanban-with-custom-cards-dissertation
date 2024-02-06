@@ -6,7 +6,7 @@ import { User } from '@prisma/client'
 interface CardProps {
     id: number
     title: string
-    developer: User
+    developer?: User
 }
 
 const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {

@@ -18,10 +18,11 @@ interface CardProps {
     id: number
     title: string
     order: number
-    developer: User
+    developer?: User
     description: string | null
     columnId: number
     swimLaneId: number
+    cardTypeId: number
 }
 
 export const Table = ({
@@ -206,6 +207,7 @@ export const Table = ({
             body: JSON.stringify({
                 order: orderPos,
                 boardId: boardId,
+                cardTypeId: 1,
             }),
         })
 
@@ -218,7 +220,9 @@ export const Table = ({
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,
-        } as Card)
+            developer: undefined,
+            cardTypeId: 1,
+        } as CardProps)
         setCard(updatedCards)
     }
 

@@ -1,0 +1,61 @@
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { FieldTypeProp } from "./Base"
+
+export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    return (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{fieldTypeData}</FormLabel>
+                    <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    )
+}
+
+export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    return (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{fieldTypeData}</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    )
+}
+
+export const Title = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    if (!form.getValues()[name])
+        form.setValue(name, fieldTypeData)
+
+    return (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormControl>
+                        <Input placeholder="shadcn" {...field}
+                            className="block w-5/6 p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    )
+}
