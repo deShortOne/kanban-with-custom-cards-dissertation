@@ -7,6 +7,7 @@ import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 import { DraggableColumn } from "./DraggableColumn"
 import { DraggableSwimLane } from "./DraggableSwimLane"
+import { AddNewCardButton } from "./NewCardButton"
 
 interface TableInformationProps {
     columns: KanbanColumn[]
@@ -197,7 +198,8 @@ export const Table = ({
     }
 
     // new card
-    const addCard = async () => {
+    const addCard = async (cardTypeId: number) => {
+        console.log("card type id is " + cardTypeId)
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
         const response = await fetch('/api/card/new', {
             method: 'POST',
@@ -207,7 +209,7 @@ export const Table = ({
             body: JSON.stringify({
                 order: orderPos,
                 boardId: boardId,
-                cardTypeId: 1,
+                cardTypeId: cardTypeId,
             }),
         })
 
@@ -221,7 +223,7 @@ export const Table = ({
             swimLaneId: -1,
             kanbanId: boardId,
             developer: undefined,
-            cardTypeId: 1,
+            cardTypeId: cardTypeId,
         } as CardProps)
         setCard(updatedCards)
     }
@@ -230,12 +232,7 @@ export const Table = ({
         <DndProvider backend={HTML5Backend}>
             <div className="flex">
                 <div className="h-full">
-                    <button
-                        type="button"
-                        onClick={addCard}
-                    >
-                        Add new card
-                    </button>
+                    <AddNewCardButton kanbanId={boardId} newCardAction={addCard}/>
                     <table style={{ borderCollapse: 'collapse' }}>
                         <tbody>
                             <tr>
