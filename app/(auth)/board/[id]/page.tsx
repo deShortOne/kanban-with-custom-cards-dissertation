@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { Table } from "./table-components/Table"
 import { Kanban } from ".prisma/client"
+import { KanbanNavBar } from "./components/KanbanNavBar"
 
 const SelectKanbanPage = async ({
     params
@@ -37,6 +38,7 @@ const SelectKanbanPage = async ({
 
     return (
         <main className="">
+            <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />
             <Table
                 columns={kanban.KanbanColumns}
                 swimlanes={kanban.KanbanSwimLanes}
