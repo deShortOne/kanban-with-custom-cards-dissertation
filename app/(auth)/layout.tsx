@@ -1,4 +1,4 @@
-import { ModalProvider } from "./board/[id]/components/card-modal/ModalProvider"
+import { ModalProvider } from "./board/[id]/table-components/card-modal/ModalProvider"
 import Provider from "./context/Provider"
 import { QueryProvider } from "./context/QueryProvider"
 

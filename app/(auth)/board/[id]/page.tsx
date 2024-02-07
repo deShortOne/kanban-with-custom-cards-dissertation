@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { Table } from "./components/Table"
+import { Table } from "./table-components/Table"
 import { Kanban } from ".prisma/client"
 
 const SelectKanbanPage = async ({
