@@ -91,8 +91,10 @@ model CardType {
 }
 
 model CardTemplate {
-  id      Int @id @default(autoincrement())
-  version Int
+  id        Int     @id @default(autoincrement())
+  name      String
+  version   Int
+  isDefault Boolean @default(false)
 
   cardTypeId Int
   cardType   CardType @relation(fields: [cardTypeId], references: [id])

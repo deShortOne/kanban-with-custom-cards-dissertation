@@ -68,11 +68,14 @@ async function main() {
 
     const cardTemplateData = [
         {
+            name: "Task card 1",
+            isDefault: true,
             cardTypeId: 1,
             version: 1,
             kanbanId: 1,
         },
         {
+            name: "Bug card 1",
             cardTypeId: 2,
             version: 1,
             kanbanId: 1,
