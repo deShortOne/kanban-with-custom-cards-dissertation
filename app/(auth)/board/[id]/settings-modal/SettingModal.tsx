@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useKanbanModal } from "./components/useDialog";
 
 export const KanbanSettingsModal = () => {
+    const id = useKanbanModal(state => state.id)
     const isOpen = useKanbanModal(state => state.isOpen)
     const onClose = useKanbanModal(state => state.onClose)
 
@@ -41,7 +42,7 @@ export const KanbanSettingsModal = () => {
                     </div>
 
                     <GeneralTab />
-                    <CardTab />
+                    <CardTab id={id} />
                     <ShareTab />
                 </Tabs>
             </DialogContent>
