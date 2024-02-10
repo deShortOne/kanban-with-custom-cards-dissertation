@@ -1,5 +1,5 @@
 "use client"
-import { CardType } from "../tabs/Base"
+import { CardType, Permission, UserPermission } from "../tabs/Base"
 import { useQuery } from "@tanstack/react-query"
 
 interface prop {
@@ -28,6 +28,22 @@ export const CardTypeDropDown = ({ cardType, register }: prop) => {
                     <option value={i.id}>{i.name}</option>
                 )
             })}
+        </select>
+    )
+}
+
+interface userPermissionProp {
+    userId: number
+    defaultValue: Permission
+    register: UseFormRegister<FieldValues>
+}
+
+export const UserPermissionDropDown = ({ userId, defaultValue, register }: userPermissionProp) => {
+
+    return (
+        <select {...register("user" + userId)} defaultValue={defaultValue}>
+            <option value="EDITOR">Editor</option>
+            <option value="VIEWER">Viewer</option>
         </select>
     )
 }
