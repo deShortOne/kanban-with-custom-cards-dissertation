@@ -6,16 +6,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { TabsContent } from "@/components/ui/tabs"
 
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
-import { CardTemplate, CardType } from "./Base"
-import { CardTypeDropDown } from "../components/CardTypeDropDown"
+import { CardTemplate } from "./Base"
+import { CardTypeDropDown } from "../components/SettingsDropDown"
+import { useState } from "react"
 
 export const CardTab = ({ id }: { id?: number }) => {
+
+    const [defaultCardId, setDefaultCard] = useState(-1)
 
     const { register, handleSubmit } = useForm();
     const onSubmit = (data: any) => console.log(data)
@@ -30,65 +32,68 @@ export const CardTab = ({ id }: { id?: number }) => {
             body: JSON.stringify({
                 kanbanId: id,
             }),
-        }).then((res) => res.json()))
+        }).then(async (res) => {
+            const a = await res.json()
+            setDefaultCard(a.find(i => i.isDefault)?.id)
+            return a
+        }))
     })
 
     if (!cardTemplates)
         return <p>error</p>
-    
-    const defaultCard = cardTemplates.find(i => i.isDefault)
 
     return (
         <TabsContent value="card">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <RadioGroup defaultValue="1">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[100px]">Default</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Card type</TableHead>
-                                <TableHead /> {/* for settings */}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {cardTemplates.map(i => {
-                                return (
-                                    <TableRow>
-                                        <TableCell className="font-medium">
-                                            {/* <RadioGroupItem
+                {/* <RadioGroup defaultValue="1"> */}
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[100px]">Default</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Card type</TableHead>
+                            <TableHead /> {/* for settings */}
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {cardTemplates.map(i => {
+                            return (
+                                <TableRow>
+                                    <TableCell className="font-medium">
+                                        {/* <RadioGroupItem
                                                 {...register("isDefault")}
                                                 value={i.id.toString()}
                                             /> */}
-                                            <input
-                                                {...register("isDefault")}
-                                                value={i.id.toString()}
-                                                checked={defaultCard?.id === i.id}
-                                                type="radio"
-                                                className="bg-white w-[25px] h-[25px] rounded-full shadow-[0_2px_10px] shadow-blackA4 hover:bg-violet3 focus:shadow-[0_0_0_2px] focus:shadow-black outline-none cursor-default"
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Input
-                                                {...register("card" + i.id.toString())}
-                                                defaultValue={i.name}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <CardTypeDropDown
-                                                cardType={i.cardType.id}
-                                                register={register}
-                                            />
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <img src="/setting.svg" />
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
-                </RadioGroup>
+                                        <input
+                                            {...register("isDefault")}
+                                            value={i.id.toString()}
+                                            checked={defaultCardId === i.id}
+                                            type="radio"
+                                            className="bg-white w-[25px] h-[25px] rounded-full shadow-[0_2px_10px] shadow-blackA4 hover:bg-violet3 focus:shadow-[0_0_0_2px] focus:shadow-black outline-none cursor-default"
+                                            onChange={() => setDefaultCard(i.id)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            {...register("card" + i.id.toString())}
+                                            defaultValue={i.name}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <CardTypeDropDown
+                                            cardType={i.cardType.id}
+                                            register={register}
+                                        />
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <img src="/setting.svg" />
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+                {/* </RadioGroup> */}
                 <input type="submit" />
             </form>
         </TabsContent>
