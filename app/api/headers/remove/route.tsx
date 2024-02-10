@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import { Kanban, KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { NextResponse } from "next/server"
 

@@ -1,6 +1,6 @@
 'use client'
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 const SelectKanbanPage = async () => {
     const boards = await prisma.kanban.findMany({
