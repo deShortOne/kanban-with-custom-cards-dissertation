@@ -22,7 +22,7 @@ export const CardTypeDropDown = ({ cardType, register }: prop) => {
         return <p>Card type list cannot load - {cardType}</p>
 
     return (
-        <select {...register("cardType" + cardType)} defaultValue={cardType}>
+        <select {...register(cardType + "-cardType")} defaultValue={cardType}>
             {cardTypes.map(i => {
                 return (
                     <option value={i.id}>{i.name}</option>

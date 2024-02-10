@@ -20,7 +20,18 @@ export const CardTab = ({ id }: { id?: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
 
     const { register, handleSubmit } = useForm();
-    const onSubmit = (data: any) => console.log(data)
+    function onSubmit(data: any) {
+        fetch("/api/board/settings/card", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                kanbanId: id,
+                ...data
+            }),
+        })
+    }
 
     const { data: cardTemplates } = useQuery<CardTemplate[]>({
         queryKey: ["boardSetting", id],
@@ -75,7 +86,7 @@ export const CardTab = ({ id }: { id?: number }) => {
                                     </TableCell>
                                     <TableCell>
                                         <Input
-                                            {...register("card" + i.id.toString())}
+                                            {...register(i.id + "-card")}
                                             defaultValue={i.name}
                                         />
                                     </TableCell>
