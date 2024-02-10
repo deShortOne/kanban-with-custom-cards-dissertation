@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useKanbanModal } from "../components/useDialog";
 
-export const GeneralTab = () => {
+export const GeneralTab = ({ id }: { id?: number }) => {
     const formSchema = z.object({
         kanbanName: z.string()
     })
@@ -22,13 +22,14 @@ export const GeneralTab = () => {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        fetch("/api/", {
+        fetch("/api/board/settings/general", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                ...values,
+                kanbanId: id,
+                ...values
             }),
         })
     }

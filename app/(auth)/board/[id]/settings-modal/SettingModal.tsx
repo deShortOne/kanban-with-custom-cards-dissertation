@@ -41,7 +41,7 @@ export const KanbanSettingsModal = () => {
                         </TabsList>
                     </div>
 
-                    <GeneralTab />
+                    <GeneralTab id={id}/>
                     <CardTab id={id} />
                     <ShareTab />
                 </Tabs>
