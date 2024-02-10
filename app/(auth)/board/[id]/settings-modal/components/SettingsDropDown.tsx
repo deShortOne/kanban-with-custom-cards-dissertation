@@ -41,7 +41,7 @@ interface userPermissionProp {
 export const UserPermissionDropDown = ({ userId, defaultValue, register }: userPermissionProp) => {
 
     return (
-        <select {...register("user" + userId)} defaultValue={defaultValue}>
+        <select {...register(userId + "~user")} defaultValue={defaultValue}>
             <option value="EDITOR">Editor</option>
             <option value="VIEWER">Viewer</option>
         </select>
