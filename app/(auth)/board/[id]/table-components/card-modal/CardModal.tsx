@@ -79,6 +79,7 @@ export const CardModal = () => {
             }
         })
     }
+    // console.log(form.getValues())
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -120,18 +121,26 @@ export const CardModal = () => {
                                 const fields = []
                                 for (let y = 1; y <= tab.sizeY; y++) {
                                     for (let x = 1; x <= tab.sizeX; x++) {
-                                        const field = tab.tabFields.find(i => i.posX === x && i.posY === y)
+                                        const tmp = tab.tabFields.find(i => i.posX === x && i.posY === y)
+                                        if (!tmp)
+                                            continue
+
+                                        // deep copy object to prevent changing original data because this component is
+                                        // loaded twice so the wrong data could be loaded
+                                        const templateField = JSON.parse(
+                                            JSON.stringify(tmp)
+                                        )
 
                                         // updates template field id to data field id 
-                                        if (field) {
+                                        if (templateField) {
                                             const id = cardData.allTabsFieldInformation
-                                                .find(i => i.cardTemplateTabFieldId === field.id)
-                                                ?.id
+                                                .find(i => i.cardTemplateTabFieldId === templateField.id)
+
                                             if (id) {
-                                                field.id = id
+                                                templateField.id = id?.id
                                             }
                                         }
-                                        fields.push(field)
+                                        fields.push(templateField)
                                     }
                                 }
                                 return <TabsContent value={tab.name}>
