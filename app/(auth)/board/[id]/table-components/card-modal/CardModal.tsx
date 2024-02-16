@@ -122,8 +122,10 @@ export const CardModal = () => {
                                 for (let y = 1; y <= tab.sizeY; y++) {
                                     for (let x = 1; x <= tab.sizeX; x++) {
                                         const tmp = tab.tabFields.find(i => i.posX === x && i.posY === y)
-                                        if (!tmp)
+                                        if (!tmp) {
+                                            fields.push(undefined)
                                             continue
+                                        }
 
                                         // deep copy object to prevent changing original data because this component is
                                         // loaded twice so the wrong data could be loaded
@@ -132,13 +134,11 @@ export const CardModal = () => {
                                         )
 
                                         // updates template field id to data field id 
-                                        if (templateField) {
-                                            const id = cardData.allTabsFieldInformation
-                                                .find(i => i.cardTemplateTabFieldId === templateField.id)
+                                        const id = cardData.allTabsFieldInformation
+                                            .find(i => i.cardTemplateTabFieldId === templateField.id)
 
-                                            if (id) {
-                                                templateField.id = id?.id
-                                            }
+                                        if (id) {
+                                            templateField.id = id?.id
                                         }
                                         fields.push(templateField)
                                     }
