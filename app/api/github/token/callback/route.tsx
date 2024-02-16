@@ -2,8 +2,16 @@ import { cookies } from "next/headers"
 import crypto from "node:crypto"
 import { createAppAuth } from '@octokit/auth-app'
 import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { getServerSession } from "next-auth"
+import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
 
 export async function GET(request: Request): Promise<Response> {
+    const session = await getServerSession(OPTIONS)
+    if (!session?.user?.email) {
+        return NextResponse.error()
+    }
+
     const url = new URL(request.url)
     const code = url.searchParams.get("code")
     const state = url.searchParams.get("state")
@@ -30,7 +38,16 @@ export async function GET(request: Request): Promise<Response> {
     })
 
     const userAuthentication = await auth({ type: "oauth-user", code: code })
-    console.log(userAuthentication)
+
+    await prisma.user.update({
+        where: {
+            email: session.user.email
+        },
+        data: {
+            token: userAuthentication.token,
+            expiresAt: userAuthentication.expiresAt,
+        }
+    })
 
     return NextResponse.json("01")
 }
