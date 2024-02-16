@@ -40,6 +40,7 @@ const SelectKanbanPage = async ({
         <main className="">
             <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />
             <Table
+            id = {kanban.id}
                 columns={kanban.KanbanColumns}
                 swimlanes={kanban.KanbanSwimLanes}
                 cards={kanban.Cards}>

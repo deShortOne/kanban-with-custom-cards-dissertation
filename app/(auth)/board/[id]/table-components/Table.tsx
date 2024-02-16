@@ -10,6 +10,7 @@ import { DraggableSwimLane } from "./DraggableSwimLane"
 import { AddNewCardButton } from "./NewCardButton"
 
 interface TableInformationProps {
+    id: number
     columns: KanbanColumn[]
     swimlanes: KanbanSwimLane[]
     cards: Card[]
@@ -27,9 +28,9 @@ interface CardProps {
 }
 
 export const Table = ({
-    columns, swimlanes, cards
+    id, columns, swimlanes, cards
 }: TableInformationProps) => {
-    const boardId = cards[0].kanbanId
+    const boardId = id
 
     /* COLUMN */
     // move column
