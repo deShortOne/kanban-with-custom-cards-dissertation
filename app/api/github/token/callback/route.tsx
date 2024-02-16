@@ -5,6 +5,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
+import { GitHubAppUserAuthenticationWithExpiration } from "@octokit/auth-app"
 
 export async function GET(request: Request): Promise<Response> {
     const session = await getServerSession(OPTIONS)
@@ -37,7 +38,7 @@ export async function GET(request: Request): Promise<Response> {
         clientSecret: process.env.GITHUB_SECRET,
     })
 
-    const userAuthentication = await auth({ type: "oauth-user", code: code })
+    const userAuthentication = await auth({ type: "oauth-user", code: code }) as GitHubAppUserAuthenticationWithExpiration
 
     await prisma.user.update({
         where: {
