@@ -35,7 +35,7 @@ const NewKanbanPage = () => {
 
     // POST the data to the URL of the form
     try {
-      let response = await fetch("/api/board", {
+      let response = await fetch("/api/board/new", {
         method: "POST",
         body: data,
         headers: {
