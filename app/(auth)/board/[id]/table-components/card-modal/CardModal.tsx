@@ -203,6 +203,17 @@ function fieldTypeToZodType(fieldType: string) {
             return z.string({
                 required_error: "You have to select at least one item.",
             })
+        case 'Track Github branch':
+            return z.object({
+                title: z.string(),
+                repo: z.string(),
+                branches: z.array(
+                    z.object({
+                        title: z.string(),
+                        branchName: z.string(),
+                    })
+                )
+            })
         default:
             return z.string() // should probs be returning error instead
     }
