@@ -2,6 +2,14 @@ import React from 'react'
 import { useDrag } from 'react-dnd'
 import { useCardModal } from './card-modal/useDialog'
 import { User } from '@prisma/client'
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 interface CardProps {
     id: number
@@ -18,14 +26,17 @@ const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {
     const cardModal = useCardModal();
 
     return (
-        <button
+        <Card
             onClick={() => cardModal.onOpen(id)}
             ref={drag}
-            style={{ border: '1px solid #ccc', padding: '8px', cursor: 'move' }}
+            className="border-solit border-2 border-[#ccc] cursor-move w-[200px] h-[100px] m-1"
         >
-            <h1 className="text-left">{title}</h1>
-            <p className="text-left">{developer ? developer.email : "To be picked"}</p>
-        </button>
+            <CardHeader>
+                <CardTitle className="text-base">{title}</CardTitle>
+                <CardDescription>{developer ? developer.email : "No developer"}</CardDescription>
+            </CardHeader>
+
+        </Card>
     )
 }
 
