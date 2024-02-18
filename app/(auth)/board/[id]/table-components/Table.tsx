@@ -9,6 +9,9 @@ import { DraggableColumn } from "./DraggableColumn"
 import { DraggableSwimLane } from "./DraggableSwimLane"
 import { AddNewCardButton } from "./NewCardButton"
 
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+
 interface TableInformationProps {
     id: number
     columns: KanbanColumn[]
@@ -231,26 +234,31 @@ export const Table = ({
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="flex min-h-[85vh]">
+            <div className="flex min-h-[85vh] h-5 space-x-4">
                 <div>
                     <AddNewCardButton kanbanId={boardId} newCardAction={addCard} />
-                    <table>
-                        <tbody>
-                            <tr>
-                                <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
-                                    key={"-1 -1"}
-                                >
-                                    {cardsInfo.map((card) =>
-                                        card.columnId === -1 && card.swimLaneId === -1 ? (
-                                            <CardInfo {...card} key={card.id} />
-                                        ) : null
-                                    )}
-                                </TableCell>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <ScrollArea className="h-[80vh] w-full rounded-md border">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                        key={"-1 -1"}
+                                    >
+                                        {cardsInfo.map((card) =>
+                                            card.columnId === -1 && card.swimLaneId === -1 ? (
+                                                <CardInfo {...card} key={card.id} />
+                                            ) : null
+                                        )}
+                                    </TableCell>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ScrollArea>
                 </div>
-                <div className="block">
+
+                <Separator orientation="vertical" />
+
+                <ScrollArea className="h-[87vh] w-full">
                     <table className="table-fixed">
                         <thead>
                             <tr>
@@ -298,7 +306,7 @@ export const Table = ({
                         </tbody>
                     </table>
                     <div />
-                </div>
+                </ScrollArea>
             </div>
         </DndProvider>
     )
