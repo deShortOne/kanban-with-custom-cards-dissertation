@@ -242,7 +242,7 @@ export const Table = ({
                             <tbody>
                                 <tr>
                                     <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
-                                        key={"-1 -1"}
+                                        key={"-1 -1"} className="min-w-[220px] max-w-[400px] align-top p-1"
                                     >
                                         {cardsInfo.map((card) =>
                                             card.columnId === -1 && card.swimLaneId === -1 ? (

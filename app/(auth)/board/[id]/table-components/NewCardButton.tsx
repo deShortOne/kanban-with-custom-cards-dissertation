@@ -37,7 +37,6 @@ export const AddNewCardButton = (
                 })
 
                 const data = await idAndTypes.json()
-                console.log(data)
                 setData(data)
             } catch (error) {
                 console.error("Fetch error:", error)
