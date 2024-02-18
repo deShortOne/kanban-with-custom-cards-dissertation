@@ -15,7 +15,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
     const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
         control,
-        name: "a13.branches",
+        name: name + ".branches",
     })
 
     const [branchStatus, updateBranchStatuses] = useState({ "a": "b" })
@@ -50,7 +50,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     return (
         <FormItem className="flex flex-col">
             <FormLabel>{label}</FormLabel>
-            <Input {...register("a13.repo")} className="w-48" />
+            <Input {...register(name + ".repo")} className="w-48" />
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -65,14 +65,14 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                         <TableRow>
                             <TableCell>
                                 <Input key={field.id}
-                                    {...register(`a13.branches.${index}.title` as const)}
+                                    {...register(name + `.branches.${index}.title`)}
                                     className="font-medium"
                                 />
                             </TableCell>
                             <TableCell>
                                 <Input
                                     key={field.id}
-                                    {...register(`a13.branches.${index}.branchName` as const)}
+                                    {...register(name + `.branches.${index}.branchName`)}
                                     className="font-medium aria-readonly"
                                 />
                             </TableCell>
