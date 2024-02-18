@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 
 interface prop {
     headerItem: header,
-    type: string
+    type: string,
+    setDrag: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type header = {
@@ -14,18 +15,20 @@ type header = {
     boardId: number;
 }
 
-const EditableText = ({ headerItem, type }: prop) => {
+const EditableText = ({ headerItem, type, setDrag }: prop) => {
     const [isEditing, setIsEditing] = useState(headerItem.id === -1);
     const [text, setText] = useState(headerItem.title);
 
     const handleDoubleClick = () => {
-        setIsEditing(true);
+        setDrag(false)
+        setIsEditing(true)
     }
     const handleChange = (event) => {
         setText(event.target.value);
     }
     const handleBlur = async () => {
-        setIsEditing(false);
+        setDrag(true)
+        setIsEditing(false)
         await fetch('/api/headers/update', {
             method: 'POST',
             headers: {
@@ -52,7 +55,7 @@ const EditableText = ({ headerItem, type }: prop) => {
                     className="text-lg"
                 />
             ) : (
-                <Label className="text-lg">{text}</Label> // set font
+                <Label className="text-lg">{text}</Label>
             )}
         </div>
     )

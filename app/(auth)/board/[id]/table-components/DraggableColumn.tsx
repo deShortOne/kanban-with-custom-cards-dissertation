@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import EditableText from './EditableText'
 import { KanbanColumn } from '@prisma/client'
@@ -32,10 +32,12 @@ export const DraggableColumn: React.FC<DraggableColumnProps> = ({ column, index,
         },
     })
 
+    const [canDrag, setDrag] = useState(true)
+
     return (
-        <th ref={(node) => ref(drop(node))}>
+        <th ref={canDrag ? (node) => ref(drop(node)) : null}>
             <div className="flex">
-                <EditableText headerItem={column} type="COLUMN" />
+                <EditableText headerItem={column} type="COLUMN" setDrag={setDrag} />
                 <button onClick={() => removeColumn(column.id, index)}>
                     <img src="/delete.svg" />
                 </button>

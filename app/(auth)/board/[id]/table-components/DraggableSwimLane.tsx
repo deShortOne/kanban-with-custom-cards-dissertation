@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import EditableText from './EditableText'
 import { KanbanSwimLane } from '@prisma/client'
@@ -31,11 +31,13 @@ export const DraggableSwimLane: React.FC<DraggableSwimLaneProps> = ({ swimLane, 
             item.index = hoverIndex
         },
     })
+    
+    const [canDrag, setDrag] = useState(true)
 
     return (
-        <td ref={(node) => ref(drop(node))}>
+        <td ref={canDrag ? (node) => ref(drop(node)) : null}>
             <div className="flex">
-                <EditableText headerItem={swimLane} type="SWIMLANE" />
+                <EditableText headerItem={swimLane} type="SWIMLANE" setDrag={setDrag} />
                 <button onClick={() => removeSwimLane(swimLane.id, index)}>
                     <img src="/delete.svg" />
                 </button>
