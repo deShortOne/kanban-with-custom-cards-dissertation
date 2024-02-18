@@ -2,7 +2,7 @@
 import { Card, KanbanColumn, KanbanSwimLane, User } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CardInfo from './CardInfo'
 import TableCell from './TableCell'
 import { DraggableColumn } from "./DraggableColumn"
@@ -11,6 +11,7 @@ import { AddNewCardButton } from "./NewCardButton"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { useCardModal } from "./card-modal/useDialog"
 
 interface TableInformationProps {
     id: number
@@ -231,6 +232,32 @@ export const Table = ({
         } as CardProps)
         setCard(updatedCards)
     }
+
+    // remove card
+    const removeCard = async (cardTypeId: number) => {
+        console.log("Called")
+        if (cardTypeId === -1)
+            return
+        fetch("/api/card/remove", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cardId: cardTypeId,
+            }),
+        })
+
+        const updatedCards = [...cardsInfo].filter(i => i.id !== cardTypeId)
+        setCard(updatedCards)
+    }
+
+    // tracks changes from cardModal hook
+    const cardModal = useCardModal()
+    useEffect(() => {
+        removeCard(cardModal.deletedId)
+        cardModal.setDeletedId(-1)
+    }, [cardModal.deletedId])
 
     return (
         <DndProvider backend={HTML5Backend}>
