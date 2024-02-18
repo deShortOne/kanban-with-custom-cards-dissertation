@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import React, { useState } from 'react';
 
 interface prop {
@@ -42,14 +44,15 @@ const EditableText = ({ headerItem, type }: prop) => {
     return (
         <div onDoubleClick={handleDoubleClick}>
             {isEditing ? (
-                <input
+                <Input
                     type="text"
                     value={text}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    className="text-lg"
                 />
             ) : (
-                <span>{text}</span> // set font
+                <Label className="text-lg">{text}</Label> // set font
             )}
         </div>
     )
