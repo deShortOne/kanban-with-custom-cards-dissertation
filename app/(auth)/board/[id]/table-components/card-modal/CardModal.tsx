@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query"
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useCardModal } from "./useDialog"
@@ -15,6 +15,7 @@ import { DatePicker } from "./field-type/DatePicker";
 import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
@@ -74,6 +75,22 @@ export const CardModal = () => {
                         break
                     case 'Check boxes':
                         form.setValue(id, item.data.split(","))
+                        break
+                    case 'Track Github branch':
+                        const data = item.data.split(";")
+
+                        form.setValue(id, {
+                            repo: data[0],
+                            branches: data[1]
+                                .split(",")
+                                .map(i => (
+                                    {
+                                        "title": i.split(":")[0],
+                                        "branchName": i.split(":")[1]
+                                    }
+                                ))
+                        }
+                        )
                         break
                 }
             }
@@ -170,6 +187,10 @@ export const CardModal = () => {
                                                     return <ComboboxForm form={form}
                                                         fieldTypeData={field.data}
                                                         name={"a" + field.id} />
+                                                case 'Track Github branch':
+                                                    return <GitHubBranchTracker form={form}
+                                                        fieldTypeData={field.data}
+                                                        name={"a" + field.id} />
                                             }
                                             return <p></p>
                                         })}
@@ -203,6 +224,17 @@ function fieldTypeToZodType(fieldType: string) {
             return z.string({
                 required_error: "You have to select at least one item.",
             })
+        case 'Track Github branch':
+            return z.object({
+                repo: z.string(),
+                branches: z.array(
+                    z.object({
+                        title: z.string(),
+                        branchName: z.string(),
+                    })
+                )
+            }).transform(i => i.repo + ";" + 
+                i.branches.flatMap(j => j.title + ":" + j.branchName).join(","))
         default:
             return z.string() // should probs be returning error instead
     }

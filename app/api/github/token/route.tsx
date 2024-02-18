@@ -1,0 +1,37 @@
+import { GitHub, generateState } from "arctic"
+import { getServerSession } from "next-auth"
+import { cookies } from "next/headers"
+import { OPTIONS } from "../../auth/[...nextauth]/route"
+import { prisma } from "@/lib/prisma"
+
+const github = new GitHub(process.env.GITHUB_ID!, process.env.GITHUB_SECRET!)
+
+export async function GET(request: Request) {
+    const session = await getServerSession(OPTIONS)
+    if (!session?.user?.email) {
+        return Response.error()
+    }
+    const user = await prisma.user.findFirstOrThrow({
+        where: {
+            email: session.user.email
+        }
+    })
+
+    if (user.expiresAt && user.expiresAt > new Date()) {
+        return Response.json("Ok")
+    }
+    
+    const state = generateState()
+    const url = await github.createAuthorizationURL(state)
+    url.searchParams.set("redirect_uri", "http://localhost:3000/api/github/token/callback")
+
+    cookies().set("github_oauth_state", state, {
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        maxAge: 60 * 10,
+        sameSite: "lax"
+    })
+
+    return Response.redirect(url)
+}

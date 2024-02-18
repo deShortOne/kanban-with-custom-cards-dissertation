@@ -67,7 +67,6 @@ async function main() {
     const cardTemplateData = [
         {
             name: "Task card 1",
-            isDefault: true,
             cardTypeId: 1,
             version: 1,
             kanbanId: 1,
@@ -78,6 +77,13 @@ async function main() {
             version: 1,
             kanbanId: 1,
         },
+        {
+            name: "Task card 1.1",
+            isDefault: true,
+            cardTypeId: 1,
+            version: 2,
+            kanbanId: 1,
+        }
     ]
     const cardTemplate = await prisma.cardTemplate.createMany({
         data: cardTemplateData,
@@ -106,6 +112,13 @@ async function main() {
             cardTemplateId: 2,
             sizeX: 3,
             sizeY: 3,
+        },
+        {
+            name: 'tab1 for card 1.1',
+            order: 1,
+            cardTemplateId: 3,
+            sizeX: 1,
+            sizeY: 1,
         },
 
     ]
@@ -200,6 +213,13 @@ async function main() {
             cardTemplateTabId: 3,
             fieldTypeId: 2,
         },
+        {
+            data: "GitHub Branch Tracker",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 4,
+            fieldTypeId: 8,
+        }
     ]
     const cardTemplateTabField = await prisma.cardTemplateTabField.createMany({
         data: cardTemplateTabFieldData,
@@ -225,6 +245,15 @@ async function main() {
             swimLaneId: 1,
             kanbanId: 1,
             cardTemplateId: 2,
+        },
+        {
+            title: 'card github repo',
+            order: 1,
+            developerId: null,
+            columnId: 1,
+            swimLaneId: 1,
+            kanbanId: 1,
+            cardTemplateId: 3,
         },
     ]
     const cards = await prisma.card.createMany({
@@ -293,6 +322,11 @@ async function main() {
             data: 'Dissertation, something v v long',
             cardId: 2,
             cardTemplateTabFieldId: 12
+        },
+        {
+            data: 'prac-diss-project;Feat1:1,Feat2:2,Feat3:3,Feat4:4,Feat5:5,Feat6:6,Feat7:7',
+            cardId: 3,
+            cardTemplateTabFieldId: 13
         },
     ]
     const cardTabField = await prisma.cardTabField.createMany({
