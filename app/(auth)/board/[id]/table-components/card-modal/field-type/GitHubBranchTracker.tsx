@@ -2,12 +2,11 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input"
 import { FieldTypeProp } from "./Base"
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-let loadData = true;
-
 export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+
     const data = fieldTypeData.split(";")
 
     const label = data[0]
@@ -20,33 +19,33 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     })
 
     const [branchStatus, updateBranchStatuses] = useState({ "a": "b" })
-    const addColumn = async (idAA: string, branchName: string) => {
-        const response = await fetch('/api/github/branch/status?'
-            + new URLSearchParams({
-                owner: "deShortOne", // TODO !!!!!!
-                repo: getValues()[name].repo,
-                branch: branchName
-            }), {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+    useEffect(() => {
+        const getBranchStatus = async (id: string, branchName: string) => {
+            const response = await fetch('/api/github/branch/status?'
+                + new URLSearchParams({
+                    owner: "deShortOne", // TODO !!!!!!
+                    repo: getValues()[name].repo,
+                    branch: branchName
+                }), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
 
-        const data = await response.json()
-        updateBranchStatuses(prevInfo => ({ ...prevInfo, ["a" + idAA.replaceAll("-", "")]: data }))
-    }
+            const data = await response.json()
+            updateBranchStatuses(prevInfo => ({ ...prevInfo, ["a" + id.replaceAll("-", "")]: data }))
+        }
 
-    if (loadData) {
-        loadData = false
-        fields.forEach((i, idx) =>
+        fields.forEach(async (i, idx) =>
             branchStatus.hasOwnProperty("a" + i.id.replaceAll("-", ""))
                 ?
                 null
                 :
-                addColumn(i.id, getValues()[name].branches[idx].branchName)
+                await getBranchStatus(i.id, getValues()[name].branches[idx].branchName)
         )
-    }
+
+    }, [])
 
     return (
         <FormItem className="flex flex-col">
@@ -74,7 +73,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                 <Input
                                     key={field.id}
                                     {...register(`a13.branches.${index}.branchName` as const)}
-                                    className="font-medium"
+                                    className="font-medium aria-readonly"
                                 />
                             </TableCell>
                             <TableCell>
