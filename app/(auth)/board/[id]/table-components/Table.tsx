@@ -232,7 +232,7 @@ export const Table = ({
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="flex min-h-[85vh]">
-                <div className="">
+                <div>
                     <AddNewCardButton kanbanId={boardId} newCardAction={addCard} />
                     <table>
                         <tbody>

@@ -49,20 +49,20 @@ export const AddNewCardButton = (
 
     return (
         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-            <Button variant="secondary" className="px-3 shadow-none" onClick={() => newCardAction(1)}>
+            <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" onClick={() => newCardAction(1)}>
                 New Task
             </Button>
-            <Separator orientation="vertical" className="h-[20px]" />
+            <Separator orientation="vertical" className="h-[10px]" />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" className="px-2 shadow-none">
+                    <Button variant="secondary" className="px-2 shadow-none min-w-[60px]">
                         <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                     align="end"
                     alignOffset={-5}
-                    className="w-[200px]"
+                    className="w-[220px]"
                     forceMount
                 >
                     {data.map(type => {
