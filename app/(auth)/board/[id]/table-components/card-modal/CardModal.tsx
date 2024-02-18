@@ -22,9 +22,10 @@ import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker";
 const cardIdsLoaded: number[] = []
 
 export const CardModal = () => {
-    const id = useCardModal(state => state.id)
-    const isOpen = useCardModal(state => state.isOpen)
-    const onClose = useCardModal(state => state.onClose)
+    const cardModal = useCardModal()
+    const id = cardModal.id
+    const isOpen = cardModal.isOpen
+    const onClose = cardModal.onClose
 
     const { data: cardData } = useQuery<CardData>({
         queryKey: ["card", id],
@@ -96,7 +97,6 @@ export const CardModal = () => {
             }
         })
     }
-    // console.log(form.getValues())
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -115,6 +115,15 @@ export const CardModal = () => {
 
     const onError = (errors, e) => console.log(errors, e)
 
+    const deleteCard = (id: number) => {
+        const cardDeleteConfirmMessage = "Are you sure you want to delete this card?\nThis action is irreversable!"
+
+        if (confirm(cardDeleteConfirmMessage)) {
+            cardModal.setDeletedId(id)
+            onClose()
+        }
+    }
+
     if (!cardData)
         return null
 
@@ -126,7 +135,14 @@ export const CardModal = () => {
             <DialogContent className="h-[90vh] min-w-[90vw]">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
-                        <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
+                        <div className="flex">
+                            <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
+
+                            <Button type="submit" className="bg-cyan-500">Save</Button>
+                            <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
+                                <img src="/delete.svg"></img>
+                            </Button>
+                        </div>
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
@@ -198,12 +214,8 @@ export const CardModal = () => {
                                 </TabsContent>
                             })}
                         </Tabs>
-                        <Button type="submit">Submit</Button>
                     </form>
                 </Form>
-                <button onClick={onClose}>
-                    Close
-                </button>
             </DialogContent>
         </Dialog >
     )
@@ -233,7 +245,7 @@ function fieldTypeToZodType(fieldType: string) {
                         branchName: z.string(),
                     })
                 )
-            }).transform(i => i.repo + ";" + 
+            }).transform(i => i.repo + ";" +
                 i.branches.flatMap(j => j.title + ":" + j.branchName).join(","))
         default:
             return z.string() // should probs be returning error instead
