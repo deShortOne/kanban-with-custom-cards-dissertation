@@ -37,7 +37,7 @@ const SelectKanbanPage = async ({
     }) as Kanban
 
     return (
-        <main className="">
+        <main className="min-h-[95vh]">
             <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />
             <Table
             id = {kanban.id}

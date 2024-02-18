@@ -14,8 +14,12 @@ const TableCell: React.FC<TableCellProps> = ({ onDrop, children }) => {
     })
 
     return (
-        <td ref={drop} style={{ border: '1px solid #ccc', padding: '8px' }}>
-            {children}
+        <td ref={drop}
+            className="border-2 min-w-[220px] max-w-[400px] align-top p-1"
+        >
+            <div className="min-h-[50px]">
+                {children}
+            </div>
         </td>
     )
 }
