@@ -55,7 +55,7 @@ const EditableText = ({ headerItem, type, setDrag }: prop) => {
                     className="text-lg"
                 />
             ) : (
-                <Label className="text-lg">{text}</Label>
+                <Label className="text-lg cursor-move">{text}</Label>
             )}
         </div>
     )
