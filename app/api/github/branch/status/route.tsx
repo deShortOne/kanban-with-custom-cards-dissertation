@@ -5,6 +5,14 @@ import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"
 
 export async function GET(request: Request) {
+    const url = new URL(request.url)
+    const owner = url.searchParams.get("owner")!
+    const repo = url.searchParams.get("repo")!
+    const branch = url.searchParams.get("branch")!
+    if (!owner || !repo || !branch) {
+        return Response.json("Invalid data")
+    }
+
     const session = await getServerSession(OPTIONS)
     if (!session?.user?.email) {
         return Response.error()
@@ -23,11 +31,6 @@ export async function GET(request: Request) {
             token: user?.token!,
         },
     })
-
-    const url = new URL(request.url)
-    const owner = url.searchParams.get("owner")!
-    const repo = url.searchParams.get("repo")!
-    const branch = url.searchParams.get("branch")!
 
     let branchInfo;
     try {
