@@ -1,4 +1,6 @@
 
+import { Dispatch, SetStateAction } from "react";
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
@@ -7,10 +9,13 @@ import { DataProp, FieldTypeProp } from "./Base"
 import { Card } from "@/components/ui/card"
 import { FieldCell } from "./FieldCell"
 
-export const CardContent = ({ cardData, allFieldTypes }: {
-    cardData: DataProp,
-    allFieldTypes: FieldTypeProp[],
-}) => {
+interface prop {
+    allFieldTypes: FieldTypeProp[]
+    cardData: DataProp
+    setData: Dispatch<SetStateAction<DataProp | undefined>>
+}
+
+export const CardContent = ({ allFieldTypes, cardData, setData }: prop) => {
     return (
         <div className="flex items-center justify-center w-screen h-[80vh]">
             <Card className="h-[70vh] min-w-[70vw]">
@@ -30,7 +35,7 @@ export const CardContent = ({ cardData, allFieldTypes }: {
                             })}
                         </TabsList>
 
-                        {cardData.tabs.map(tab => {
+                        {cardData.tabs.map((tab, tabIdx) => {
                             const fields = []
                             for (let y = 1; y <= tab.sizeY; y++) {
                                 for (let x = 1; x <= tab.sizeX; x++) {
@@ -40,12 +45,17 @@ export const CardContent = ({ cardData, allFieldTypes }: {
                             }
                             return <TabsContent value={tab.name}>
                                 <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
-                                    {fields.map(field => {
+                                    {fields.map((field, fieldIdx) => {
                                         if (!field) {
                                             return <div />
                                         }
                                         return (
-                                            <FieldCell allFieldTypes={allFieldTypes} fieldType={field.fieldType} data={field.data} />
+                                            <FieldCell
+                                                allFieldTypes={allFieldTypes}
+                                                cardData={cardData}
+                                                setData={setData}
+                                                position={[tabIdx, fieldIdx]}
+                                                fieldData={field}/>
                                         )
                                     })}
                                 </div>

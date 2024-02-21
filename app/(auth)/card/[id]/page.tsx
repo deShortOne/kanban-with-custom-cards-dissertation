@@ -54,11 +54,15 @@ const SelectKanbanPage = ({
 
     if (isLoading)
         return <p>Loading</p>
-        
+
     return (
         <main className="min-h-[95vh] flex">
             <SideBar />
-            <CardContent allFieldTypes={fieldType as FieldTypeProp[]} cardData={data as DataProp} />
+            <CardContent
+                allFieldTypes={fieldType as FieldTypeProp[]}
+                cardData={data as DataProp}
+                setData={setData}
+            />
         </main>
     )
 }

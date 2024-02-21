@@ -1,7 +1,8 @@
 "use client"
 
-import * as React from "react"
+import { Dispatch, SetStateAction, useState } from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import update from 'immutability-helper'
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -18,20 +19,44 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Card } from "@/components/ui/card"
-import { FieldTypeProp } from "./Base"
+import { DataProp, FieldProp, FieldTypeProp } from "./Base"
 import { CardTemplateTabFieldModal } from "./CardModal"
 
 interface prop {
-    allFieldTypes: FieldTypeProp[],
-    fieldType: FieldTypeProp,
-    data: string
+    allFieldTypes: FieldTypeProp[]
+    cardData: DataProp
+    setData: Dispatch<SetStateAction<DataProp | undefined>>
+    position: number[]
+    fieldData: FieldProp
 }
 
-export const FieldCell = ({ allFieldTypes, fieldType, data }: prop) => {
-    const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState(fieldType.id)
+export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldData }: prop) => {
+    const [open, setOpen] = useState(false)
 
-    const title = data.split(";")[0]
+    const updateFieldType = (fieldTypeId: number) => {
+        const fieldType = allFieldTypes.find(i => i.id === fieldTypeId)
+        const newCardData = update(cardData, {
+            tabs: {
+                [position[0]]: {
+                    tabFields: {
+                        [position[1]]: {
+                            data: {
+                                $set: fieldData.data.split(";")[0] // TODO keep ; removed
+                            },
+                            fieldType: {
+                                $set: fieldType as FieldTypeProp
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        setData(newCardData)
+    }
+
+    const title = fieldData.data.split(";")[0]
+    const value = fieldData.fieldType.id
 
     return (
         <Card className="max-w-[250px] max-h-[100px]">
@@ -59,7 +84,7 @@ export const FieldCell = ({ allFieldTypes, fieldType, data }: prop) => {
                                         key={field.id}
                                         value={field.name}
                                         onSelect={() => {
-                                            setValue(field.id)
+                                            updateFieldType(field.id)
                                             setOpen(false)
                                         }}
                                     >
@@ -77,7 +102,7 @@ export const FieldCell = ({ allFieldTypes, fieldType, data }: prop) => {
                     </PopoverContent>
                 </Popover>
 
-                <CardTemplateTabFieldModal data={data} fieldType={fieldType} />
+                <CardTemplateTabFieldModal data={fieldData.data} fieldType={fieldData.fieldType} />
             </div>
         </Card>
     )
