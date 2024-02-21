@@ -12,6 +12,7 @@ const SelectKanbanPage = ({
 }) => {
     const [data, setData] = useState<DataProp>()
     const [fieldType, setFieldType] = useState<FieldTypeProp[]>()
+    const [isLoading, setLoading] = useState(true)
     const [mode, setMode] = useState<"Card contents" | "Card display">();
 
     useEffect(() => {
@@ -26,7 +27,7 @@ const SelectKanbanPage = ({
                 },
             })
 
-            setData(await response.json())
+            return await response.json()
         }
 
         const getFieldTypes = async () => {
@@ -36,22 +37,28 @@ const SelectKanbanPage = ({
                     'Content-Type': 'application/json',
                 },
             })
-            setFieldType(await response.json())
+            return await response.json()
         }
 
-        getCardTemplate()
-        getFieldTypes()
+        const fetchBoth = async () => {
+            const dataTemplate = await getCardTemplate()
+            const dataField = await getFieldTypes()
+
+            setData(dataTemplate)
+            setFieldType(dataField)
+            setLoading(false)
+        }
+
+        fetchBoth()
     }, [])
 
-    if (!data && !fieldType)
+    if (isLoading)
         return <p>Loading</p>
-
-    console.log(data)
-
+        
     return (
         <main className="min-h-[95vh] flex">
             <SideBar />
-            <CardContent allFieldTypes={fieldType} cardData={data as DataProp} />
+            <CardContent allFieldTypes={fieldType as FieldTypeProp[]} cardData={data as DataProp} />
         </main>
     )
 }

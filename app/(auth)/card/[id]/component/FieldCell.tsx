@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/popover"
 import { Card } from "@/components/ui/card"
 import { FieldTypeProp } from "./Base"
+import { CardTemplateTabFieldModal } from "./CardModal"
 
 interface prop {
     allFieldTypes: FieldTypeProp[],
@@ -26,7 +27,7 @@ interface prop {
     data: string
 }
 
-export const FieldCell = ({allFieldTypes, fieldType, data}: prop) => {
+export const FieldCell = ({ allFieldTypes, fieldType, data }: prop) => {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(fieldType.id)
 
@@ -57,9 +58,8 @@ export const FieldCell = ({allFieldTypes, fieldType, data}: prop) => {
                                     <CommandItem
                                         key={field.id}
                                         value={field.name}
-                                        onSelect={(currentValue) => {
-                                            const val = parseInt(currentValue)
-                                            setValue(val === value ? -1 : val)
+                                        onSelect={() => {
+                                            setValue(field.id)
                                             setOpen(false)
                                         }}
                                     >
@@ -77,7 +77,7 @@ export const FieldCell = ({allFieldTypes, fieldType, data}: prop) => {
                     </PopoverContent>
                 </Popover>
 
-                <img src="/setting.svg" />
+                <CardTemplateTabFieldModal data={data} fieldType={fieldType} />
             </div>
         </Card>
     )
