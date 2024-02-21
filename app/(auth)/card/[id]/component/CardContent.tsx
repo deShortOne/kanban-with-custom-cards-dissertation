@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
 import { TabsList } from "@radix-ui/react-tabs"
-import { DataProp, FieldTypeProp } from "./Base"
+import { DataProp, FieldProp, FieldTypeProp } from "./Base"
 import { Card } from "@/components/ui/card"
 import { FieldCell } from "./FieldCell"
 
@@ -36,16 +36,17 @@ export const CardContent = ({ allFieldTypes, cardData, setData }: prop) => {
                         </TabsList>
 
                         {cardData.tabs.map((tab, tabIdx) => {
-                            const fields = []
+                            const fields: ([FieldProp, number])[] = []
                             for (let y = 1; y <= tab.sizeY; y++) {
                                 for (let x = 1; x <= tab.sizeX; x++) {
-                                    const templateField = tab.tabFields.find(i => i.posX === x && i.posY === y)
-                                    fields.push(templateField)
+                                    const templateField = tab.tabFields.find(i => i.posX === x && i.posY === y) as FieldProp
+                                    const templateFieldIdx = tab.tabFields.findIndex(i => i.posX === x && i.posY === y)
+                                    fields.push([templateField, templateFieldIdx])
                                 }
                             }
                             return <TabsContent value={tab.name}>
                                 <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
-                                    {fields.map((field, fieldIdx) => {
+                                    {fields.map(field => {
                                         if (!field) {
                                             return <div />
                                         }
@@ -54,8 +55,8 @@ export const CardContent = ({ allFieldTypes, cardData, setData }: prop) => {
                                                 allFieldTypes={allFieldTypes}
                                                 cardData={cardData}
                                                 setData={setData}
-                                                position={[tabIdx, fieldIdx]}
-                                                fieldData={field}/>
+                                                position={[tabIdx, field[1]]}
+                                                fieldData={field[0]} />
                                         )
                                     })}
                                 </div>

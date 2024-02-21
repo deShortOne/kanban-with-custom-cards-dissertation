@@ -41,7 +41,7 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                     tabFields: {
                         [position[1]]: {
                             data: {
-                                $set: fieldData.data.split(";")[0] // TODO keep ; removed
+                                $set: fieldTypeId === -1 ? "Select field" : fieldData.data.split(";")[0] // TODO keep ; removed
                             },
                             fieldType: {
                                 $set: fieldType as FieldTypeProp
@@ -68,7 +68,7 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                             variant="default"
                             role="combobox"
                             aria-expanded={open}
-                            className="w-[200px] justify-between"
+                            className="w-[250px] justify-between"
                         >
                             {value
                                 ? allFieldTypes.find((field) => field.id === value)?.name
@@ -76,7 +76,7 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
+                    <PopoverContent className="w-[250px] p-0">
                         <Command>
                             <CommandGroup>
                                 {allFieldTypes.map((field) => (
@@ -102,7 +102,9 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                     </PopoverContent>
                 </Popover>
 
-                <CardTemplateTabFieldModal data={fieldData.data} fieldType={fieldData.fieldType} />
+                {value !== -1 &&
+                    <CardTemplateTabFieldModal data={fieldData.data} fieldType={fieldData.fieldType} />
+                }
             </div>
         </Card>
     )

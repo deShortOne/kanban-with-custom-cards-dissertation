@@ -37,12 +37,39 @@ const SelectKanbanPage = ({
                     'Content-Type': 'application/json',
                 },
             })
+
             return await response.json()
         }
 
         const fetchBoth = async () => {
-            const dataTemplate = await getCardTemplate()
-            const dataField = await getFieldTypes()
+            const dataTemplate = await getCardTemplate() as DataProp
+            const dataField = await getFieldTypes() as FieldTypeProp[]
+
+            const nullField = {
+                id: -1,
+                name: "null",
+                description: ""
+            }
+
+            dataField.unshift(nullField)
+
+            dataTemplate.tabs.forEach(tab => {
+                for (let x = 1; x <= tab.sizeX; x++) {
+                    for (let y = 1; y <= tab.sizeY; y++) {
+                        const field = tab.tabFields.find(i => i.posX === x && i.posY === y)
+                        if (!field) {
+                            tab.tabFields.push({
+                                data: "Select field",
+                                posX: x,
+                                posY: y,
+                                fieldType: JSON.parse(JSON.stringify(nullField))
+                            })
+                        }
+                    }
+                }
+            })
+
+            console.log(dataField)
 
             setData(dataTemplate)
             setFieldType(dataField)
