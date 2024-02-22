@@ -79,6 +79,21 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
         setData(newCardData)
     }
 
+    const updateTabPosition = (fromIdx: number, toIdx: number) => {
+        const cardDataTabs: Tab[] = JSON.parse(JSON.stringify(cardData["tabs"]))
+        const temp = cardDataTabs[fromIdx]
+        cardDataTabs[fromIdx] = cardDataTabs[toIdx]
+        cardDataTabs[toIdx] = temp
+
+        const newCardData = update(cardData, {
+            tabs: {
+                $set: cardDataTabs
+            }
+        })
+        setData(newCardData)
+        setCurrentTabIdx(toIdx)
+    }
+
     // this is more permanent
     // -1 to add a new tab
     // otherwise tab position
@@ -123,14 +138,14 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                     <li className="flex justify-between">
                         <span>Position:</span>
                         <div className="inline-flex">
-                            <button onClick={() => updateNumber(0, "ROW")}>
+                            <button onClick={() => updateTabPosition(tabIdx, tabIdx - 1)}>
                                 <ChevronDown />
                             </button>
                             <span className="inline-block align-middle">
-                                {tabIdx}
+                                {tabIdx + 1}
                             </span>
-                            <button>
-                                <ChevronUp onClick={() => updateNumber(0, "ROW")} />
+                            <button onClick={() => updateTabPosition(tabIdx, tabIdx + 1)}>
+                                <ChevronUp/>
                             </button>
                         </div>
                     </li>
