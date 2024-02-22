@@ -17,6 +17,9 @@ export async function GET(req: Request) {
                             fieldType: true
                         }
                     }
+                },
+                orderBy: {
+                    order: "asc"
                 }
             }
         }
