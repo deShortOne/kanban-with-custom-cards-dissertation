@@ -93,13 +93,15 @@ const SelectKanbanPage = ({
             <SideBar
                 cardData={data as DataProp}
                 setData={setData}
-                tabIdx={currentTabIdx}
                 nullField={newField}
+                tabIdx={currentTabIdx}
+                setCurrentTabIdx={setCurrentTabIdx}
             />
             <CardContent
                 allFieldTypes={fieldType as FieldTypeProp[]}
                 cardData={data as DataProp}
                 setData={setData}
+                currTabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
             />
         </main>

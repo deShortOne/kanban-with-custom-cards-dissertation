@@ -11,10 +11,11 @@ import { nullField } from '../page'
 import { Button } from '@/components/ui/button'
 
 interface prop {
-    tabIdx: number
     cardData: DataProp
     setData: Dispatch<SetStateAction<DataProp | undefined>>
     nullField: FieldProp
+    tabIdx: number
+    setCurrentTabIdx: Dispatch<SetStateAction<number>>
 }
 
 const newField = {
@@ -39,7 +40,7 @@ const emptyTab: Tab = {
     tabFields: [JSON.parse(JSON.stringify(newField))]
 }
 
-export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
+export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -91,7 +92,6 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
                 name: "Tab " + (cardDataTabs.length + 1),
                 order: cardDataTabs.length + 1
             })
-            // switch to tab
         } else {
             cardDataTabs.splice(value, 1)
         }
@@ -102,6 +102,7 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
             }
         })
         setData(newCardData)
+        setCurrentTabIdx(cardDataTabs.length - 1)
     }
 
     return (

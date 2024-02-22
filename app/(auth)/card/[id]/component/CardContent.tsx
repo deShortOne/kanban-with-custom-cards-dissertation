@@ -13,10 +13,11 @@ interface prop {
     allFieldTypes: FieldTypeProp[]
     cardData: DataProp
     setData: Dispatch<SetStateAction<DataProp | undefined>>
+    currTabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
 }
 
-export const CardContent = ({ allFieldTypes, cardData, setData, setCurrentTabIdx }: prop) => {
+export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setCurrentTabIdx }: prop) => {
     return (
         <div className="flex items-center justify-center w-screen h-[80vh]">
             <Card className="h-[70vh] min-w-[70vw]">
@@ -29,7 +30,7 @@ export const CardContent = ({ allFieldTypes, cardData, setData, setCurrentTabIdx
                             <img src="/delete.svg"></img>
                         </Button>
                     </div>
-                    <Tabs defaultValue={cardData.tabs[0].name}>
+                    <Tabs value={cardData.tabs[currTabIdx].name}>
                         <TabsList>
                             {cardData.tabs.map((tab, tabIdx) => {
                                 return (
