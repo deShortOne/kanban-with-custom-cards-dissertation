@@ -16,6 +16,7 @@ interface prop {
     nullField: FieldProp
     tabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
+    saveDataToDB: () => Promise<void>
 }
 
 const newField = {
@@ -40,7 +41,7 @@ const emptyTab: Tab = {
     tabFields: [JSON.parse(JSON.stringify(newField))]
 }
 
-export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx }: prop) => {
+export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx, saveDataToDB }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -196,8 +197,8 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                         </Button>
                     </li>
                 </ul>
-                <div className="flex-1"/>
-                <Button variant={"outline"}>
+                <div className="flex-1" />
+                <Button variant={"outline"} onClick={() => saveDataToDB()}>
                     Save changes
                 </Button>
             </div>

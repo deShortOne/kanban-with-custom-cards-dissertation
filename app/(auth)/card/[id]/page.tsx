@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { SideBar } from "./component/SideBar"
 import { DataProp, FieldTypeProp } from "./component/Base"
 import { CardContent } from "./component/CardContent"
+import { prisma } from "@/lib/prisma"
 
 export const nullField = {
     id: -1,
@@ -85,6 +86,16 @@ const SelectKanbanPage = ({
         fetchBoth()
     }, [])
 
+    const saveDataToDB = async () => {
+        await fetch('/api/card/template', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+    }
+
     if (isLoading)
         return <p>Loading</p>
 
@@ -96,6 +107,7 @@ const SelectKanbanPage = ({
                 nullField={newField}
                 tabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
+                saveDataToDB={saveDataToDB}
             />
             <CardContent
                 allFieldTypes={fieldType as FieldTypeProp[]}

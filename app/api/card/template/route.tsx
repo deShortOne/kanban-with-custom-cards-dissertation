@@ -1,4 +1,6 @@
+import { DataProp, Tab } from "@/app/(auth)/card/[id]/component/Base"
 import { prisma } from "@/lib/prisma"
+import { CardTemplateTab } from "@prisma/client"
 import { NextResponse } from "next/server"
 
 export async function GET(req: Request) {
@@ -26,4 +28,12 @@ export async function GET(req: Request) {
     })
 
     return NextResponse.json(cardTemplate);
+}
+
+export async function POST(req: Request) {
+    const data: DataProp = await req.json()
+
+    console.log(data)
+
+    return new NextResponse("ok")
 }
