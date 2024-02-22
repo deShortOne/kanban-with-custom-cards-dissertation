@@ -1,15 +1,15 @@
 'use client'
 
+import { Dispatch, SetStateAction, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import update from 'immutability-helper'
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FieldTypeProp } from "./Base";
+import { DataProp, FieldTypeProp } from "./Base";
 import { useFieldArray, useForm } from "react-hook-form";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch"
 import {
@@ -20,15 +20,18 @@ import {
 } from "@/components/ui/tooltip"
 
 interface prop {
-    data: string,
-    fieldType: FieldTypeProp,
-    // update data
+    data: string
+    fieldType: FieldTypeProp
+    cardData: DataProp
+    setData: Dispatch<SetStateAction<DataProp | undefined>>
+    position: number[]
 }
 
-export const CardTemplateTabFieldModal = ({ data, fieldType }: prop) => {
+export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, position }: prop) => {
+    const [openModal, setOpenModal] = useState(false);
 
     const fieldSchema: any = {
-        label: z.string()
+        label: z.string().min(1, "Please enter a title")
     }
     switch (fieldType.name) {
         case 'Text field':
@@ -38,7 +41,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType }: prop) => {
             break;
         case 'Drop down':
         case 'Check boxes':
-            fieldSchema["options"] = z.array(z.string()).min(1)
+            fieldSchema["options"] = z.array(z.object({ value: z.string() })).min(1)
             fieldSchema["optional"] = z.boolean().default(false)
             break
         case 'Date picker':
@@ -71,16 +74,57 @@ export const CardTemplateTabFieldModal = ({ data, fieldType }: prop) => {
 
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // âœ… This will be type-safe and validated.
-        console.log(values);
-        // update
+        let dataToBeStored = values.label
+        switch (fieldType.name) {
+            case 'Text field':
+            case 'Text area':
+                dataToBeStored += ";"
+                if (values.placeholder) {
+                    dataToBeStored += values.placeholder
+                }
+                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                break;
+            case 'Drop down':
+            case 'Check boxes':
+                dataToBeStored += ";"
+
+                const listOfOptions = values.options
+                const listOptions = listOfOptions.map((i: { value: string }, idx: number) => idx + ":" + i.value)
+                dataToBeStored += listOptions.toString()
+
+                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                break
+            case 'Date picker':
+                dataToBeStored += ";"
+                if (values.defaultDate) {
+                    dataToBeStored += values.defaultDate
+                }
+                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                break
+            case 'Track Github branch':
+                break
+        }
+
+        const newCardData = update(cardData, {
+            tabs: {
+                [position[0]]: {
+                    tabFields: {
+                        [position[1]]: {
+                            data: {
+                                $set: dataToBeStored
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        setData(newCardData)
     }
 
     const onError = (errors, e) => console.log(errors, e)
 
     return (
-        <Dialog>
+        <Dialog open={openModal} onOpenChange={setOpenModal}>
             <DialogTrigger asChild>
                 <Button variant="outline">
                     <img src="/setting.svg" />
@@ -203,7 +247,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType }: prop) => {
                                 <Button onClick={() => append({})} type="button">Add</Button>
                             </div>
                         }
-                        <Button type="submit" className="bg-cyan-500">Save</Button>
+                        <Button
+                            type="submit"
+                            className="bg-cyan-500"
+                            onClick={() => setOpenModal(false)}
+                        >
+                            Save
+                        </Button>
                     </form>
                 </Form>
             </DialogContent>

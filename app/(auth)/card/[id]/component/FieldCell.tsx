@@ -103,7 +103,13 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                 </Popover>
 
                 {value !== -1 &&
-                    <CardTemplateTabFieldModal data={fieldData.data} fieldType={fieldData.fieldType} />
+                    <CardTemplateTabFieldModal
+                        cardData={cardData}
+                        setData={setData}
+                        data={fieldData.data}
+                        position={position}
+                        fieldType={fieldData.fieldType}
+                    />
                 }
             </div>
         </Card>
