@@ -100,6 +100,7 @@ const SelectKanbanPage = ({
                 allFieldTypes={fieldType as FieldTypeProp[]}
                 cardData={data as DataProp}
                 setData={setData}
+                setCurrentTabIdx={setCurrentTabIdx}
             />
         </main>
     )
