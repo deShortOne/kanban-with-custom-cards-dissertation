@@ -5,6 +5,19 @@ import { SideBar } from "./component/SideBar"
 import { DataProp, FieldTypeProp } from "./component/Base"
 import { CardContent } from "./component/CardContent"
 
+const nullField = {
+    id: -1,
+    name: "null",
+    description: ""
+}
+
+const newField = {
+    data: "Select field",
+    posX: -1,
+    posY: -1,
+    fieldType: nullField
+}
+
 const SelectKanbanPage = ({
     params
 }: {
@@ -12,6 +25,7 @@ const SelectKanbanPage = ({
 }) => {
     const [data, setData] = useState<DataProp>()
     const [fieldType, setFieldType] = useState<FieldTypeProp[]>()
+    const [currentTabIdx, setCurrentTabIdx] = useState<number>(0)
     const [isLoading, setLoading] = useState(true)
     const [mode, setMode] = useState<"Card contents" | "Card display">();
 
@@ -45,11 +59,6 @@ const SelectKanbanPage = ({
             const dataTemplate = await getCardTemplate() as DataProp
             const dataField = await getFieldTypes() as FieldTypeProp[]
 
-            const nullField = {
-                id: -1,
-                name: "null",
-                description: ""
-            }
 
             dataField.unshift(nullField)
 
@@ -59,17 +68,14 @@ const SelectKanbanPage = ({
                         const field = tab.tabFields.find(i => i.posX === x && i.posY === y)
                         if (!field) {
                             tab.tabFields.push({
-                                data: "Select field",
+                                ...newField,
                                 posX: x,
                                 posY: y,
-                                fieldType: JSON.parse(JSON.stringify(nullField))
                             })
                         }
                     }
                 }
             })
-
-            console.log(dataField)
 
             setData(dataTemplate)
             setFieldType(dataField)
@@ -84,7 +90,12 @@ const SelectKanbanPage = ({
 
     return (
         <main className="min-h-[95vh] flex">
-            <SideBar />
+            <SideBar
+                cardData={data as DataProp}
+                setData={setData}
+                tabIdx={currentTabIdx}
+                nullField={newField}
+            />
             <CardContent
                 allFieldTypes={fieldType as FieldTypeProp[]}
                 cardData={data as DataProp}

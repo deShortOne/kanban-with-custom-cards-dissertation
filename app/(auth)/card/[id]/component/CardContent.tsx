@@ -31,7 +31,7 @@ export const CardContent = ({ allFieldTypes, cardData, setData }: prop) => {
                     <Tabs defaultValue={cardData.tabs[0].name}>
                         <TabsList>
                             {cardData.tabs.map(tab => {
-                                return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
+                                return <TabsTrigger value={tab.name} onClick={() => console.log("RE")}>{tab.name}</TabsTrigger>
                             })}
                         </TabsList>
 
@@ -41,6 +41,7 @@ export const CardContent = ({ allFieldTypes, cardData, setData }: prop) => {
                                 for (let x = 1; x <= tab.sizeX; x++) {
                                     const templateField = tab.tabFields.find(i => i.posX === x && i.posY === y) as FieldProp
                                     const templateFieldIdx = tab.tabFields.findIndex(i => i.posX === x && i.posY === y)
+
                                     fields.push([templateField, templateFieldIdx])
                                 }
                             }
