@@ -42,9 +42,10 @@ export const CardTemplateTabFieldModal = ({ data, fieldType }: prop) => {
             fieldSchema["optional"] = z.boolean().default(false)
             break
         case 'Date picker':
-            fieldSchema["defaultDate"] = z.string()
-                .refine(value => /(today|(add|sub) \d+ (day|week|month|year)s?)/.test(value))
-                .optional()
+            fieldSchema["defaultDate"] = z.union(
+                [z.string().optional(),
+                z.string().refine(value => /(today|(add|sub) \d+ (day|week|month|year)s?)/.test(value))]
+            )
             fieldSchema["optional"] = z.boolean().default(false)
             break
         case 'Track Github branch':
