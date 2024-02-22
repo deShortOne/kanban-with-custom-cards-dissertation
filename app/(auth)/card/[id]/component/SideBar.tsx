@@ -121,8 +121,8 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
     }
 
     return (
-        <aside className="w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <aside className="w-64 min-h-[94vh] transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+            <div className="flex flex-col min-h-[94vh] px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul className="space-y-2 font-medium">
                     <li>
                         <span className="inline-block align-middle">Name of card</span>
@@ -196,6 +196,10 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                         </Button>
                     </li>
                 </ul>
+                <div className="flex-1"/>
+                <Button variant={"outline"}>
+                    Save changes
+                </Button>
             </div>
         </aside>
     )

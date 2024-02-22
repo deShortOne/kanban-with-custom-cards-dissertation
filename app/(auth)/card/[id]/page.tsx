@@ -89,7 +89,7 @@ const SelectKanbanPage = ({
         return <p>Loading</p>
 
     return (
-        <main className="min-h-[95vh] flex">
+        <main className="min-h-[90vh] flex">
             <SideBar
                 cardData={data as DataProp}
                 setData={setData}
