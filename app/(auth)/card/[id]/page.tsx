@@ -5,13 +5,13 @@ import { SideBar } from "./component/SideBar"
 import { DataProp, FieldTypeProp } from "./component/Base"
 import { CardContent } from "./component/CardContent"
 
-const nullField = {
+export const nullField = {
     id: -1,
     name: "null",
     description: ""
 }
 
-const newField = {
+export const newField = {
     data: "Select field",
     posX: -1,
     posY: -1,

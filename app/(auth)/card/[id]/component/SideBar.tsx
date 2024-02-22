@@ -4,14 +4,39 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { DataProp, FieldProp } from "./Base"
+import { DataProp, FieldProp, Tab } from "./Base"
 import { Dispatch, SetStateAction } from "react"
+import { Separator } from '@/components/ui/separator'
+import { nullField } from '../page'
+import { Button } from '@/components/ui/button'
 
 interface prop {
     tabIdx: number
     cardData: DataProp
     setData: Dispatch<SetStateAction<DataProp | undefined>>
     nullField: FieldProp
+}
+
+const newField = {
+    data: "New input",
+    posX: 1,
+    posY: 1,
+    fieldType: {
+        id: -1,
+        name: "null",
+        description: ""
+    }
+    // instead of using nullField from page, it returns
+    // rEfErEnCeeRrOr: cAnNoT aCcEsS 'nullField' bEfOrE iNiTiAlIzAtIoN
+    // I could put it in SideBar, but
+}
+
+const emptyTab: Tab = {
+    name: "New tab",
+    order: -1,
+    sizeX: 1,
+    sizeY: 1,
+    tabFields: [JSON.parse(JSON.stringify(newField))]
 }
 
 export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
@@ -53,13 +78,60 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
         setData(newCardData)
     }
 
+    // this is more permanent
+    // -1 to add a new tab
+    // otherwise tab position
+    const updateNumberOfTabs = (value: number) => {
+        // need to deepclone otherwise it will think the array has not been updated as 
+        // it refers to the same one
+        const cardDataTabs = JSON.parse(JSON.stringify(cardData["tabs"]))
+        if (value === -1) {
+            cardDataTabs.push({
+                ...emptyTab,
+                name: "Tab " + (cardDataTabs.length + 1),
+                order: cardDataTabs.length + 1
+            })
+            // switch to tab
+        } else {
+            cardDataTabs.splice(value, 1)
+        }
+
+        const newCardData = update(cardData, {
+            tabs: {
+                $set: cardDataTabs
+            }
+        })
+        setData(newCardData)
+    }
+
     return (
         <aside className="w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul className="space-y-2 font-medium">
                     <li>
-                        <span className="inline-block align-middle">Name</span>
+                        <span className="inline-block align-middle">Name of card</span>
                         <Input className="inline-block align-middle" defaultValue={cardData.name} />
+                    </li>
+                    <li>
+                        <Separator />
+                    </li>
+                    <li>
+                        <span className="inline-block align-middle">Tab name</span>
+                        <Input className="inline-block align-middle" defaultValue={cardData.tabs[tabIdx].name} />
+                    </li>
+                    <li className="flex justify-between">
+                        <span>Position:</span>
+                        <div className="inline-flex">
+                            <button onClick={() => updateNumber(0, "ROW")}>
+                                <ChevronDown />
+                            </button>
+                            <span className="inline-block align-middle">
+                                {tabIdx}
+                            </span>
+                            <button>
+                                <ChevronUp onClick={() => updateNumber(0, "ROW")} />
+                            </button>
+                        </div>
                     </li>
                     <li className="flex justify-between">
                         <span>Rows:</span>
@@ -88,6 +160,16 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField }: prop) => {
                                 <ChevronUp />
                             </button>
                         </div>
+                    </li>
+                    <li>
+                        <Button onClick={() => updateNumberOfTabs(-1)}>
+                            Add new tab
+                        </Button>
+                    </li>
+                    <li>
+                        <Button variant="destructive" onClick={() => updateNumberOfTabs(tabIdx)}>
+                            Remove current tab
+                        </Button>
                     </li>
                 </ul>
             </div>
