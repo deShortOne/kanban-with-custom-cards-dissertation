@@ -121,20 +121,48 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
         setCurrentTabIdx(cardDataTabs.length - 1)
     }
 
+    const updateCardName = (name: string) => {
+        const newCardData = update(cardData, {
+            name: {
+                $set: name
+            }
+        })
+        setData(newCardData)
+    }
+
+    const updateTabName = (name: string) => {
+        const cardDataTabs: Tab[] = JSON.parse(JSON.stringify(cardData["tabs"]))
+        cardDataTabs[tabIdx].name = name
+        const newCardData = update(cardData, {
+            tabs: {
+                $set: cardDataTabs
+            },
+        })
+        setData(newCardData)
+    }
+
     return (
         <aside className="w-64 min-h-[94vh] transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div className="flex flex-col min-h-[94vh] px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul className="space-y-2 font-medium">
                     <li>
                         <span className="inline-block align-middle">Name of card</span>
-                        <Input className="inline-block align-middle" defaultValue={cardData.name} />
+                        <Input
+                            className="inline-block align-middle"
+                            defaultValue={cardData.name}
+                            onBlur={(e) => updateCardName(e.target.value)}
+                        />
                     </li>
                     <li>
                         <Separator />
                     </li>
                     <li>
                         <span className="inline-block align-middle">Tab name</span>
-                        <Input className="inline-block align-middle" defaultValue={cardData.tabs[tabIdx].name} />
+                        <Input
+                            className="inline-block align-middle"
+                            defaultValue={cardData.tabs[tabIdx].name}
+                            onChange={(e) => updateTabName(e.target.value)}
+                        />
                     </li>
                     <li className="flex justify-between">
                         <span>Position:</span>
