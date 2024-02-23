@@ -12,8 +12,8 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   token     String?
   expiresAt DateTime?
 
@@ -77,9 +77,10 @@ model KanbanSwimLane {
 
 // e.g. text area, text field, file upload, checkboxes etc.
 model FieldType {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
+  id            Int     @id @default(autoincrement())
+  name          String
+  description   String
+  implemented Boolean @default(false)
 
   a CardTemplateTabField[]
 }
