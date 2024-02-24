@@ -17,7 +17,7 @@ interface TableInformationProps {
     id: number
     columns: KanbanColumn[]
     swimlanes: KanbanSwimLane[]
-    cards: Card[]
+    cards: CardProps[]
 }
 
 interface CardProps {

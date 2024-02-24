@@ -23,7 +23,15 @@ const SelectKanbanPage = async ({
                     order: "asc"
                 }
             },
-            Cards: true
+            Cards: {
+                include: {
+                    cardTemplate: {
+                        select: {
+                            cardType: true
+                        }
+                    }
+                }
+            }
         }
     }) as Kanban
 
