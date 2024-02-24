@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(req, res) {
+export async function POST(req: Request) {
     const data = await req.json()
 
     const kanbanId = data.kanbanId
     delete data["kanbanId"]
 
-    const dataInArray = {}
+    const dataInArray: any = {}
     for (var i in data) {
         const idAndDataType = i.split("~")
         if (!dataInArray.hasOwnProperty(idAndDataType[0])) {
