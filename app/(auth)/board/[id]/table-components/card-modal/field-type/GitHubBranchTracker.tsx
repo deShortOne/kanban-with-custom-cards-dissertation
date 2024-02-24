@@ -1,10 +1,11 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { FieldTypeProp } from "./Base"
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { useFieldArray, useFormContext } from "react-hook-form"
+import { useEffect, useState } from "react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 const loadingText = "...loading..."
@@ -53,7 +54,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     return (
         <FormItem className="flex flex-col">
             <FormLabel>{label}</FormLabel>
-            <Input {...register(name + ".repo")} className="w-48" />
+            <Input {...register(name + ".repo")} className="w-48" placeholder="repo" />
             <ScrollArea className="h-[50vh]">
                 <Table>
                     <TableHeader>
