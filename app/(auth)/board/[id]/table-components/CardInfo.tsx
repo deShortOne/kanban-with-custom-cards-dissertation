@@ -4,9 +4,7 @@ import { useCardModal } from './card-modal/useDialog'
 import { User } from '@prisma/client'
 import {
     Card,
-    CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"

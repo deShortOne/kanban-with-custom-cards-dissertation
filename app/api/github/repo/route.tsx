@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"
 
-export async function GET(request: Request) {
+export async function GET() {
     const session = await getServerSession(OPTIONS)
     if (!session?.user?.email) {
         return Response.error()

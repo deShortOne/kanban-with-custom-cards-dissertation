@@ -1,7 +1,6 @@
 import React from 'react'
 import { useDrop } from 'react-dnd'
 
-
 interface TableCellProps {
     onDrop: (item: { id: number; type: string }) => void
     children?: React.ReactNode,

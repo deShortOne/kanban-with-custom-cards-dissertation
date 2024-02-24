@@ -11,7 +11,7 @@ const NewKanbanPage = () => {
   const [formSuccess, setFormSuccess] = useState(false)
   const [formSuccessMessage, setFormSuccessMessage] = useState("")
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fieldName = e.target.name;
     const fieldValue = e.target.value;
 
@@ -21,7 +21,7 @@ const NewKanbanPage = () => {
     }))
   }
 
-  const submitForm = async (e) => {
+  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     // await axios.post()
     // We don't want the page to refresh
     e.preventDefault()
@@ -50,11 +50,9 @@ const NewKanbanPage = () => {
         window.location.href = "http://localhost:3000/board/" + dataa.kanban.id;
       }
       setFormSuccess(true)
-      
+
     } catch (error) {
-      console.log("-fetch error-------------")
-      console.error(error) //statement 2
-      console.log("====================")
+      console.error(error)
     }
   }
 

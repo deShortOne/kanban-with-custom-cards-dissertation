@@ -40,7 +40,7 @@ export async function GET(request: Request) {
             repo: repo,
             branch: branch,
         })
-    } catch (error) {
+    } catch (error: any) {
         if (error.status && error.status === 404) {
             return Response.json("Not found")
         } else {
@@ -95,7 +95,7 @@ export async function GET(request: Request) {
                 head: branch,
                 base: getPulls[0].base.ref
             })
-        
+
             if (compareCommitNotMain.status === "behind") {
                 return Response.json("Merged to branch " + getPulls[0].base.label)
             } else {
