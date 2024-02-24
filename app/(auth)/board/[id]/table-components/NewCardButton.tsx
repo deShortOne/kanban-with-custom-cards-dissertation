@@ -26,7 +26,7 @@ export const AddNewCardButton = (
     { kanbanId, newCardAction }:
         {
             kanbanId: number,
-            newCardAction: (cardTypeId: number) => void
+            newCardAction: (cardTemplateId: number, cardTypeName: string) => void
         }
 ) => {
     const kanbanSettingModal = useKanbanModal()
@@ -84,7 +84,7 @@ export const AddNewCardButton = (
                     <Button
                         variant="secondary"
                         className="px-3 shadow-none min-w-[150px]"
-                        onClick={() => newCardAction(defaultNewCard.id)}>
+                        onClick={() => newCardAction(defaultNewCard.id, defaultNewCard.cardType.name)}>
                         {defaultNewCard.name}
                     </Button>
                     :
@@ -113,7 +113,7 @@ export const AddNewCardButton = (
                         return (
                             <DropdownMenuItem
                                 className="justify-between"
-                                onClick={() => newCardAction(type.id)}
+                                onClick={() => newCardAction(type.id, type.cardType.name)}
                             >
                                 {type.name}
                                 <Badge className="max-h-[24px]" variant="outline">{type.cardType.name}</Badge>

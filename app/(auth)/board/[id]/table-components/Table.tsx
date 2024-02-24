@@ -29,7 +29,6 @@ interface CardProps {
     swimLaneId: number
     cardTemplate: {
         cardType: {
-            id: number,
             name: string,
         }
     }
@@ -207,7 +206,7 @@ export const Table = ({
     }
 
     // new card
-    const addCard = async (cardTypeId: number) => {
+    const addCard = async (cardTemplateId: number, cardTypeName: string) => {
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
         const response = await fetch('/api/card/new', {
             method: 'POST',
@@ -217,7 +216,7 @@ export const Table = ({
             body: JSON.stringify({
                 order: orderPos,
                 boardId: boardId,
-                cardTypeId: cardTypeId,
+                cardTemplateId: cardTemplateId,
             }),
         })
 
@@ -230,7 +229,11 @@ export const Table = ({
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,
-            cardTypeId: cardTypeId,
+            cardTemplate: {
+                cardType: {
+                    name: cardTypeName
+                }
+            }
         } as CardProps)
         setCard(updatedCards)
     }
