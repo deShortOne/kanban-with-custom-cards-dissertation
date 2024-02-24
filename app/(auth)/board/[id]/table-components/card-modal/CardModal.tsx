@@ -112,7 +112,7 @@ export const CardModal = () => {
         })
     }
 
-    const onError = (errors, e) => console.log(errors, e)
+    const onError = (errors: any, e: any) => console.log(errors, e)
 
     const deleteCard = (id: number) => {
         const cardDeleteConfirmMessage = "Are you sure you want to delete this card?\nThis action is irreversable!"
