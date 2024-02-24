@@ -35,6 +35,8 @@ const SelectKanbanPage = async ({
         }
     }) as Kanban
 
+    console.log(kanban.Cards)
+
     // prisma should include the included types but seems to be broken
     return (
         <main className="min-h-[95vh]">

@@ -27,7 +27,12 @@ interface CardProps {
     description: string | null
     columnId: number
     swimLaneId: number
-    cardTypeId: number
+    cardTemplate: {
+        cardType: {
+            id: number,
+            name: string,
+        }
+    }
 }
 
 export const Table = ({
