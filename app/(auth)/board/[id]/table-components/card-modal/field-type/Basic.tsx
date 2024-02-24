@@ -4,15 +4,19 @@ import { Textarea } from "@/components/ui/textarea"
 import { FieldTypeProp } from "./Base"
 
 export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const splitData = fieldTypeData.split(";")
+    const label = splitData[0]
+    const placeHolder = splitData[1]
+
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{fieldTypeData}</FormLabel>
+                    <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder={placeHolder} {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -22,15 +26,19 @@ export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
 }
 
 export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const splitData = fieldTypeData.split(";")
+    const label = splitData[0]
+    const placeHolder = splitData[1]
+
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{fieldTypeData}</FormLabel>
+                <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Textarea placeholder="shadcn" {...field} />
+                        <Input placeholder={placeHolder} {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
