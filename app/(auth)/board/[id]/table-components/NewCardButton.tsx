@@ -14,6 +14,12 @@ import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
 import { useKanbanModal } from "../settings-modal/components/useDialog"
 
+interface NewCardInfo {
+    id: number
+    name: string,
+    cardType: { id: number, name: string }
+}
+
 export const AddNewCardButton = (
     { kanbanId, newCardAction }:
         {
@@ -23,7 +29,7 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModal()
 
-    const [data, setData] = useState<{ id: number, name: string }[]>([])
+    const [data, setData] = useState<NewCardInfo[]>([])
 
     useEffect(() => {
         const fetchData = async () => {

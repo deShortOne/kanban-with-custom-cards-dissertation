@@ -9,7 +9,7 @@ export async function GET(req: Request) {
         where: {
             kanbanId: parseInt(kanbanId)
         },
-        select: {
+        include: {
             cardType: {
                 select: {
                     id: true,
@@ -20,5 +20,5 @@ export async function GET(req: Request) {
         distinct: ["cardTypeId"],
     })
 
-    return NextResponse.json(a.flatMap(i => i.cardType));
+    return NextResponse.json(a);
 }
