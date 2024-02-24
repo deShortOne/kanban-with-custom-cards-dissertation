@@ -40,13 +40,23 @@ export const CardModal = () => {
         }).then((res) => res.json()))
     })
 
+    // stores information about the field template
     const fieldIdAndType = cardData?.cardTemplate
         .tabs
         .flatMap(i => i.tabFields)
         .map(i => ({ key: i.id, value: i.fieldType.name, data: i.data }))
 
+    // converts field template id to actual data id
+    const templateFieldIdToDataId: any = {}
+    cardData?.allTabsFieldInformation.forEach(item => {
+        const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
+        if (dict)
+            templateFieldIdToDataId[dict.key] = item.id
+    })
+
     const schemaForFields = fieldIdAndType ? fieldIdAndType
-        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value, item.data), obj), {})
+        .reduce((obj: any, item) => (
+            obj["a" + templateFieldIdToDataId[item.key]] = fieldTypeToZodType(item.value, item.data), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
 
