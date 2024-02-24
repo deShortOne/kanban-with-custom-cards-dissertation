@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
+import { useKanbanModal } from "../settings-modal/components/useDialog"
 
 export const AddNewCardButton = (
     { kanbanId, newCardAction }:
@@ -21,6 +22,8 @@ export const AddNewCardButton = (
             newCardAction: (cardTypeId: number) => void
         }
 ) => {
+    const kanbanSettingModal = useKanbanModal()
+
     const [data, setData] = useState([])
 
     useEffect(() => {
@@ -72,7 +75,7 @@ export const AddNewCardButton = (
                         )
                     })}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen(kanbanId, "card")}>
                         <Pencil2Icon className="mr-2 h-4 w-4" /> Update cards
                     </DropdownMenuItem>
                 </DropdownMenuContent>

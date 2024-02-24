@@ -11,6 +11,7 @@ import { useKanbanModal } from "./components/useDialog";
 export const KanbanSettingsModal = () => {
     const id = useKanbanModal(state => state.id)
     const isOpen = useKanbanModal(state => state.isOpen)
+    const defaultTab = useKanbanModal(state => state.defaultTab)
     const onClose = useKanbanModal(state => state.onClose)
 
     // const { data: kanbanData } = useQuery<KanbanData>({
@@ -25,14 +26,14 @@ export const KanbanSettingsModal = () => {
     //         }),
     //     }).then((res) => res.json()))
     // })
-    
+
     return (
         <Dialog
             open={isOpen}
             onOpenChange={onClose}
         >
             <DialogContent className="h-[90vh] max-w-[40vw] max-h-[60vh]">
-                <Tabs defaultValue="general">
+                <Tabs defaultValue={defaultTab}>
                     <div className="flex justify-center mx-auto p-4">
                         <TabsList>
                             <TabsTrigger value="general">General</TabsTrigger>
@@ -41,9 +42,9 @@ export const KanbanSettingsModal = () => {
                         </TabsList>
                     </div>
 
-                    <GeneralTab id={id}/>
+                    <GeneralTab id={id} />
                     <CardTab id={id} />
-                    <ShareTab id={id}/>
+                    <ShareTab id={id} />
                 </Tabs>
             </DialogContent>
         </Dialog>

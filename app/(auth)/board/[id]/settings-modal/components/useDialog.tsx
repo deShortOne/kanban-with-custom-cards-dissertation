@@ -4,13 +4,23 @@ type KanbanModalStore = {
   id?: number
   title?: string
   isOpen: boolean
-  onOpen: (id: number, title: string) => void
+  defaultTab: "general" | "card" | "share"
+  setTitle: (title: string) => void
+  onOpen: (id: number, tab?: "general" | "card" | "share") => void
   onClose: () => void
 }
 
-export  const useKanbanModal = create<KanbanModalStore>((set) => ({
+export const useKanbanModal = create<KanbanModalStore>((set) => ({
   id: -1,
   isOpen: false,
-  onOpen: (id: number, title: string) => set({ isOpen: true, id, title }),
+  defaultTab: "general",
+  setTitle: (title: string) => set({ title }),
+  onOpen: (id: number, tab = "general") => set(
+    {
+      isOpen: true,
+      id,
+      defaultTab: tab
+    }
+  ),
   onClose: () => set({ isOpen: false, id: -1, title: undefined }),
 }))

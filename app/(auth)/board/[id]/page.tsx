@@ -9,10 +9,6 @@ const SelectKanbanPage = async ({
 }: {
     params: { id: string }
 }) => {
-    if (!params.id) {
-        redirect("/select-board")
-    }
-
     const kanban = await prisma.kanban.findUnique({
         where: {
             id: parseInt(params.id)
@@ -40,7 +36,7 @@ const SelectKanbanPage = async ({
         <main className="min-h-[95vh]">
             <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />
             <Table
-            id = {kanban.id}
+                id={kanban.id}
                 columns={kanban.KanbanColumns}
                 swimlanes={kanban.KanbanSwimLanes}
                 cards={kanban.Cards}>
