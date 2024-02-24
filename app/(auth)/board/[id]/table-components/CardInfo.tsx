@@ -26,7 +26,6 @@ const CardInfo: React.FC<CardProps> = ({ id, title, cardTemplate }) => {
     })
 
     const cardModal = useCardModal()
-    console.log(cardTemplate)
 
     return (
         <Card
