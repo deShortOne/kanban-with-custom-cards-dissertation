@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
-    const data = await req.json()
+export async function GET(req: Request) {
+    const url = new URL(req.url)
+    const kanbanId = url.searchParams.get("kanbanId")!
 
     const a = await prisma.cardTemplate.findMany({
         where: {
-            kanbanId: 1
+            kanbanId: parseInt(kanbanId)
         },
         select: {
             cardType: {

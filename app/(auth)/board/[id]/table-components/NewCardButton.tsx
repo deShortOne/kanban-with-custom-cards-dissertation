@@ -23,19 +23,19 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModal()
 
-    const [data, setData] = useState<{id: number, name: string}[]>([])
+    const [data, setData] = useState<{ id: number, name: string }[]>([])
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const idAndTypes = await fetch('/api/card/types', {
-                    method: 'POST',
+                const idAndTypes = await fetch('/api/card/types?' +
+                    new URLSearchParams({
+                        kanbanId: kanbanId.toString(),
+                    }), {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        kanbanId: kanbanId,
-                    }),
                 })
 
                 const data = await idAndTypes.json()
