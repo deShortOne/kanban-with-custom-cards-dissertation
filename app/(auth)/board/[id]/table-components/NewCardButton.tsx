@@ -16,8 +16,9 @@ import { useKanbanModal } from "../settings-modal/components/useDialog"
 
 interface NewCardInfo {
     id: number
-    name: string,
-    cardType: { id: number, name: string }
+    name: string
+    isDefault: boolean
+    cardType: { name: string }
 }
 
 export const AddNewCardButton = (
@@ -29,7 +30,9 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModal()
 
+    const [isLoading, setLoading] = useState(true)
     const [data, setData] = useState<NewCardInfo[]>([])
+    const [defaultNewCard, setDefaultNewCard] = useState<NewCardInfo>()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,8 +47,12 @@ export const AddNewCardButton = (
                     },
                 })
 
-                const data = await idAndTypes.json()
-                setData(data)
+                const idAndTypesData = await idAndTypes.json()
+                setData(idAndTypesData)
+                setDefaultNewCard(idAndTypesData[0])
+                idAndTypesData.forEach((i: NewCardInfo) => i.isDefault ? setDefaultNewCard(i) : null)
+
+                setLoading(false)
             } catch (error) {
                 console.error("Fetch error:", error)
             }
@@ -54,11 +61,40 @@ export const AddNewCardButton = (
         fetchData()
     }, [])
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
+                <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" disabled>
+                    Loading cards
+                </Button>
+                <Separator orientation="vertical" className="h-[10px]" />
+                <Button variant="secondary" className="px-2 shadow-none min-w-[60px]" disabled>
+                    <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-            <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" onClick={() => newCardAction(1)}>
-                New Task
-            </Button>
+            {
+                defaultNewCard
+                    ?
+                    <Button
+                        variant="secondary"
+                        className="px-3 shadow-none min-w-[150px]"
+                        onClick={() => newCardAction(defaultNewCard.id)}>
+                        {defaultNewCard.name}
+                    </Button>
+                    :
+                    <Button
+                        variant="default"
+                        className="px-3 shadow-none min-w-[150px]"
+                        disabled>
+                        No default card found
+                    </Button>
+            }
+
             <Separator orientation="vertical" className="h-[10px]" />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

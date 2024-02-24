@@ -9,10 +9,12 @@ export async function GET(req: Request) {
         where: {
             kanbanId: parseInt(kanbanId)
         },
-        include: {
+        select: {
+            id: true,
+            name: true,
+            isDefault: true,
             cardType: {
                 select: {
-                    id: true,
                     name: true,
                 },
             },
