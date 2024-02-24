@@ -36,12 +36,12 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
         })
 
         const data = await response.json()
-        updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, ["a" + id.replaceAll("-", "")]: data }))
+        updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
     useEffect(() => {
         fields.forEach(async (i, idx) =>
-            branchStatus.hasOwnProperty("a" + i.id.replaceAll("-", ""))
+            branchStatus.hasOwnProperty(convertIdToString(i.id))
                 ?
                 null
                 :
@@ -84,7 +84,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                             updateBranchStatuses((prevInfo: any) => (
                                                 {
                                                     ...prevInfo,
-                                                    ["a" + field.id.replaceAll("-", "")]: loadingText
+                                                    [convertIdToString(field.id)]: loadingText
                                                 }
                                             ))
                                             getBranchStatus(field.id, getValues()[name].branches[index].branchName)
@@ -92,9 +92,9 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    {branchStatus.hasOwnProperty("a" + field.id.replaceAll("-", ""))
+                                    {branchStatus.hasOwnProperty(convertIdToString(field.id))
                                         ?
-                                        branchStatus["a" + field.id.replaceAll("-", "")]
+                                        branchStatus[convertIdToString(field.id)]
                                         :
                                         loadingText
                                     }
@@ -112,4 +112,8 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
             <Button onClick={() => append({})} type="button">Add</Button>
         </FormItem>
     )
+}
+
+function convertIdToString(id: string) {
+    return "a" + id.replaceAll("-", "")
 }
