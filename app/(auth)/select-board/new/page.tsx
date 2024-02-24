@@ -50,11 +50,9 @@ const NewKanbanPage = () => {
         window.location.href = "http://localhost:3000/board/" + dataa.kanban.id;
       }
       setFormSuccess(true)
-      
+
     } catch (error) {
-      console.log("-fetch error-------------")
-      console.error(error) //statement 2
-      console.log("====================")
+      console.error(error)
     }
   }
 

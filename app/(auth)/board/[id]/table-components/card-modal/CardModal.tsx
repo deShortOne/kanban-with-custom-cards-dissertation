@@ -101,7 +101,6 @@ export const CardModal = () => {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // âœ… This will be type-safe and validated.
-        console.log(values);
         fetch("/api/card/update/content", {
             method: 'POST',
             headers: {
