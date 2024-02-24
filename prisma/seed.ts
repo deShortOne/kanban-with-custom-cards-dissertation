@@ -57,6 +57,7 @@ async function main() {
     const cardTypeData = [
         { name: 'task' },
         { name: 'bug' },
+        { name: 'test' },
     ]
     const cardType = await prisma.cardType.createMany({
         data: cardTypeData,
@@ -81,9 +82,15 @@ async function main() {
             name: "Task card 1.1",
             isDefault: true,
             cardTypeId: 1,
-            version: 2,
+            version: 3,
             kanbanId: 1,
-        }
+        },
+        {
+            name: "Test card",
+            cardTypeId: 3,
+            version: 1,
+            kanbanId: 1,
+        },
     ]
     const cardTemplate = await prisma.cardTemplate.createMany({
         data: cardTemplateData,
@@ -120,6 +127,41 @@ async function main() {
             sizeX: 1,
             sizeY: 1,
         },
+        {
+            name: 'Basic',
+            order: 1,
+            cardTemplateId: 4,
+            sizeX: 2,
+            sizeY: 3,
+        },
+        {
+            name: 'CheckBox',
+            order: 2,
+            cardTemplateId: 4,
+            sizeX: 1,
+            sizeY: 2,
+        },
+        {
+            name: 'Date picker',
+            order: 3,
+            cardTemplateId: 4,
+            sizeX: 3,
+            sizeY: 3,
+        },
+        {
+            name: 'Drop down',
+            order: 4,
+            cardTemplateId: 4,
+            sizeX: 2,
+            sizeY: 2,
+        },
+        {
+            name: 'GitHub Branch tracker',
+            order: 5,
+            cardTemplateId: 4,
+            sizeX: 2,
+            sizeY: 1,
+        },
 
     ]
     const cardTemplateTab = await prisma.cardTemplateTab.createMany({
@@ -130,21 +172,21 @@ async function main() {
 
     const cardTemplateTabFieldData = [
         {
-            data: "Single line label",
+            data: "Single line label;;",
             posX: 1,
             posY: 1,
             cardTemplateTabId: 1,
             fieldTypeId: 1,
         },
         {
-            data: "Multiline label",
+            data: "Multiline label;;",
             posX: 1,
             posY: 2,
             cardTemplateTabId: 1,
             fieldTypeId: 2,
         },
         {
-            data: "Datepicker label;",
+            data: "Datepicker label;;",
             posX: 1,
             posY: 1,
             cardTemplateTabId: 2,
@@ -219,7 +261,140 @@ async function main() {
             posY: 1,
             cardTemplateTabId: 4,
             fieldTypeId: 8,
-        }
+        },
+        {
+            data: "Single line w/o placeholder optional;;0",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 5,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Single line w/ placeholder optional;Text field;0",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 5,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Single line w/o placeholder required;;1",
+            posX: 1,
+            posY: 3,
+            cardTemplateTabId: 5,
+            fieldTypeId: 1,
+        },
+        {
+            data: "Muli line w/o placeholder optional;;0",
+            posX: 2,
+            posY: 1,
+            cardTemplateTabId: 5,
+            fieldTypeId: 2,
+        },
+        {
+            data: "Muli line w/ placeholder optional;Text area;0",
+            posX: 2,
+            posY: 2,
+            cardTemplateTabId: 5,
+            fieldTypeId: 2,
+        },
+        {
+            data: "Muli line w/o placeholder required;;1",
+            posX: 2,
+            posY: 3,
+            cardTemplateTabId: 5,
+            fieldTypeId: 2,
+        },
+        {
+            data: "CBox optional;0:a,1:b,2:c;0",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 6,
+            fieldTypeId: 6,
+        },
+        {
+            data: "CBox required;0:a,1:b,2:c;1",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 6,
+            fieldTypeId: 6,
+        },
+        {
+            data: "Date picker no default required;;1",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker today optional;today;0",
+            posX: 2,
+            posY: 1,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker yesterday optional;sub 1 day;0",
+            posX: 3,
+            posY: 1,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker 2 weeks ago optional;sub 2 weeks;0",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker 3 months hence optional;add 3 months;0",
+            posX: 2,
+            posY: 2,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker 1 year hence optional;add 1 year;0",
+            posX: 3,
+            posY: 2,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Date picker no default optional;;0",
+            posX: 1,
+            posY: 3,
+            cardTemplateTabId: 7,
+            fieldTypeId: 3,
+        },
+        {
+            data: "Dropdown optional;0:a,1:b,2:c;0",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 8,
+            fieldTypeId: 7,
+        },
+        {
+            data: "Drop down required;0:a,1:b,2:c;1",
+            posX: 1,
+            posY: 2,
+            cardTemplateTabId: 8,
+            fieldTypeId: 7,
+        },
+        {
+            data: "GitHub tracker optional;0",
+            posX: 1,
+            posY: 1,
+            cardTemplateTabId: 9,
+            fieldTypeId: 8,
+        },
+        {
+            data: "GitHub tracker required;1",
+            posX: 2,
+            posY: 1,
+            cardTemplateTabId: 9,
+            fieldTypeId: 8,
+        },
     ]
     const cardTemplateTabField = await prisma.cardTemplateTabField.createMany({
         data: cardTemplateTabFieldData,
@@ -251,6 +426,14 @@ async function main() {
             swimLaneId: 1,
             kanbanId: 1,
             cardTemplateId: 3,
+        },
+        {
+            title: 'test card',
+            order: 2,
+            columnId: 1,
+            swimLaneId: 1,
+            kanbanId: 1,
+            cardTemplateId: 4,
         },
     ]
     const cards = await prisma.card.createMany({
