@@ -72,7 +72,9 @@ export const CardModal = () => {
                         form.setValue(id, item.data)
                         break
                     case 'Date picker':
-                        form.setValue(id, new Date(item.data))
+                        if (item.data !== "") {
+                            form.setValue(id, new Date(item.data))
+                        }
                         break
                     case 'Check boxes':
                         form.setValue(id, item.data.split(","))

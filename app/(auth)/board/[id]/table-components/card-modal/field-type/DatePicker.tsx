@@ -24,15 +24,6 @@ export function DatePicker({ form, fieldTypeData, name }: FieldTypeProp) {
     const data = fieldTypeData.split(";")
 
     const label = data[0]
-    const itemsA: string[][] = data[1].split(",").map(i => i.split(":"))
-
-    const items: { id: string, label: string }[] = []
-    for (let i = 0; i < itemsA.length; i++) {
-        items.push({
-            id: itemsA[i][0],
-            label: itemsA[i][1]
-        })
-    }
 
     return (
         <FormField
