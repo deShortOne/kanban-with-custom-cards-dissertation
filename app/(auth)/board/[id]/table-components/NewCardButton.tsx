@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
 import { useKanbanModal } from "../settings-modal/components/useDialog"
+import { Badge } from "@/components/ui/badge"
 
 interface NewCardInfo {
     id: number
@@ -110,8 +111,12 @@ export const AddNewCardButton = (
                 >
                     {data.map(type => {
                         return (
-                            <DropdownMenuItem onClick={() => newCardAction(type.id)}>
+                            <DropdownMenuItem
+                                className="justify-between"
+                                onClick={() => newCardAction(type.id)}
+                            >
                                 {type.name}
+                                <Badge className="max-h-[24px]" variant="outline">{type.cardType.name}</Badge>
                             </DropdownMenuItem>
                         )
                     })}
