@@ -46,7 +46,7 @@ export const CardModal = () => {
         .map(i => ({ key: i.id, value: i.fieldType.name }))
 
     const schemaForFields = fieldIdAndType ? fieldIdAndType
-        .reduce((obj, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
+        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
 

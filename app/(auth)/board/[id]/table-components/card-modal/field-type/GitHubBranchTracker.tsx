@@ -36,9 +36,9 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
         })
 
         const data = await response.json()
-        updateBranchStatuses(prevInfo => ({ ...prevInfo, ["a" + id.replaceAll("-", "")]: data }))
+        updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, ["a" + id.replaceAll("-", "")]: data }))
     }
-    const [branchStatus, updateBranchStatuses] = useState({ "a": "b" })
+    const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
     useEffect(() => {
         fields.forEach(async (i, idx) =>
             branchStatus.hasOwnProperty("a" + i.id.replaceAll("-", ""))
@@ -81,7 +81,12 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                         className="font-medium aria-readonly"
                                         placeholder="branch name"
                                         onBlur={() => {
-                                            updateBranchStatuses(prevInfo => ({ ...prevInfo, ["a" + field.id.replaceAll("-", "")]: loadingText }))
+                                            updateBranchStatuses((prevInfo: any) => (
+                                                {
+                                                    ...prevInfo,
+                                                    ["a" + field.id.replaceAll("-", "")]: loadingText
+                                                }
+                                            ))
                                             getBranchStatus(field.id, getValues()[name].branches[index].branchName)
                                         }}
                                     />

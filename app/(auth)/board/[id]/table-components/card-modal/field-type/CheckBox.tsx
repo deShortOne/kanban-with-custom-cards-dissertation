@@ -51,7 +51,7 @@ export const CheckboxMultiple = ({ form, fieldTypeData, name }: FieldTypeProp) =
                                                         ? field.onChange([...field.value, item.id])
                                                         : field.onChange(
                                                             field.value?.filter(
-                                                                (value) => value !== item.id
+                                                                (value: any) => value !== item.id
                                                             )
                                                         )
                                                 }}
