@@ -43,10 +43,10 @@ export const CardModal = () => {
     const fieldIdAndType = cardData?.cardTemplate
         .tabs
         .flatMap(i => i.tabFields)
-        .map(i => ({ key: i.id, value: i.fieldType.name }))
+        .map(i => ({ key: i.id, value: i.fieldType.name, data: i.data }))
 
     const schemaForFields = fieldIdAndType ? fieldIdAndType
-        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
+        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value, item.data), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
 
@@ -85,8 +85,7 @@ export const CardModal = () => {
                         if (data.length === 1) {
                             form.setValue(id, {
                                 repo: data[0]
-                            }
-                            )
+                            })
                         } else {
                             form.setValue(id, {
                                 repo: data[0],
@@ -98,12 +97,9 @@ export const CardModal = () => {
                                             "branchName": i.split(":")[1]
                                         }
                                     ))
-                            }
-                            )
+                            })
+                            break
                         }
-
-
-                        break
                 }
             }
         })
@@ -181,8 +177,9 @@ export const CardModal = () => {
                                             .find(i => i.cardTemplateTabFieldId === templateField.id)
 
                                         if (id) {
-                                            templateField.id = id?.id
+                                            templateField.id = id.id
                                         }
+
                                         fields.push(templateField)
                                     }
                                 }
@@ -231,18 +228,29 @@ export const CardModal = () => {
     )
 }
 
-function fieldTypeToZodType(fieldType: string) {
+function fieldTypeToZodType(fieldType: string, data: string) {
+    const temp = data.split(";")
+    const optional = temp[temp.length - 1] === "0"
+
     switch (fieldType) {
         case 'Text field':
         case 'Text area':
-            return z.string()
+            if (optional)
+                return z.string().optional()
+            return z.string().min(1)
         case 'Date picker':
+            if (optional)
+                return z.date().optional()
             return z.date()
         case 'Check boxes':
+            if (optional)
+                return z.array(z.string()).optional()
             return z.array(z.string()).refine((value) => value.some((item) => item), {
                 message: "You have to select at least one item.",
             })
         case 'Drop down':
+            if (optional)
+                return z.string().optional()
             return z.string({
                 required_error: "You have to select at least one item.",
             })
