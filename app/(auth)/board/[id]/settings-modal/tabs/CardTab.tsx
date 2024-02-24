@@ -44,9 +44,10 @@ export const CardTab = ({ id }: { id?: number }) => {
                 kanbanId: id,
             }),
         }).then(async (res) => {
-            const a = await res.json()
-            setDefaultCard(a.find(i => i.isDefault)?.id)
-            return a
+            const listCardTemplates = await res.json() as CardTemplate[]
+            const defaultCardTemplateId = listCardTemplates.find(i => i.isDefault)?.id as number
+            setDefaultCard(defaultCardTemplateId)
+            return listCardTemplates
         }))
     })
 

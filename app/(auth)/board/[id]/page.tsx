@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import { Table } from "./table-components/Table"
 import { Kanban } from ".prisma/client"
 import { KanbanNavBar } from "./components/KanbanNavBar"
@@ -24,14 +23,11 @@ const SelectKanbanPage = async ({
                     order: "asc"
                 }
             },
-            Cards: {
-                include: {
-                    developer: true
-                }
-            }
+            Cards: true
         }
     }) as Kanban
 
+    // prisma should include the included types but seems to be broken
     return (
         <main className="min-h-[95vh]">
             <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />

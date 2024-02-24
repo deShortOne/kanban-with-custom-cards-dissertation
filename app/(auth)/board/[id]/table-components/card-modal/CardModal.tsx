@@ -46,7 +46,7 @@ export const CardModal = () => {
         .map(i => ({ key: i.id, value: i.fieldType.name }))
 
     const schemaForFields = fieldIdAndType ? fieldIdAndType
-        .reduce((obj, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
+        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
 
@@ -101,7 +101,6 @@ export const CardModal = () => {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // âœ… This will be type-safe and validated.
-        console.log(values);
         fetch("/api/card/update/content", {
             method: 'POST',
             headers: {
@@ -113,7 +112,7 @@ export const CardModal = () => {
         })
     }
 
-    const onError = (errors, e) => console.log(errors, e)
+    const onError = (errors: any, e: any) => console.log(errors, e)
 
     const deleteCard = (id: number) => {
         const cardDeleteConfirmMessage = "Are you sure you want to delete this card?\nThis action is irreversable!"

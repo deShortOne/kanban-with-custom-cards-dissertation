@@ -1,17 +1,16 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(req, res) {
+export async function POST(req: Request) {
   const data = await req.json()
 
-  const aa = await prisma.card.findUnique({
+  const card = await prisma.card.findUnique({
     where: {
       id: data.id
     },
     select: {
       id: true,
       title: true,
-      developer: true,
       description: true,
       cardTemplate: {
         select: {
@@ -41,5 +40,5 @@ export async function POST(req, res) {
     }
   })
 
-  return NextResponse.json(aa);
+  return NextResponse.json(card);
 }

@@ -24,7 +24,6 @@ interface CardProps {
     id: number
     title: string
     order: number
-    developer?: User
     description: string | null
     columnId: number
     swimLaneId: number
@@ -204,7 +203,6 @@ export const Table = ({
 
     // new card
     const addCard = async (cardTypeId: number) => {
-        console.log("card type id is " + cardTypeId)
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
         const response = await fetch('/api/card/new', {
             method: 'POST',
@@ -227,7 +225,6 @@ export const Table = ({
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,
-            developer: undefined,
             cardTypeId: cardTypeId,
         } as CardProps)
         setCard(updatedCards)
@@ -235,7 +232,6 @@ export const Table = ({
 
     // remove card
     const removeCard = async (cardTypeId: number) => {
-        console.log("Called")
         if (cardTypeId === -1)
             return
         fetch("/api/card/remove", {

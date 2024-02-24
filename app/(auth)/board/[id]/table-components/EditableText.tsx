@@ -23,7 +23,7 @@ const EditableText = ({ headerItem, type, setDrag }: prop) => {
         setDrag(false)
         setIsEditing(true)
     }
-    const handleChange = (event) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setText(event.target.value);
     }
     const handleBlur = async () => {

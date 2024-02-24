@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma"
-import { Kanban, KanbanColumn, KanbanSwimLane } from "@prisma/client"
+import { KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { NextResponse } from "next/server"
 
-export async function POST(req, res) {
+export async function POST(req: Request) {
   const data = await req.json()
 
   if (data.type === "COLUMN") {
@@ -53,8 +53,6 @@ export async function POST(req, res) {
       }),
     })
   }
-
-
 
   return NextResponse.json("ok")
 }

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function POST(request) {
+export async function POST(request: Request) {
   const data = await request.json()
 
   const latestCardTypeWithId = await prisma.cardTemplate.groupBy({
@@ -16,7 +16,7 @@ export async function POST(request) {
   const latestCardTypeWithIdFlat = latestCardTypeWithId.flatMap(i => {
     return {
       cardTypeId: i.cardTypeId,
-      version: i._max.version
+      version: i._max.version as number
     }
   })
 

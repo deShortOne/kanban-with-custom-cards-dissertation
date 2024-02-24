@@ -4,7 +4,6 @@ import {
 } from "@radix-ui/react-icons"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
@@ -24,7 +23,7 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModal()
 
-    const [data, setData] = useState([])
+    const [data, setData] = useState<{id: number, name: string}[]>([])
 
     useEffect(() => {
         const fetchData = async () => {

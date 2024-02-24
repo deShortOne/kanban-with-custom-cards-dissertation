@@ -231,7 +231,6 @@ async function main() {
         {
             title: 'card 1 2',
             order: 1,
-            developerId: 1,
             columnId: 1,
             swimLaneId: 2,
             kanbanId: 1,
@@ -240,7 +239,6 @@ async function main() {
         {
             title: 'card 2 1',
             order: 1,
-            developerId: null,
             columnId: 2,
             swimLaneId: 1,
             kanbanId: 1,
@@ -249,7 +247,6 @@ async function main() {
         {
             title: 'card github repo',
             order: 1,
-            developerId: null,
             columnId: 1,
             swimLaneId: 1,
             kanbanId: 1,

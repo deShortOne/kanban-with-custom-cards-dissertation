@@ -4,9 +4,7 @@ import { useCardModal } from './card-modal/useDialog'
 import { User } from '@prisma/client'
 import {
     Card,
-    CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -14,10 +12,9 @@ import {
 interface CardProps {
     id: number
     title: string
-    developer?: User
 }
 
-const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {
+const CardInfo: React.FC<CardProps> = ({ id, title }) => {
     const [, drag] = useDrag({
         type: 'div',
         item: { id },
@@ -33,7 +30,6 @@ const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {
         >
             <CardHeader>
                 <CardTitle className="text-base">{title}</CardTitle>
-                <CardDescription>{developer ? developer.email : "No developer"}</CardDescription>
             </CardHeader>
 
         </Card>

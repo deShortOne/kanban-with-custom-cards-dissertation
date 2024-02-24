@@ -11,7 +11,6 @@ const ReeRee = () => {
             try {
                 const response = await fetch('/api/hello')
                 const data = await response.json()
-                console.log(data)
 
                 if (response.ok) {
                     const token = data.user.token

@@ -7,7 +7,6 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 import { DataProp, FieldProp, Tab } from "./Base"
 import { Dispatch, SetStateAction } from "react"
 import { Separator } from '@/components/ui/separator'
-import { nullField } from '../page'
 import { Button } from '@/components/ui/button'
 
 interface prop {

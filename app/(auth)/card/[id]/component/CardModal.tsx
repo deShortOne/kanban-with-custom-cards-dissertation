@@ -121,7 +121,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         setData(newCardData)
     }
 
-    const onError = (errors, e) => console.log(errors, e)
+    const onError = (errors: any, e: any) => console.log(errors, e)
 
     return (
         <Dialog open={openModal} onOpenChange={setOpenModal}>

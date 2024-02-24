@@ -1,5 +1,6 @@
 "use client"
-import { CardType, Permission, UserPermission } from "../tabs/Base"
+import { FieldValues, UseFormRegister } from "react-hook-form"
+import { CardType, Permission } from "../tabs/Base"
 import { useQuery } from "@tanstack/react-query"
 
 interface prop {

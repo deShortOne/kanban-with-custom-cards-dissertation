@@ -18,7 +18,6 @@ model User {
   expiresAt DateTime?
 
   kanbans UserRoleKanban[] @relation("AvailableKanbans")
-  Cards   Card[]
 }
 
 model Kanban {
@@ -163,8 +162,6 @@ model Card {
   order       Int
   description String? @db.Text
 
-  developerId    Int?
-  developer      User?          @relation(fields: [developerId], references: [id])
   columnId       Int
   column         KanbanColumn   @relation(fields: [columnId], references: [id])
   swimLaneId     Int
@@ -176,7 +173,6 @@ model Card {
 
   allTabsFieldInformation CardTabField[]
 
-  @@index([developerId])
   @@index([columnId])
   @@index([swimLaneId])
   @@index([kanbanId])

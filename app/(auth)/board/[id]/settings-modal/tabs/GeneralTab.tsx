@@ -34,7 +34,7 @@ export const GeneralTab = ({ id }: { id?: number }) => {
         })
     }
 
-    const onError = (errors, e) => console.log(errors, e)
+    const onError = (errors: any, e: any) => console.log(errors, e)
     return (
         <TabsContent value="general" className="flex items-center justify-center">
             <Form {...form}>

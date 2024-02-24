@@ -1,7 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 
 export interface FieldTypeProp {
-    form: UseFormReturn<{}, any, {}>,
+    form: UseFormReturn<any, any, any>,
     fieldTypeData: string,
     name: string
 }
@@ -38,10 +38,6 @@ export interface CardData {
         }[]
     },
     "description": string,
-    "developer": {
-        "email": string,
-        "id": number,
-    },
     "id": number,
     "title": string,
 }

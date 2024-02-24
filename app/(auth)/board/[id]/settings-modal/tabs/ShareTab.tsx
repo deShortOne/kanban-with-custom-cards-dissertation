@@ -57,7 +57,7 @@ export const ShareTab = ({ id }: { id?: number }) => {
                 id: negativeCounter,
                 email: "",
             },
-            permission: "VIEWER"
+            permission: Permission.VIEWER
         })
         setUserPermissions(updatedList)
         setNegativeCounter(negativeCounter - 1)

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { FieldTypeProp } from "./Base"
 
-export function DatePicker({ form, fieldTypeData, defaultValues, name }: FieldTypeProp) {
+export function DatePicker({ form, fieldTypeData, name }: FieldTypeProp) {
     const data = fieldTypeData.split(";")
 
     const label = data[0]
