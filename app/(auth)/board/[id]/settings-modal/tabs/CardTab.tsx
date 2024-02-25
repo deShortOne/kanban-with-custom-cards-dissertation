@@ -15,8 +15,6 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
-    FormMessage,
 } from "@/components/ui/form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -28,11 +26,10 @@ import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
 import { CardTemplate } from "./Base"
 import { useState } from "react"
+import Link from 'next/link';
 
 export const CardTab = ({ id }: { id: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
-
-    const { register } = useForm();
 
     const { data: cardTemplates } = useQuery<CardTemplate[]>({
         queryKey: ["boardSetting", id],
@@ -124,9 +121,11 @@ export const CardTab = ({ id }: { id: number }) => {
                                                             <Badge className="max-h-[24px]" variant="outline">{i.cardType.name}</Badge>
                                                         </TableCell>
                                                         <TableCell className="text-right">
-                                                            <Button variant="ghost">
-                                                                <img src="/setting.svg" />
-                                                            </Button>
+                                                            <Link href={"/card/" + i.id}>
+                                                                <Button variant="ghost">
+                                                                    <img src="/setting.svg" />
+                                                                </Button>
+                                                            </Link>
                                                         </TableCell>
                                                     </TableRow>
                                                 )
