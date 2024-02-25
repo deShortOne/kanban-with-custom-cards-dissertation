@@ -23,7 +23,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { FieldTypeProp } from "./Base"
+import { FieldTypeProp, requiredIndicator } from "./Base"
 import { useState } from "react"
 
 export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
@@ -31,7 +31,9 @@ export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
 
     const data = fieldTypeData.split(";")
 
-    const label = data[0]
+    const isRequired = data[2] === "1"
+    const label = data[0] + (isRequired ? requiredIndicator() : "")
+
     const itemsA: string[][] = data[1].split(",").map(i => i.split(":"))
 
     const items: { id: string, label: string }[] = []

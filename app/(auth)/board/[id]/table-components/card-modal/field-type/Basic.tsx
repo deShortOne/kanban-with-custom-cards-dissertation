@@ -1,11 +1,14 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { FieldTypeProp } from "./Base"
+import { FieldTypeProp, requiredIndicator } from "./Base"
 
 export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     const splitData = fieldTypeData.split(";")
-    const label = splitData[0]
+
+    const isRequired = splitData[2] === "1"
+    const label = splitData[0] + (isRequired ? requiredIndicator() : "")
+
     const placeHolder = splitData[1]
 
     return (
@@ -27,7 +30,10 @@ export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
 
 export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     const splitData = fieldTypeData.split(";")
-    const label = splitData[0]
+
+    const isRequired = splitData[2] === "1"
+    const label = splitData[0] + (isRequired ? requiredIndicator() : "")
+
     const placeHolder = splitData[1]
 
     return (
@@ -36,7 +42,7 @@ export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
             name={name}
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>{label}</FormLabel>
+                    <FormLabel>{label}</FormLabel>
                     <FormControl>
                         <Input placeholder={placeHolder} {...field} />
                     </FormControl>

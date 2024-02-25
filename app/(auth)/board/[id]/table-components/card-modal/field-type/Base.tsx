@@ -1,5 +1,10 @@
 import { UseFormReturn } from "react-hook-form";
 
+// TODO: have text with pulse
+export const requiredIndicator = () => {
+    return " *"
+}
+
 export interface FieldTypeProp {
     form: UseFormReturn<any, any, any>,
     fieldTypeData: string,
@@ -41,3 +46,4 @@ export interface CardData {
     "id": number,
     "title": string,
 }
+
