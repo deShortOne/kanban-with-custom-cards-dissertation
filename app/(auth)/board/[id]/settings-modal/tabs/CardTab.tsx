@@ -9,31 +9,30 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { TabsContent } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
 import { CardTemplate } from "./Base"
 import { useState } from "react"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 
 export const CardTab = ({ id }: { id: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
 
-    const { register, handleSubmit } = useForm();
-    function onSubmit(data: any) {
-        fetch("/api/board/settings/card", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                kanbanId: id,
-                ...data
-            }),
-        })
-    }
+    const { register } = useForm();
 
     const { data: cardTemplates } = useQuery<CardTemplate[]>({
         queryKey: ["boardSetting", id],
@@ -53,59 +52,93 @@ export const CardTab = ({ id }: { id: number }) => {
         }))
     })
 
+    const FormSchema = z.object({
+        isDefault: z.string({
+            required_error: "You need to select a notification type.",
+        }),
+    })
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+    })
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        fetch("/api/board/settings/card", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                kanbanId: id,
+                ...data
+            }),
+        })
+    }
+
     if (!cardTemplates)
-        return <p>error</p>
+        return (
+            <TabsContent value="card">
+                Loading
+            </TabsContent>
+        )
 
     return (
         <TabsContent value="card">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* <RadioGroup defaultValue="1"> */}
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">Default</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Card type</TableHead>
-                            <TableHead /> {/* for settings */}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {cardTemplates.map(i => {
-                            return (
-                                <TableRow>
-                                    <TableCell className="font-medium">
-                                        {/* <RadioGroupItem
-                                                {...register("isDefault")}
-                                                value={i.id.toString()}
-                                            /> */}
-                                        <input
-                                            {...register("isDefault")}
-                                            value={i.id.toString()}
-                                            checked={defaultCardId === i.id}
-                                            type="radio"
-                                            className="bg-white w-[25px] h-[25px] rounded-full shadow-[0_2px_10px] shadow-blackA4 hover:bg-violet3 focus:shadow-[0_0_0_2px] focus:shadow-black outline-none cursor-default"
-                                            onChange={() => setDefaultCard(i.id)}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Label>{i.name}</Label>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge className="max-h-[24px]" variant="outline">{i.cardType.name}</Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="ghost">
-                                            <img src="/setting.svg" />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-                {/* </RadioGroup> */}
-                <input type="submit" />
-            </form>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                        control={form.control}
+                        name="isDefault"
+                        render={({ field }) => (
+                            <div>
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={defaultCardId?.toString()}
+                                >
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-[100px]">Default</TableHead>
+                                                <TableHead>Name</TableHead>
+                                                <TableHead>Card type</TableHead>
+                                                <TableHead /> {/* for settings */}
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {cardTemplates.map(i => {
+                                                return (
+                                                    <TableRow>
+                                                        <TableCell>
+                                                            <FormItem className="flex items-center space-x-3 space-y-0">
+                                                                <FormControl>
+                                                                    <RadioGroupItem
+                                                                        {...field}
+                                                                        value={i.id.toString()}
+                                                                        className="ml-[15px]"
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Label>{i.name}</Label>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge className="max-h-[24px]" variant="outline">{i.cardType.name}</Badge>
+                                                        </TableCell>
+                                                        <TableCell className="text-right">
+                                                            <Button variant="ghost">
+                                                                <img src="/setting.svg" />
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                    <Button type="submit">Save</Button>
+                                </RadioGroup>
+                            </div>
+                        )} />
+                </form>
+            </Form>
         </TabsContent>
     )
 }
