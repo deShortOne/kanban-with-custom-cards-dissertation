@@ -96,6 +96,7 @@ export const ShareTab = ({ id }: { id: number }) => {
                                         <Input
                                             {...register(i.user.id + "~useremail")}
                                             defaultValue={i.user.email}
+                                            placeholder="email"
                                         />
                                     </TableCell>
                                     <TableCell>
