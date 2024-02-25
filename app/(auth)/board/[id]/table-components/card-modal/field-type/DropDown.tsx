@@ -73,7 +73,7 @@ export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
                         <PopoverContent className="w-[200px] p-0">
                             <Command>
                                 <CommandInput
-                                    placeholder="Search framework..."
+                                    placeholder="Search..."
                                     className="h-9"
                                 />
                                 <CommandEmpty>No options found.</CommandEmpty>

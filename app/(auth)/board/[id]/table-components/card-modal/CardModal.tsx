@@ -265,6 +265,8 @@ function fieldTypeToZodType(fieldType: string, data: string) {
                 return z.string().optional()
             return z.string({
                 required_error: "You have to select at least one item.",
+            }).min(1, {
+                message: "You must select an item"
             })
         case 'Track Github branch':
             return z.object({
