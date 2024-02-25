@@ -92,21 +92,23 @@ export const CardModal = () => {
                     case 'Track Github branch':
                         const data = item.data.split(";")
 
-                        if (data.length === 1) {
+                        if (data.length === 2 && data[0] === "") {
                             form.setValue(id, {
-                                repo: data[0]
+                                repo: ""
                             })
                         } else {
-                            form.setValue(id, {
-                                repo: data[0],
-                                branches: data[1]
-                                    .split(",")
+                            const branchInfoLis = data[1] === "" ? [] :
+                                data[1].split(",")
                                     .map(i => (
                                         {
                                             "title": i.split(":")[0],
                                             "branchName": i.split(":")[1]
                                         }
                                     ))
+
+                            form.setValue(id, {
+                                repo: data[0],
+                                branches: branchInfoLis
                             })
                             break
                         }
