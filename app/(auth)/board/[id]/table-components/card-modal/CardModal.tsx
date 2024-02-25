@@ -163,10 +163,11 @@ export const CardModal = () => {
                                 </Button>
                             </div>
                         </div>
-                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
+                        
+                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
                             <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
-                                    return <TabsTrigger value={tab.name}>{tab.name}</TabsTrigger>
+                                    return <TabsTrigger value={tab.name} key={tab.name}>{tab.name}</TabsTrigger>
                                 })}
                             </TabsList>
 
@@ -197,37 +198,43 @@ export const CardModal = () => {
                                         fields.push(templateField)
                                     }
                                 }
-                                return <TabsContent value={tab.name}>
+                                return <TabsContent value={tab.name} key={tab.name}>
                                     <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
-                                        {fields.map(field => {
+                                        {fields.map((field, index) => {
                                             if (!field) {
-                                                return <div />
+                                                return <div key={index + tab.name} />
                                             }
                                             switch (field.fieldType.name) {
                                                 case 'Text field':
                                                     return <TextField form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                                 case 'Text area':
                                                     return <TextArea form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                                 case 'Date picker':
                                                     return <DatePicker form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                                 case 'Check boxes':
                                                     return <CheckboxMultiple form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                                 case 'Drop down':
                                                     return <ComboboxForm form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                                 case 'Track Github branch':
                                                     return <GitHubBranchTracker form={form}
                                                         fieldTypeData={field.data}
-                                                        name={"a" + field.id} />
+                                                        name={"a" + field.id}
+                                                        key={field.id} />
                                             }
                                             return <p></p>
                                         })}
