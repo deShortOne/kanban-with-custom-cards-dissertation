@@ -9,11 +9,12 @@ import {
 import { TabsContent } from "@/components/ui/tabs"
 
 import { useForm } from "react-hook-form"
-import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
 import { CardTemplate } from "./Base"
-import { CardTypeDropDown } from "../components/SettingsDropDown"
 import { useState } from "react"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 export const CardTab = ({ id }: { id?: number }) => {
 
@@ -86,19 +87,15 @@ export const CardTab = ({ id }: { id?: number }) => {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Input
-                                            {...register(i.id + "-card")}
-                                            defaultValue={i.name}
-                                        />
+                                        <Label>{i.name}</Label>
                                     </TableCell>
                                     <TableCell>
-                                        <CardTypeDropDown
-                                            cardType={i.cardType.id}
-                                            register={register}
-                                        />
+                                        <Badge className="max-h-[24px]" variant="outline">{i.cardType.name}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <img src="/setting.svg" />
+                                        <Button variant="ghost">
+                                            <img src="/setting.svg" />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             )
