@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Table,
     TableBody,
@@ -14,7 +16,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { TrashIcon } from "@radix-ui/react-icons"
 
-export const ShareTab = ({ id }: { id?: number }) => {
+export const ShareTab = ({ id }: { id: number }) => {
     const { register, handleSubmit, unregister } = useForm()
 
     const [userPermissions, setUserPermissions] = useState<UserPermission[]>([])
@@ -22,14 +24,14 @@ export const ShareTab = ({ id }: { id?: number }) => {
 
     useQuery<UserPermission[]>({
         queryKey: ["userPermission", id],
-        queryFn: () => (fetch("/api/board/users", {
-            method: 'POST',
+        queryFn: () => (fetch("/api/board/settings/share?" +
+            new URLSearchParams({
+                kanbanId: id.toString(),
+            }), {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                kanbanId: id,
-            }),
         }).then(async (res) => {
             const data = await res.json()
             setUserPermissions(data)

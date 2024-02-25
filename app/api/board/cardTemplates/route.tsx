@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const latestCardTypeWithId = await prisma.cardTemplate.groupBy({
     by: ["cardTypeId"],
     where: {
-      kanbanId: parseInt(data["kanbanId"])
+      kanbanId: parseInt(data.kanbanId)
     },
     _max: {
       version: true

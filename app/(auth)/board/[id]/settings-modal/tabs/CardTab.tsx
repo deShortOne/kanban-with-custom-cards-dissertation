@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Table,
     TableBody,
@@ -16,8 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
-export const CardTab = ({ id }: { id?: number }) => {
-
+export const CardTab = ({ id }: { id: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
 
     const { register, handleSubmit } = useForm();
@@ -35,7 +36,7 @@ export const CardTab = ({ id }: { id?: number }) => {
     }
 
     const { data: cardTemplates } = useQuery<CardTemplate[]>({
-        queryKey: ["boardSetting", id],
+        queryKey: ["boardSettingAA", id],
         queryFn: () => (fetch("/api/board/cardTemplates", {
             method: 'POST',
             headers: {
