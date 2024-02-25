@@ -36,15 +36,15 @@ export const CardTab = ({ id }: { id: number }) => {
     }
 
     const { data: cardTemplates } = useQuery<CardTemplate[]>({
-        queryKey: ["boardSettingAA", id],
-        queryFn: () => (fetch("/api/board/cardTemplates", {
-            method: 'POST',
+        queryKey: ["boardSetting", id],
+        queryFn: () => (fetch("/api/board/settings/card?" +
+            new URLSearchParams({
+                kanbanId: id.toString(),
+            }), {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                kanbanId: id,
-            }),
         }).then(async (res) => {
             const listCardTemplates = await res.json() as CardTemplate[]
             const defaultCardTemplateId = listCardTemplates.find(i => i.isDefault)?.id as number

@@ -1,6 +1,24 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export async function GET(request: Request) {
+    const url = new URL(request.url)
+    const kanbanId = parseInt(url.searchParams.get("kanbanId")!)
+
+    const res = await prisma.userRoleKanban.findMany({
+        where: {
+            kanbanId: kanbanId
+        },
+        select: {
+            user: true,
+            permission: true
+        }
+    })
+
+    return NextResponse.json(res)
+}
+
+
 export async function POST(req: Request) {
     const data = await req.json()
 
