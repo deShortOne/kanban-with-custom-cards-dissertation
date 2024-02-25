@@ -96,7 +96,7 @@ export const CardTab = ({ id }: { id: number }) => {
                                                 <TableHead className="w-[100px]">Default</TableHead>
                                                 <TableHead>Name</TableHead>
                                                 <TableHead>Card type</TableHead>
-                                                <TableHead /> {/* for settings */}
+                                                <TableHead />{/* for settings */}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
