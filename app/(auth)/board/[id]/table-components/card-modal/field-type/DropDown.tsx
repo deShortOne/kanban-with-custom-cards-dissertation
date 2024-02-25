@@ -24,8 +24,11 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { FieldTypeProp } from "./Base"
+import { useState } from "react"
 
 export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const [open, setOpen] = useState(false)
+
     const data = fieldTypeData.split(";")
 
     const label = data[0]
@@ -47,7 +50,7 @@ export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
             render={({ field }) => (
                 <FormItem className="flex flex-col">
                     <FormLabel>{label}</FormLabel>
-                    <Popover>
+                    <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                             <FormControl>
                                 <Button
@@ -81,6 +84,7 @@ export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
                                             key={item.label}
                                             onSelect={() => {
                                                 form.setValue(name, item.id)
+                                                setOpen(false)
                                             }}
                                         >
                                             {item.label}
