@@ -65,7 +65,7 @@ export const Title = ({ form, fieldTypeData, name }: FieldTypeProp) => {
                 <FormItem>
                     <FormControl>
                         <Input placeholder="shadcn" {...field}
-                            className="block w-5/6 p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
+                            className="block min-w-[900px] p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

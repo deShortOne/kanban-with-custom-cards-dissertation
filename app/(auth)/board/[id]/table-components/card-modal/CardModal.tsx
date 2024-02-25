@@ -153,13 +153,15 @@ export const CardModal = () => {
             <DialogContent className="h-[90vh] min-w-[90vw]">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
-                        <div className="flex">
+                        <div className="flex justify-between">
                             <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
 
-                            <Button type="submit" className="bg-cyan-500">Save</Button>
-                            <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
-                                <img src="/delete.svg"></img>
-                            </Button>
+                            <div className="flex px-5">
+                                <Button type="submit" className="bg-cyan-500">Save</Button>
+                                <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
+                                    <img src="/delete.svg"></img>
+                                </Button>
+                            </div>
                         </div>
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
