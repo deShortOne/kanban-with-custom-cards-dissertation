@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button"
 import { TrashIcon } from "@radix-ui/react-icons"
 
 export const ShareTab = ({ id }: { id: number }) => {
-    const { register, handleSubmit, unregister } = useForm()
+    const { register, handleSubmit, unregister, setValue } = useForm()
 
     const [userPermissions, setUserPermissions] = useState<UserPermission[]>([])
     const [negativeCounter, setNegativeCounter] = useState(-1)
@@ -102,7 +102,7 @@ export const ShareTab = ({ id }: { id: number }) => {
                                         <UserPermissionDropDown
                                             userId={i.user.id}
                                             defaultValue={i.permission}
-                                            register={register}
+                                            setValue={setValue}
                                         />
                                     </TableCell>
                                     <TableCell>
