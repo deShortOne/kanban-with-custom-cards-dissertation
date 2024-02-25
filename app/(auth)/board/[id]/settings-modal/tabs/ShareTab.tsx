@@ -4,6 +4,8 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableHead,
+    TableHeader,
     TableRow,
 } from "@/components/ui/table"
 import { TabsContent } from "@/components/ui/tabs"
@@ -77,9 +79,15 @@ export const ShareTab = ({ id }: { id: number }) => {
     }
 
     return (
-        <TabsContent value="share" className="max-w-96">
+        <TabsContent value="share">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Role</TableHead>
+                        </TableRow>
+                    </TableHeader>
                     <TableBody>
                         {userPermissions?.map(i => {
                             return (
@@ -107,9 +115,13 @@ export const ShareTab = ({ id }: { id: number }) => {
                         })}
                     </TableBody>
                 </Table>
-                <input type="submit" value="Save" />
+                <div className="flex justify-between">
+                    <Button onClick={addNewUser} variant={"secondary"}>
+                        Add new user
+                    </Button>
+                    <Button type="submit" variant={"outline"}>Save</Button>
+                </div>
             </form>
-            <Button onClick={addNewUser}>Add new user</Button>
         </TabsContent>
     )
 }

@@ -2,6 +2,7 @@
 import { FieldValues, UseFormRegister } from "react-hook-form"
 import { CardType, Permission } from "../tabs/Base"
 import { useQuery } from "@tanstack/react-query"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface prop {
     cardType: number
@@ -40,11 +41,21 @@ interface userPermissionProp {
 }
 
 export const UserPermissionDropDown = ({ userId, defaultValue, register }: userPermissionProp) => {
-
     return (
-        <select {...register(userId + "~user")} defaultValue={defaultValue}>
-            <option value="EDITOR">Editor</option>
-            <option value="VIEWER">Viewer</option>
-        </select>
+        <Select {...register(userId + "~user")} defaultValue={defaultValue.toString()}>
+            <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    <SelectItem value={"EDITOR"}>
+                        Editor
+                    </SelectItem>
+                    <SelectItem value={"VIEWER"}>
+                        Viewer
+                    </SelectItem>
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     )
 }
