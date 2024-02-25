@@ -7,9 +7,8 @@ import { TabsContent } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useKanbanModal } from "../components/useDialog";
 
-export const GeneralTab = ({ id }: { id?: number }) => {
+export const GeneralTab = ({ id, title }: { id: number, title: string }) => {
     const formSchema = z.object({
         kanbanName: z.string()
     })
@@ -17,7 +16,7 @@ export const GeneralTab = ({ id }: { id?: number }) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            kanbanName: useKanbanModal(state => state.title)
+            kanbanName: title
         }
     })
 

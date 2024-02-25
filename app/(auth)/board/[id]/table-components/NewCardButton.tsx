@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
-import { useKanbanModal } from "../settings-modal/components/useDialog"
+import { useKanbanModalSetting } from "../settings-modal/components/useDialog"
 import { Badge } from "@/components/ui/badge"
 
 interface NewCardInfo {
@@ -29,7 +29,7 @@ export const AddNewCardButton = (
             newCardAction: (cardTemplateId: number, cardTypeName: string) => void
         }
 ) => {
-    const kanbanSettingModal = useKanbanModal()
+    const kanbanSettingModal = useKanbanModalSetting()
 
     const [isLoading, setLoading] = useState(true)
     const [data, setData] = useState<NewCardInfo[]>([])
@@ -121,7 +121,7 @@ export const AddNewCardButton = (
                         )
                     })}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen(kanbanId, "card")}>
+                    <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen("card")}>
                         <Pencil2Icon className="mr-2 h-4 w-4" /> Update cards
                     </DropdownMenuItem>
                 </DropdownMenuContent>

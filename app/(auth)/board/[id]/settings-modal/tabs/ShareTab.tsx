@@ -1,7 +1,11 @@
+"use client"
+
 import {
     Table,
     TableBody,
     TableCell,
+    TableHead,
+    TableHeader,
     TableRow,
 } from "@/components/ui/table"
 import { TabsContent } from "@/components/ui/tabs"
@@ -14,22 +18,22 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { TrashIcon } from "@radix-ui/react-icons"
 
-export const ShareTab = ({ id }: { id?: number }) => {
-    const { register, handleSubmit, unregister } = useForm()
+export const ShareTab = ({ id }: { id: number }) => {
+    const { register, handleSubmit, unregister, setValue } = useForm()
 
     const [userPermissions, setUserPermissions] = useState<UserPermission[]>([])
     const [negativeCounter, setNegativeCounter] = useState(-1)
 
     useQuery<UserPermission[]>({
         queryKey: ["userPermission", id],
-        queryFn: () => (fetch("/api/board/users", {
-            method: 'POST',
+        queryFn: () => (fetch("/api/board/settings/share?" +
+            new URLSearchParams({
+                kanbanId: id.toString(),
+            }), {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                kanbanId: id,
-            }),
         }).then(async (res) => {
             const data = await res.json()
             setUserPermissions(data)
@@ -75,9 +79,15 @@ export const ShareTab = ({ id }: { id?: number }) => {
     }
 
     return (
-        <TabsContent value="share" className="max-w-96">
+        <TabsContent value="share">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Role</TableHead>
+                        </TableRow>
+                    </TableHeader>
                     <TableBody>
                         {userPermissions?.map(i => {
                             return (
@@ -86,13 +96,14 @@ export const ShareTab = ({ id }: { id?: number }) => {
                                         <Input
                                             {...register(i.user.id + "~useremail")}
                                             defaultValue={i.user.email}
+                                            placeholder="email"
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <UserPermissionDropDown
                                             userId={i.user.id}
                                             defaultValue={i.permission}
-                                            register={register}
+                                            setValue={setValue}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -105,9 +116,13 @@ export const ShareTab = ({ id }: { id?: number }) => {
                         })}
                     </TableBody>
                 </Table>
-                <input type="submit" value="Save" />
+                <div className="flex justify-between">
+                    <Button onClick={addNewUser} variant={"secondary"}>
+                        Add new user
+                    </Button>
+                    <Button type="submit" variant={"outline"}>Save</Button>
+                </div>
             </form>
-            <Button onClick={addNewUser}>Add new user</Button>
         </TabsContent>
     )
 }

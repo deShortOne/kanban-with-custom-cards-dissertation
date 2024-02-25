@@ -1,7 +1,9 @@
 import { Table } from "./table-components/Table"
-import { Kanban } from ".prisma/client"
 import { KanbanNavBar } from "./components/KanbanNavBar"
+import { SettingModalProvider } from "./settings-modal/components/SettingModalProvider"
+
 import { prisma } from "@/lib/prisma"
+import { redirect } from "next/navigation"
 
 const SelectKanbanPage = async ({
     params
@@ -33,12 +35,15 @@ const SelectKanbanPage = async ({
                 }
             }
         }
-    }) as Kanban
+    })
+    if (kanban === null) {
+        redirect("/select-board")
+    }
 
-    // prisma should include the included types but seems to be broken
     return (
         <main className="min-h-[95vh]">
-            <KanbanNavBar title={kanban.title} kanbanId={parseInt(params.id)} />
+            <SettingModalProvider id={kanban.id} title={kanban.title} />
+            <KanbanNavBar title={kanban.title} />
             <Table
                 id={kanban.id}
                 columns={kanban.KanbanColumns}

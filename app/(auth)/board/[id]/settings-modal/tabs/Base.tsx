@@ -15,8 +15,8 @@ export interface CardType {
 }
 
 export enum Permission {
-    VIEWER,
-    EDITOR
+    VIEWER = "VIEWER",
+    EDITOR = "EDITOR"
 }
 
 export interface UserPermission {

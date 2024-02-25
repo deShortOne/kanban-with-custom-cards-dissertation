@@ -1,7 +1,8 @@
 "use client"
-import { FieldValues, UseFormRegister } from "react-hook-form"
+import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form"
 import { CardType, Permission } from "../tabs/Base"
 import { useQuery } from "@tanstack/react-query"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface prop {
     cardType: number
@@ -36,15 +37,31 @@ export const CardTypeDropDown = ({ cardType, register }: prop) => {
 interface userPermissionProp {
     userId: number
     defaultValue: Permission
-    register: UseFormRegister<FieldValues>
+    setValue: UseFormSetValue<FieldValues>
 }
 
-export const UserPermissionDropDown = ({ userId, defaultValue, register }: userPermissionProp) => {
+export const UserPermissionDropDown = ({ userId, defaultValue, setValue }: userPermissionProp) => {
+
+    setValue(userId + "~user", defaultValue)
 
     return (
-        <select {...register(userId + "~user")} defaultValue={defaultValue}>
-            <option value="EDITOR">Editor</option>
-            <option value="VIEWER">Viewer</option>
-        </select>
+        <Select
+            onValueChange={(val) => setValue(userId + "~user", val)}
+            defaultValue={defaultValue.toString()}
+        >
+            <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    <SelectItem value={"EDITOR"}>
+                        Editor
+                    </SelectItem>
+                    <SelectItem value={"VIEWER"}>
+                        Viewer
+                    </SelectItem>
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     )
 }

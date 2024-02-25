@@ -1,38 +1,26 @@
-"use client"
-
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { ShareTab } from "./tabs/ShareTab";
 import { CardTab } from "./tabs/CardTab";
-import { useQuery } from "@tanstack/react-query";
-import { useKanbanModal } from "./components/useDialog";
+import { useKanbanModalSetting } from "./components/useDialog";
 
-export const KanbanSettingsModal = () => {
-    const id = useKanbanModal(state => state.id)
-    const isOpen = useKanbanModal(state => state.isOpen)
-    const defaultTab = useKanbanModal(state => state.defaultTab)
-    const onClose = useKanbanModal(state => state.onClose)
+export interface KanbanSettingsModalProps {
+    id: number
+    title: string
+}
 
-    // const { data: kanbanData } = useQuery<KanbanData>({
-    //     queryKey: ["card", id],
-    //     queryFn: () => (fetch("/api/", {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             id: id,
-    //         }),
-    //     }).then((res) => res.json()))
-    // })
+export const KanbanSettingsModal = ({ id, title }: KanbanSettingsModalProps) => {
+    const isOpen = useKanbanModalSetting(state => state.isOpen)
+    const defaultTab = useKanbanModalSetting(state => state.defaultTab)
+    const onClose = useKanbanModalSetting(state => state.onClose)
 
     return (
         <Dialog
             open={isOpen}
             onOpenChange={onClose}
         >
-            <DialogContent className="h-[90vh] max-w-[40vw] max-h-[60vh]">
+            <DialogContent className="h-[90vh] max-w-[500px] max-h-[60vh]">
                 <Tabs defaultValue={defaultTab}>
                     <div className="flex justify-center mx-auto p-4">
                         <TabsList>
@@ -42,9 +30,9 @@ export const KanbanSettingsModal = () => {
                         </TabsList>
                     </div>
 
-                    <GeneralTab id={id} />
-                    <CardTab id={id} />
+                    <GeneralTab id={id} title={title} />
                     <ShareTab id={id} />
+                    <CardTab id={id} />
                 </Tabs>
             </DialogContent>
         </Dialog>

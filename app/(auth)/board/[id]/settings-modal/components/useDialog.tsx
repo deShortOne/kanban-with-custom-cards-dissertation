@@ -1,26 +1,20 @@
 import { create } from "zustand";
 
-type KanbanModalStore = {
-  id?: number
-  title?: string
-  isOpen: boolean
-  defaultTab: "general" | "card" | "share"
-  setTitle: (title: string) => void
-  onOpen: (id: number, tab?: "general" | "card" | "share") => void
-  onClose: () => void
+type KanbanModalSetting = {
+    isOpen: boolean
+    defaultTab: "general" | "card" | "share"
+    onOpen: (tab?: "general" | "card" | "share") => void
+    onClose: () => void
 }
 
-export const useKanbanModal = create<KanbanModalStore>((set) => ({
-  id: -1,
-  isOpen: false,
-  defaultTab: "general",
-  setTitle: (title: string) => set({ title }),
-  onOpen: (id: number, tab = "general") => set(
-    {
-      isOpen: true,
-      id,
-      defaultTab: tab
-    }
-  ),
-  onClose: () => set({ isOpen: false, id: -1, title: undefined }),
+export const useKanbanModalSetting = create<KanbanModalSetting>((set) => ({
+    isOpen: false,
+    defaultTab: "general",
+    onOpen: (tab = "general") => set(
+        {
+            isOpen: true,
+            defaultTab: tab
+        }
+    ),
+    onClose: () => set({ isOpen: false }),
 }))
