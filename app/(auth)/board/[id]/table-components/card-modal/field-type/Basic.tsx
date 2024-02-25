@@ -1,18 +1,25 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { FieldTypeProp } from "./Base"
+import { FieldTypeProp, requiredIndicator } from "./Base"
 
 export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const splitData = fieldTypeData.split(";")
+
+    const isRequired = splitData[2] === "1"
+    const label = splitData[0] + (isRequired ? requiredIndicator() : "")
+
+    const placeHolder = splitData[1]
+
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{fieldTypeData}</FormLabel>
+                    <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder={placeHolder} {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -22,15 +29,22 @@ export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
 }
 
 export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const splitData = fieldTypeData.split(";")
+
+    const isRequired = splitData[2] === "1"
+    const label = splitData[0] + (isRequired ? requiredIndicator() : "")
+
+    const placeHolder = splitData[1]
+
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{fieldTypeData}</FormLabel>
+                    <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Textarea placeholder="shadcn" {...field} />
+                        <Input placeholder={placeHolder} {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -51,7 +65,7 @@ export const Title = ({ form, fieldTypeData, name }: FieldTypeProp) => {
                 <FormItem>
                     <FormControl>
                         <Input placeholder="shadcn" {...field}
-                            className="block w-5/6 p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
+                            className="block min-w-[900px] p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

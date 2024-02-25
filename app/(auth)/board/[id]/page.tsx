@@ -25,7 +25,11 @@ const SelectKanbanPage = async ({
             },
             Cards: {
                 include: {
-                    developer: true
+                    cardTemplate: {
+                        select: {
+                            cardType: true
+                        }
+                    }
                 }
             }
         }

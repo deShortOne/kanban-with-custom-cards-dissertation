@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     select: {
       id: true,
       title: true,
-      developer: true,
       description: true,
       cardTemplate: {
         select: {

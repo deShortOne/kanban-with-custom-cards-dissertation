@@ -1,27 +1,31 @@
 import React from 'react'
 import { useDrag } from 'react-dnd'
 import { useCardModal } from './card-modal/useDialog'
-import { User } from '@prisma/client'
 import {
     Card,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 interface CardProps {
     id: number
     title: string
-    developer?: User
+    cardTemplate: {
+        cardType: {
+            id: number
+            name: string
+        }
+    }
 }
 
-const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {
+const CardInfo: React.FC<CardProps> = ({ id, title, cardTemplate }) => {
     const [, drag] = useDrag({
         type: 'div',
         item: { id },
     })
 
-    const cardModal = useCardModal();
+    const cardModal = useCardModal()
 
     return (
         <Card
@@ -30,8 +34,10 @@ const CardInfo: React.FC<CardProps> = ({ id, developer, title }) => {
             className="border-solit border-2 border-[#ccc] cursor-move w-[200px] h-[100px] m-1"
         >
             <CardHeader>
-                <CardTitle className="text-base">{title}</CardTitle>
-                <CardDescription>{developer ? developer.email : "No developer"}</CardDescription>
+                <div className="flex justify-between">
+                    <CardTitle className="text-base">{title}</CardTitle>
+                    <Badge className="max-h-[24px]" variant="outline">{cardTemplate.cardType.name}</Badge>
+                </div>
             </CardHeader>
 
         </Card>

@@ -13,33 +13,47 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
 import { useKanbanModal } from "../settings-modal/components/useDialog"
+import { Badge } from "@/components/ui/badge"
+
+interface NewCardInfo {
+    id: number
+    name: string
+    isDefault: boolean
+    cardType: { name: string }
+}
 
 export const AddNewCardButton = (
     { kanbanId, newCardAction }:
         {
             kanbanId: number,
-            newCardAction: (cardTypeId: number) => void
+            newCardAction: (cardTemplateId: number, cardTypeName: string) => void
         }
 ) => {
     const kanbanSettingModal = useKanbanModal()
 
-    const [data, setData] = useState<{id: number, name: string}[]>([])
+    const [isLoading, setLoading] = useState(true)
+    const [data, setData] = useState<NewCardInfo[]>([])
+    const [defaultNewCard, setDefaultNewCard] = useState<NewCardInfo>()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const idAndTypes = await fetch('/api/card/types', {
-                    method: 'POST',
+                const idAndTypes = await fetch('/api/card/types?' +
+                    new URLSearchParams({
+                        kanbanId: kanbanId.toString(),
+                    }), {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        kanbanId: kanbanId,
-                    }),
                 })
 
-                const data = await idAndTypes.json()
-                setData(data)
+                const idAndTypesData = await idAndTypes.json()
+                setData(idAndTypesData)
+                setDefaultNewCard(idAndTypesData[0])
+                idAndTypesData.forEach((i: NewCardInfo) => i.isDefault ? setDefaultNewCard(i) : null)
+
+                setLoading(false)
             } catch (error) {
                 console.error("Fetch error:", error)
             }
@@ -48,11 +62,40 @@ export const AddNewCardButton = (
         fetchData()
     }, [])
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
+                <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" disabled>
+                    Loading cards
+                </Button>
+                <Separator orientation="vertical" className="h-[10px]" />
+                <Button variant="secondary" className="px-2 shadow-none min-w-[60px]" disabled>
+                    <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-            <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" onClick={() => newCardAction(1)}>
-                New Task
-            </Button>
+            {
+                defaultNewCard
+                    ?
+                    <Button
+                        variant="secondary"
+                        className="px-3 shadow-none min-w-[150px]"
+                        onClick={() => newCardAction(defaultNewCard.id, defaultNewCard.cardType.name)}>
+                        {defaultNewCard.name}
+                    </Button>
+                    :
+                    <Button
+                        variant="default"
+                        className="px-3 shadow-none min-w-[150px]"
+                        disabled>
+                        No default card found
+                    </Button>
+            }
+
             <Separator orientation="vertical" className="h-[10px]" />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -68,8 +111,12 @@ export const AddNewCardButton = (
                 >
                     {data.map(type => {
                         return (
-                            <DropdownMenuItem onClick={() => newCardAction(type.id)}>
+                            <DropdownMenuItem
+                                className="justify-between"
+                                onClick={() => newCardAction(type.id, type.cardType.name)}
+                            >
                                 {type.name}
+                                <Badge className="max-h-[24px]" variant="outline">{type.cardType.name}</Badge>
                             </DropdownMenuItem>
                         )
                     })}

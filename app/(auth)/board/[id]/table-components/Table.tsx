@@ -17,18 +17,21 @@ interface TableInformationProps {
     id: number
     columns: KanbanColumn[]
     swimlanes: KanbanSwimLane[]
-    cards: Card[]
+    cards: CardProps[]
 }
 
 interface CardProps {
     id: number
     title: string
     order: number
-    developer?: User
     description: string | null
     columnId: number
     swimLaneId: number
-    cardTypeId: number
+    cardTemplate: {
+        cardType: {
+            name: string,
+        }
+    }
 }
 
 export const Table = ({
@@ -203,7 +206,7 @@ export const Table = ({
     }
 
     // new card
-    const addCard = async (cardTypeId: number) => {
+    const addCard = async (cardTemplateId: number, cardTypeName: string) => {
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
         const response = await fetch('/api/card/new', {
             method: 'POST',
@@ -213,7 +216,7 @@ export const Table = ({
             body: JSON.stringify({
                 order: orderPos,
                 boardId: boardId,
-                cardTypeId: cardTypeId,
+                cardTemplateId: cardTemplateId,
             }),
         })
 
@@ -226,8 +229,11 @@ export const Table = ({
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,
-            developer: undefined,
-            cardTypeId: cardTypeId,
+            cardTemplate: {
+                cardType: {
+                    name: cardTypeName
+                }
+            }
         } as CardProps)
         setCard(updatedCards)
     }

@@ -40,13 +40,23 @@ export const CardModal = () => {
         }).then((res) => res.json()))
     })
 
+    // stores information about the field template
     const fieldIdAndType = cardData?.cardTemplate
         .tabs
         .flatMap(i => i.tabFields)
-        .map(i => ({ key: i.id, value: i.fieldType.name }))
+        .map(i => ({ key: i.id, value: i.fieldType.name, data: i.data }))
+
+    // converts field template id to actual data id
+    const templateFieldIdToDataId: any = {}
+    cardData?.allTabsFieldInformation.forEach(item => {
+        const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
+        if (dict)
+            templateFieldIdToDataId[dict.key] = item.id
+    })
 
     const schemaForFields = fieldIdAndType ? fieldIdAndType
-        .reduce((obj: any, item) => (obj["a" + item.key] = fieldTypeToZodType(item.value), obj), {})
+        .reduce((obj: any, item) => (
+            obj["a" + templateFieldIdToDataId[item.key]] = fieldTypeToZodType(item.value, item.data), obj), {})
         : { empty: -1 }
     schemaForFields["title" + cardData?.id] = z.string()
 
@@ -72,7 +82,9 @@ export const CardModal = () => {
                         form.setValue(id, item.data)
                         break
                     case 'Date picker':
-                        form.setValue(id, new Date(item.data))
+                        if (item.data !== "") {
+                            form.setValue(id, new Date(item.data))
+                        }
                         break
                     case 'Check boxes':
                         form.setValue(id, item.data.split(","))
@@ -80,19 +92,26 @@ export const CardModal = () => {
                     case 'Track Github branch':
                         const data = item.data.split(";")
 
-                        form.setValue(id, {
-                            repo: data[0],
-                            branches: data[1]
-                                .split(",")
-                                .map(i => (
-                                    {
-                                        "title": i.split(":")[0],
-                                        "branchName": i.split(":")[1]
-                                    }
-                                ))
+                        if (data.length === 2 && data[0] === "") {
+                            form.setValue(id, {
+                                repo: ""
+                            })
+                        } else {
+                            const branchInfoLis = data[1] === "" ? [] :
+                                data[1].split(",")
+                                    .map(i => (
+                                        {
+                                            "title": i.split(":")[0],
+                                            "branchName": i.split(":")[1]
+                                        }
+                                    ))
+
+                            form.setValue(id, {
+                                repo: data[0],
+                                branches: branchInfoLis
+                            })
+                            break
                         }
-                        )
-                        break
                 }
             }
         })
@@ -134,13 +153,15 @@ export const CardModal = () => {
             <DialogContent className="h-[90vh] min-w-[90vw]">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
-                        <div className="flex">
+                        <div className="flex justify-between">
                             <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
 
-                            <Button type="submit" className="bg-cyan-500">Save</Button>
-                            <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
-                                <img src="/delete.svg"></img>
-                            </Button>
+                            <div className="flex px-5">
+                                <Button type="submit" className="bg-cyan-500">Save</Button>
+                                <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
+                                    <img src="/delete.svg"></img>
+                                </Button>
+                            </div>
                         </div>
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name}>
                             <TabsList>
@@ -170,8 +191,9 @@ export const CardModal = () => {
                                             .find(i => i.cardTemplateTabFieldId === templateField.id)
 
                                         if (id) {
-                                            templateField.id = id?.id
+                                            templateField.id = id.id
                                         }
+
                                         fields.push(templateField)
                                     }
                                 }
@@ -220,20 +242,33 @@ export const CardModal = () => {
     )
 }
 
-function fieldTypeToZodType(fieldType: string) {
+function fieldTypeToZodType(fieldType: string, data: string) {
+    const temp = data.split(";")
+    const optional = temp[temp.length - 1] === "0"
+
     switch (fieldType) {
         case 'Text field':
         case 'Text area':
-            return z.string()
+            if (optional)
+                return z.string().optional()
+            return z.string().min(1)
         case 'Date picker':
+            if (optional)
+                return z.date().optional()
             return z.date()
         case 'Check boxes':
+            if (optional)
+                return z.array(z.string()).optional()
             return z.array(z.string()).refine((value) => value.some((item) => item), {
                 message: "You have to select at least one item.",
             })
         case 'Drop down':
+            if (optional)
+                return z.string().optional()
             return z.string({
                 required_error: "You have to select at least one item.",
+            }).min(1, {
+                message: "You must select an item"
             })
         case 'Track Github branch':
             return z.object({
