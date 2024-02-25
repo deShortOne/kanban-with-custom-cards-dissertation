@@ -97,7 +97,7 @@ export const CardModal = () => {
                                 repo: ""
                             })
                         } else {
-                            const branchInfoLis = data[1] === "" ? [] :
+                            const branchInfoLis = data[1] === "" || data[1] === undefined ? [] :
                                 data[1].split(",")
                                     .map(i => (
                                         {
