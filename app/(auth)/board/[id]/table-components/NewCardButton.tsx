@@ -114,6 +114,7 @@ export const AddNewCardButton = (
                             <DropdownMenuItem
                                 className="justify-between"
                                 onClick={() => newCardAction(type.id, type.cardType.name)}
+                                key={type.id}
                             >
                                 {type.name}
                                 <Badge className="max-h-[24px]" variant="outline">{type.cardType.name}</Badge>
