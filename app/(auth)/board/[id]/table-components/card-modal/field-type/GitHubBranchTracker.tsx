@@ -87,7 +87,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                     </TableHeader>
                     <TableBody>
                         {fields.map((field, index) => (
-                            <TableRow>
+                            <TableRow key={field.id + " -> " + index}>
                                 <TableCell>
                                     <Input key={field.id}
                                         {...register(name + `.branches.${index}.title`)}

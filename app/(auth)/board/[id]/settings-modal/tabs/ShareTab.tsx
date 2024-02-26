@@ -91,7 +91,7 @@ export const ShareTab = ({ id }: { id: number }) => {
                     <TableBody>
                         {userPermissions?.map(i => {
                             return (
-                                <TableRow>
+                                <TableRow key={i.user.id}>
                                     <TableCell>
                                         <Input
                                             {...register(i.user.id + "~useremail")}

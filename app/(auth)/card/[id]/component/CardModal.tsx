@@ -30,6 +30,11 @@ interface prop {
 export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, position }: prop) => {
     const [openModal, setOpenModal] = useState(false);
 
+    const splitData = data.split(";")
+    const defaultValues: any = {
+        label: splitData[0]
+    }
+
     const fieldSchema: any = {
         label: z.string().min(1, "Please enter a title")
     }
@@ -37,19 +42,37 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         case 'Text field':
         case 'Text area':
             fieldSchema["placeholder"] = z.string().optional()
-            fieldSchema["optional"] = z.boolean().default(false)
+            defaultValues["placeholder"] = splitData[1]
+
+            fieldSchema["optional"] = z.boolean()
+            defaultValues["optional"] = splitData[2] === "0"
             break;
         case 'Drop down':
         case 'Check boxes':
             fieldSchema["options"] = z.array(z.object({ value: z.string() })).min(1)
+            const options = splitData[1]
+                .split(",")
+                .map(i => {
+                    const val = i.split(":")
+                    val.splice(0, 1)
+
+                    return ({
+                        value: val.join(":")
+                    })
+                })
+            defaultValues["options"] = options
+
             fieldSchema["optional"] = z.boolean().default(false)
+            defaultValues["optional"] = splitData[2] === "0"
             break
         case 'Date picker':
-            fieldSchema["defaultDate"] = z.union(
-                [z.string().optional(),
-                z.string().refine(value => /(today|(add|sub) \d+ (day|week|month|year)s?)/.test(value))]
-            )
+            fieldSchema["defaultDate"] = z.string()
+                .refine(value => /(today|^$|(add|sub) \d+ (day|week|month|year)s?)/.test(value))
+
+            defaultValues["defaultDate"] = splitData[1]
+
             fieldSchema["optional"] = z.boolean().default(false)
+            defaultValues["optional"] = splitData[2] === "0"
             break
         case 'Track Github branch':
             break
@@ -61,9 +84,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            label: data.split(";")[0]
-        }
+        defaultValues: defaultValues
     })
 
     const { control, register } = form;
@@ -119,6 +140,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
             }
         })
         setData(newCardData)
+        setOpenModal(false)
     }
 
     const onError = (errors: any, e: any) => console.log(errors, e)
@@ -233,7 +255,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                             "options" in fieldSchema &&
                             <div className="">
                                 {fields.map((field, index) => (
-                                    <div className="flex">
+                                    <div className="flex" key={field.id}>
                                         <input
                                             key={field.id}
                                             {...register(`options.${index}.value`)}
@@ -250,7 +272,6 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                         <Button
                             type="submit"
                             className="bg-cyan-500"
-                            onClick={() => setOpenModal(false)}
                         >
                             Save
                         </Button>

@@ -96,13 +96,13 @@ export const CardTab = ({ id }: { id: number }) => {
                                                 <TableHead className="w-[100px]">Default</TableHead>
                                                 <TableHead>Name</TableHead>
                                                 <TableHead>Card type</TableHead>
-                                                <TableHead /> {/* for settings */}
+                                                <TableHead />{/* for settings */}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {cardTemplates.map(i => {
                                                 return (
-                                                    <TableRow>
+                                                    <TableRow key={i.id}>
                                                         <TableCell>
                                                             <FormItem className="flex items-center space-x-3 space-y-0">
                                                                 <FormControl>

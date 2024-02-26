@@ -34,7 +34,11 @@ export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setC
                         <TabsList>
                             {cardData.tabs.map((tab, tabIdx) => {
                                 return (
-                                    <TabsTrigger value={tab.name} onClick={() => setCurrentTabIdx(tabIdx)}>
+                                    <TabsTrigger
+                                        value={tab.name}
+                                        onClick={() => setCurrentTabIdx(tabIdx)}
+                                        key={tab.name}
+                                    >
                                         {tab.name}
                                     </TabsTrigger>
                                 )
@@ -51,11 +55,11 @@ export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setC
                                     fields.push([templateField, templateFieldIdx])
                                 }
                             }
-                            return <TabsContent value={tab.name}>
+                            return <TabsContent value={tab.name} key={tab.name}>
                                 <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
-                                    {fields.map(field => {
+                                    {fields.map((field, index) => {
                                         if (!field) {
-                                            return <div />
+                                            return <div key={index + tab.name} />
                                         }
                                         return (
                                             <FieldCell
@@ -63,7 +67,8 @@ export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setC
                                                 cardData={cardData}
                                                 setData={setData}
                                                 position={[tabIdx, field[1]]}
-                                                fieldData={field[0]} />
+                                                fieldData={field[0]}
+                                                key={index + tab.name} />
                                         )
                                     })}
                                 </div>
