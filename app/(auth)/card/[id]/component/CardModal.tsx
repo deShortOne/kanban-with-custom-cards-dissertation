@@ -66,10 +66,9 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
             defaultValues["optional"] = splitData[2] === "0"
             break
         case 'Date picker':
-            fieldSchema["defaultDate"] = z.union(
-                [z.string().optional(),
-                z.string().refine(value => /(today|(add|sub) \d+ (day|week|month|year)s?)/.test(value))]
-            )
+            fieldSchema["defaultDate"] = z.string()
+                .refine(value => /(today|^$|(add|sub) \d+ (day|week|month|year)s?)/.test(value))
+
             defaultValues["defaultDate"] = splitData[1]
 
             fieldSchema["optional"] = z.boolean().default(false)
@@ -141,6 +140,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
             }
         })
         setData(newCardData)
+        setOpenModal(false)
     }
 
     const onError = (errors: any, e: any) => console.log(errors, e)
@@ -272,7 +272,6 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                         <Button
                             type="submit"
                             className="bg-cyan-500"
-                            onClick={() => setOpenModal(false)}
                         >
                             Save
                         </Button>
