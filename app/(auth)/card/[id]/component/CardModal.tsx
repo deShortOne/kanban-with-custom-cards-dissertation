@@ -255,7 +255,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                             "options" in fieldSchema &&
                             <div className="">
                                 {fields.map((field, index) => (
-                                    <div className="flex">
+                                    <div className="flex" key={field.id}>
                                         <input
                                             key={field.id}
                                             {...register(`options.${index}.value`)}
