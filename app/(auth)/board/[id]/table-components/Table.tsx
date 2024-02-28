@@ -259,6 +259,25 @@ export const Table = ({
         setCard(prevCards)
     }
 
+    // for table cell detection
+    const moveCardCell = (cardId: number, columnId: number, swimLaneId: number) => {
+        const prevCards = [...cardsInfo]
+        const card = prevCards.find(i => i.id === cardId) as CardProps
+        if (card.columnId === columnId && card.swimLaneId === swimLaneId) {
+            return
+        }
+
+        card.columnId = columnId
+        card.swimLaneId = swimLaneId
+        card.order = prevCards.reduce(
+            (acc, item) => acc + (
+                (item.columnId === columnId && item.swimLaneId === swimLaneId) ? 1 : 0
+            )
+            , 0) + 1
+
+        setCard(prevCards)
+    }
+
     // new card
     const addCard = async (cardTemplateId: number, cardTypeName: string) => {
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
@@ -327,7 +346,9 @@ export const Table = ({
                         <table>
                             <tbody>
                                 <tr>
-                                    <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                    <TableCell
+                                        onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                        onHover={(item) => moveCardCell(item.id, -1, -1)}
                                         key={"-1 -1"} className="min-w-[220px] max-w-[400px] align-top p-1"
                                     >
                                         {cardsInfo.map((card) =>
@@ -367,7 +388,9 @@ export const Table = ({
                                 <tr key={swimLane.id} className="min-w-[100px]">
                                     <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane} />
                                     {stateColumns.map((cell) => (
-                                        <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                        <TableCell
+                                            onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                            onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
                                             key={cell.id + " " + swimLane.id}
                                         >
                                             {cardsInfo.map((card) =>
