@@ -6,10 +6,14 @@ import { CardProps } from "../Table"
 
 export interface CardPropExtra extends CardProps {
     moveCard: (dragIndex: number, hoverIndex: number) => void
+
+    dragCardId: number
+    setDragCardId: React.Dispatch<React.SetStateAction<number>>
 }
 
 export const CardInfoProvider: React.FC<CardPropExtra> = (
-    { id, title, cardTemplate, order, columnId, swimLaneId, moveCard }
+    { id, title, cardTemplate, order, columnId, swimLaneId,
+        moveCard, dragCardId, setDragCardId }
 ) => {
     const [isMounted, setIsMounted] = useState(false)
 
@@ -29,6 +33,8 @@ export const CardInfoProvider: React.FC<CardPropExtra> = (
             moveCard={moveCard}
             columnId={columnId}
             swimLaneId={swimLaneId}
+            dragCardId={dragCardId}
+            setDragCardId={setDragCardId}
         />
     )
 }

@@ -194,6 +194,7 @@ export const Table = ({
     // move card
     cards.sort(sortCardPropsByOrder)
     const [cardsInfo, setCard] = useState<CardProps[]>(cards)
+    const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
 
         const lisOfCardsInCell = cardsInfo.filter(i => i.columnId === columnId && i.swimLaneId === rowId)
@@ -214,6 +215,7 @@ export const Table = ({
 
         updatedCard.sort(sortCardPropsByOrder)
         setCard(updatedCard)
+        setDragCardId(-1)
 
         // fetch('/api/card/update', {
         //     method: 'POST',
@@ -353,7 +355,13 @@ export const Table = ({
                                     >
                                         {cardsInfo.map((card) =>
                                             card.columnId === -1 && card.swimLaneId === -1 ? (
-                                                <CardInfoProvider {...card} key={card.id} moveCard={moveCard} />
+                                                <CardInfoProvider
+                                                    {...card}
+                                                    key={card.id}
+                                                    moveCard={moveCard}
+                                                    dragCardId={dragCardId}
+                                                    setDragCardId={setDragCardId}
+                                                />
                                             ) : null
                                         )}
                                     </TableCell>
@@ -395,8 +403,13 @@ export const Table = ({
                                         >
                                             {cardsInfo.map((card) =>
                                                 card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
-                                                    <CardInfoProvider {...card} key={card.id}
-                                                        moveCard={moveCard} />
+                                                    <CardInfoProvider
+                                                        {...card}
+                                                        key={card.id}
+                                                        moveCard={moveCard}
+                                                        dragCardId={dragCardId}
+                                                        setDragCardId={setDragCardId}
+                                                    />
                                                 ) : null
                                             )}
                                         </TableCell>

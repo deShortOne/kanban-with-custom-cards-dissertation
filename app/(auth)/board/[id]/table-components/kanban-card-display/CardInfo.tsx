@@ -7,7 +7,8 @@ import { CardClassName, CardDisplay } from './CardDisplay'
 import { CardPropExtra } from './CardInfoProvider'
 
 const CardInfo: React.FC<CardPropExtra> = (
-    { id, title, cardTemplate, order, columnId, swimLaneId, moveCard }
+    { id, title, cardTemplate, order, columnId, swimLaneId,
+        moveCard, dragCardId, setDragCardId }
 ) => {
     const ref = useRef<HTMLDivElement>(null)
     const [{ handlerId }, drop] = useDrop({
@@ -73,12 +74,18 @@ const CardInfo: React.FC<CardPropExtra> = (
         preview(getEmptyImage(), { captureDraggingState: true })
     }, [])
 
+    useEffect(() => {
+        if (isDragging) {
+            setDragCardId(id)
+        }
+    }, [isDragging])
+
     drag(drop(ref))
     return (
         <Card
             onClick={() => cardModal.onOpen(id)}
             ref={ref}
-            className={isDragging ? "opacity-0" : CardClassName}
+            className={(isDragging || dragCardId === id) ? "opacity-0" : CardClassName}
             key={id}
         >
             <CardDisplay
