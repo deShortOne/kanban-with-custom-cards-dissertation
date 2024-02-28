@@ -217,15 +217,21 @@ export const Table = ({
         setCard(updatedCard)
         setDragCardId(-1)
 
-        // fetch('/api/card/update', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         card: updatedCard.find(element => element.id == cardId)
-        //     }),
-        // })
+        fetch('/api/card/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cardList: updatedCard.map(i => ({
+                    id: i.id,
+                    title: i.title,
+                    columnId: i.columnId,
+                    swimLaneId: i.swimLaneId,
+                    order: i.order,
+                }))
+            }),
+        })
     }
 
     // dest card is the card that is being hovered over
