@@ -1,19 +1,36 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+interface updateCardDisplay {
+    id: number,
+    title: string,
+    columnId: number
+    swimLaneId: number,
+    order: number,
+}
+
 export async function POST(req: Request) {
-  const data = (await req.json()).card
+    const data = (await req.json()).cardList as updateCardDisplay[]
+    const dataLoadToDb = []
 
-  await prisma.card.update({
-    where: {
-      id: data.id,
-    },
-    data: {
-      title: data.title,
-      columnId: data.columnId,
-      swimLaneId: data.swimLaneId,
-    },
-  })
+    for (let i = 0; i < data.length; i++) {
+        dataLoadToDb.push(
+            prisma.card.update({
+                where: {
+                    id: data[i].id,
+                },
+                data: {
+                    title: data[i].title,
+                    columnId: data[i].columnId,
+                    swimLaneId: data[i].swimLaneId,
+                    order: data[i].order,
+                },
+            })
+        )
 
-  return new NextResponse("ok")
+    }
+
+    Promise.all(dataLoadToDb)
+
+    return new NextResponse("ok")
 }

@@ -3,14 +3,16 @@ import { useDrop } from 'react-dnd'
 
 interface TableCellProps {
     onDrop: (item: { id: number; type: string }) => void
+    onHover: (item: { id: number, type: string }) => void
     children?: React.ReactNode,
     className?: string,
 }
 
-const TableCell: React.FC<TableCellProps> = ({ onDrop, children, className }) => {
+const TableCell: React.FC<TableCellProps> = ({ onDrop, onHover, children, className }) => {
     const [, drop] = useDrop({
         accept: 'div',
         drop: onDrop,
+        hover: onHover
     })
 
     if (className === undefined) {

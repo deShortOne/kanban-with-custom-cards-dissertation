@@ -1,10 +1,10 @@
 'use client'
-import { Card, KanbanColumn, KanbanSwimLane, User } from "@prisma/client"
+import { KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useEffect, useState } from 'react'
-import CardInfo from './CardInfo'
 import TableCell from './TableCell'
+
 import { DraggableColumn } from "./DraggableColumn"
 import { DraggableSwimLane } from "./DraggableSwimLane"
 import { AddNewCardButton } from "./NewCardButton"
@@ -12,6 +12,8 @@ import { AddNewCardButton } from "./NewCardButton"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useCardModal } from "./card-modal/useDialog"
+import { CustomDragLayer } from "./kanban-card-display/drag/CustomDragLayer"
+import { CardInfoProvider } from "./kanban-card-display/CardInfoProvider"
 
 interface TableInformationProps {
     id: number
@@ -20,11 +22,10 @@ interface TableInformationProps {
     cards: CardProps[]
 }
 
-interface CardProps {
+export interface CardProps {
     id: number
     title: string
     order: number
-    description: string | null
     columnId: number
     swimLaneId: number
     cardTemplate: {
@@ -32,6 +33,10 @@ interface CardProps {
             name: string,
         }
     }
+}
+
+function sortCardPropsByOrder(a: CardProps, b: CardProps) {
+    return a.order - b.order
 }
 
 export const Table = ({
@@ -187,12 +192,30 @@ export const Table = ({
 
     /* CARD */
     // move card
+    cards.sort(sortCardPropsByOrder)
     const [cardsInfo, setCard] = useState<CardProps[]>(cards)
+    const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
+
+        const lisOfCardsInCell = cardsInfo.filter(i => i.columnId === columnId && i.swimLaneId === rowId)
+        const orderIds = new Set(lisOfCardsInCell)
+
+        let orderPos: number;
+        if (lisOfCardsInCell.length === 0) {
+            orderPos = 1
+        } else if (lisOfCardsInCell.length !== orderIds.size) {
+            orderPos = lisOfCardsInCell.length + 1
+        } else {
+            orderPos = (cardsInfo.find(i => i.id === cardId) as CardProps).order
+        }
+
         const updatedCard = cardsInfo.map((card) =>
-            card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId } : card
+            card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId, order: orderPos } : card
         )
+
+        updatedCard.sort(sortCardPropsByOrder)
         setCard(updatedCard)
+        setDragCardId(-1)
 
         fetch('/api/card/update', {
             method: 'POST',
@@ -200,9 +223,67 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                card: updatedCard.find(element => element.id == cardId)
+                cardList: updatedCard.map(i => ({
+                    id: i.id,
+                    title: i.title,
+                    columnId: i.columnId,
+                    swimLaneId: i.swimLaneId,
+                    order: i.order,
+                }))
             }),
         })
+    }
+
+    // dest card is the card that is being hovered over
+    const moveCard = (sourceCardId: number, destCardId: number) => {
+        const prevCards = [...cardsInfo]
+        const sourcePos = prevCards.findIndex(i => i.id === sourceCardId)
+
+        const destPos = prevCards.find(i => i.id === destCardId) as CardProps
+        const destCol = destPos.columnId
+        const destSwim = destPos.swimLaneId
+
+        if (prevCards[sourcePos].columnId === destCol &&
+            prevCards[sourcePos].swimLaneId === destSwim) {
+            const tmpPos = prevCards[sourcePos].order
+            prevCards[sourcePos].order = destPos.order
+            destPos.order = tmpPos
+        } else {
+            prevCards[sourcePos] = {
+                ...prevCards[sourcePos],
+                columnId: destCol,
+                swimLaneId: destSwim,
+                order: destPos.order - 0.5,
+            }
+        }
+
+        const lisOfCardsInCell = prevCards.filter(i => i.columnId === destCol && i.swimLaneId === destSwim)
+        lisOfCardsInCell.sort(sortCardPropsByOrder)
+        for (let i = 0; i < lisOfCardsInCell.length; i++) {
+            lisOfCardsInCell[i].order = i + 1
+        }
+        prevCards.sort(sortCardPropsByOrder)
+
+        setCard(prevCards)
+    }
+
+    // for table cell detection
+    const moveCardCell = (cardId: number, columnId: number, swimLaneId: number) => {
+        const prevCards = [...cardsInfo]
+        const card = prevCards.find(i => i.id === cardId) as CardProps
+        if (card.columnId === columnId && card.swimLaneId === swimLaneId) {
+            return
+        }
+
+        card.columnId = columnId
+        card.swimLaneId = swimLaneId
+        card.order = prevCards.reduce(
+            (acc, item) => acc + (
+                (item.columnId === columnId && item.swimLaneId === swimLaneId) ? 1 : 0
+            )
+            , 0) + 1
+
+        setCard(prevCards)
     }
 
     // new card
@@ -265,6 +346,7 @@ export const Table = ({
 
     return (
         <DndProvider backend={HTML5Backend}>
+            <CustomDragLayer key={new Date().getTime()} />
             <div className="flex min-h-[85vh] h-5 space-x-4">
                 <div>
                     <AddNewCardButton kanbanId={boardId} newCardAction={addCard} />
@@ -272,12 +354,21 @@ export const Table = ({
                         <table>
                             <tbody>
                                 <tr>
-                                    <TableCell onDrop={(item) => handleCardDrop(item.id, -1, -1)}
-                                        key={"-1 -1"} className="min-w-[220px] max-w-[400px] align-top p-1"
+                                    <TableCell
+                                        onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                        onHover={(item) => moveCardCell(item.id, -1, -1)}
+                                        key={"-1 -1"}
+                                        className="absolute h-full min-w-[220px] max-w-[400px] align-top p-1"
                                     >
                                         {cardsInfo.map((card) =>
                                             card.columnId === -1 && card.swimLaneId === -1 ? (
-                                                <CardInfo {...card} key={card.id} />
+                                                <CardInfoProvider
+                                                    {...card}
+                                                    key={card.id}
+                                                    moveCard={moveCard}
+                                                    dragCardId={dragCardId}
+                                                    setDragCardId={setDragCardId}
+                                                />
                                             ) : null
                                         )}
                                     </TableCell>
@@ -312,12 +403,20 @@ export const Table = ({
                                 <tr key={swimLane.id} className="min-w-[100px]">
                                     <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane} />
                                     {stateColumns.map((cell) => (
-                                        <TableCell onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                        <TableCell
+                                            onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                            onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
                                             key={cell.id + " " + swimLane.id}
                                         >
                                             {cardsInfo.map((card) =>
                                                 card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
-                                                    <CardInfo {...card} key={card.id} />
+                                                    <CardInfoProvider
+                                                        {...card}
+                                                        key={card.id}
+                                                        moveCard={moveCard}
+                                                        dragCardId={dragCardId}
+                                                        setDragCardId={setDragCardId}
+                                                    />
                                                 ) : null
                                             )}
                                         </TableCell>
