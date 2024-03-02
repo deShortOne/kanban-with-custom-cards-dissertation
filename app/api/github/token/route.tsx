@@ -8,19 +8,22 @@ const github = new GitHub(process.env.GITHUB_ID!, process.env.GITHUB_SECRET!)
 
 export async function GET(request: Request) {
     const session = await getServerSession(OPTIONS)
-    if (!session?.user?.email) {
+    if (!session?.user) {
         return Response.error()
     }
     const user = await prisma.user.findFirstOrThrow({
         where: {
-            email: session.user.email
+            githubId: session.user.id
+        },
+        include: {
+            UserToken: true
         }
     })
 
-    if (user.expiresAt && user.expiresAt > new Date()) {
+    if (user.UserToken !== null && user.UserToken.expiresAt && user.UserToken.expiresAt > new Date()) {
         return Response.json("Ok")
     }
-    
+
     const state = generateState()
     const url = await github.createAuthorizationURL(state)
     url.searchParams.set("redirect_uri", "http://localhost:3000/api/github/token/callback")
