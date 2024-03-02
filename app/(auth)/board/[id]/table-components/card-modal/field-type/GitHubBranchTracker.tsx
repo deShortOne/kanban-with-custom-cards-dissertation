@@ -12,6 +12,7 @@ const loadingText = "...loading..."
 
 export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     const [tokenIsValid, setTokenIsValid] = useState<"connecting" | "connected" | "invalid token">("connecting")
+    const [numberOfCurrentlyFetchingStatus, setNumberOfCurrentlyFetchingStatus] = useState(0)
 
     const data = fieldTypeData.split(";")
 
@@ -25,6 +26,8 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     })
 
     const getBranchStatus = async (id: string, branchName: string) => {
+        setNumberOfCurrentlyFetchingStatus(numberOfCurrentlyFetchingStatus + 1)
+
         const response = await fetch('/api/github/branch/status?'
             + new URLSearchParams({
                 owner: "deShortOne", // TODO !!!!!!
@@ -39,10 +42,12 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
         if (response.status === 498) {
             setTokenIsValid("invalid token")
+            setNumberOfCurrentlyFetchingStatus(0)
         } else {
             const data = await response.json()
             updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
             setTokenIsValid("connected")
+            setNumberOfCurrentlyFetchingStatus(numberOfCurrentlyFetchingStatus - 1)
         }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
@@ -56,6 +61,13 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
         )
 
     }, [])
+    const refreshBranchStatuses = () => {
+        updateBranchStatuses({})
+        setNumberOfCurrentlyFetchingStatus(0)
+        fields.forEach(async (i, idx) =>
+            await getBranchStatus(i.id, getValues()[name].branches[idx].branchName)
+        )
+    }
 
     return (
         <FormItem className="flex flex-col">
@@ -124,7 +136,21 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                         <TableRow>
                             <TableHead className="w-[20vw]">Feature title</TableHead>
                             <TableHead className="w-[20vw]">Branch name</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>
+                                <div className="flex">
+                                    Status
+                                    <button onClick={() => refreshBranchStatuses()}>
+                                        <img src="/refresh.svg" className={"w-[24px] " +
+                                            (numberOfCurrentlyFetchingStatus === 0 || tokenIsValid === "connecting"
+                                                ?
+                                                "animate-spin"
+                                                :
+                                                "")}
+                                        />
+
+                                    </button>
+                                </div>
+                            </TableHead>
                             <TableHead className="w-[10vw]" />
                         </TableRow>
                     </TableHeader>
