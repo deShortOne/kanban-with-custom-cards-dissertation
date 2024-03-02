@@ -227,7 +227,11 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                         </Button>
                     </li>
                     <li>
-                        <Button variant="destructive" onClick={() => updateNumberOfTabs(tabIdx)}>
+                        <Button
+                            disabled={cardData.tabs.length < 2}
+                            className={cardData.tabs.length < 2 ? "brightness-50" : ""}
+                            variant="destructive"
+                            onClick={() => updateNumberOfTabs(tabIdx)}>
                             Remove current tab
                         </Button>
                     </li>
