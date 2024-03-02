@@ -4,32 +4,54 @@ import { SettingModalProvider } from "./settings-modal/components/SettingModalPr
 
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
+import { getServerSession } from 'next-auth/next'
+import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
 
 const SelectKanbanPage = async ({
     params
 }: {
     params: { id: string }
 }) => {
+    const kanbanId = parseInt(params.id)
+
+    const session = await getServerSession(OPTIONS)
+    if (!session?.user) {
+        return (<div>Invalid session</div>)
+    }
+
+    const userRoleKanban = await prisma.userRoleKanban.findFirst({
+        where: {
+            user: {
+                githubId: session.user.id,
+            },
+            kanbanId: kanbanId,
+        }
+    })
+
+    if (userRoleKanban === null) {
+        return (<div>You're not authorised to visit this board</div>)
+    }
+
     const kanban = await prisma.kanban.findUnique({
         where: {
-            id: parseInt(params.id)
+            id: kanbanId,
         },
         include: {
             KanbanColumns: {
                 orderBy: {
-                    order: "asc"
+                    order: "asc",
                 }
             },
             KanbanSwimLanes: {
                 orderBy: {
-                    order: "asc"
+                    order: "asc",
                 }
             },
             Cards: {
                 include: {
                     cardTemplate: {
                         select: {
-                            cardType: true
+                            cardType: true,
                         }
                     }
                 }
@@ -48,8 +70,9 @@ const SelectKanbanPage = async ({
                 id={kanban.id}
                 columns={kanban.KanbanColumns}
                 swimlanes={kanban.KanbanSwimLanes}
-                cards={kanban.Cards}>
-            </Table>
+                cards={kanban.Cards}
+                role={userRoleKanban.permission}
+            />
         </main>
     )
 }

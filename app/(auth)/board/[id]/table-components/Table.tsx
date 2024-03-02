@@ -1,5 +1,5 @@
 'use client'
-import { KanbanColumn, KanbanSwimLane } from "@prisma/client"
+import { KanbanColumn, KanbanSwimLane, Role } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useEffect, useState } from 'react'
@@ -20,6 +20,7 @@ interface TableInformationProps {
     columns: KanbanColumn[]
     swimlanes: KanbanSwimLane[]
     cards: CardProps[]
+    role: Role
 }
 
 export interface CardProps {
