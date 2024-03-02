@@ -74,21 +74,20 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                 "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300")
                         )
                     }>
-                        <span
-                            className={"w-2 h-2 me-1 rounded-full " +
-                                (
-                                    tokenIsValid === "connecting"
-                                        ?
-                                        "bg-orange-500"
-                                        :
-                                        (tokenIsValid === "connected"
-                                            ?
-                                            "bg-green-500"
-                                            :
-                                            "bg-red-500")
-                                )
-                            }
-                        />
+                        {tokenIsValid === "connecting" || tokenIsValid === "connected"
+                            ?
+                            (<span
+                                className={"w-2 h-2 me-1 rounded-full " +
+                                    (tokenIsValid === "connecting" ? "bg-orange-500" : "bg-green-500")
+                                }
+                            />)
+                            :
+                            <span className="relative me-1 flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                        }
+
                         {tokenIsValid === "invalid token"
                             ?
                             (<a href="http://localhost:3000/api/github/token" target="_blank">invalid token</a>)
