@@ -11,6 +11,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const loadingText = "...loading..."
 
 export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const [tokenIsValid, setTokenIsValid] = useState<"connecting" | "connected" | "invalid token">("connecting")
+    const [numberOfCurrentlyFetchingStatus, setNumberOfCurrentlyFetchingStatus] = useState(0)
 
     const data = fieldTypeData.split(";")
 
@@ -24,6 +26,8 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     })
 
     const getBranchStatus = async (id: string, branchName: string) => {
+        setNumberOfCurrentlyFetchingStatus(numberOfCurrentlyFetchingStatus + 1)
+
         const response = await fetch('/api/github/branch/status?'
             + new URLSearchParams({
                 owner: "deShortOne", // TODO !!!!!!
@@ -36,8 +40,15 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
             },
         })
 
-        const data = await response.json()
-        updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
+        if (response.status === 498) {
+            setTokenIsValid("invalid token")
+            setNumberOfCurrentlyFetchingStatus(0)
+        } else {
+            const data = await response.json()
+            updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
+            setTokenIsValid("connected")
+            setNumberOfCurrentlyFetchingStatus(numberOfCurrentlyFetchingStatus - 1)
+        }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
     useEffect(() => {
@@ -50,10 +61,54 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
         )
 
     }, [])
+    const refreshBranchStatuses = () => {
+        updateBranchStatuses({})
+        setNumberOfCurrentlyFetchingStatus(0)
+        fields.forEach(async (i, idx) =>
+            await getBranchStatus(i.id, getValues()[name].branches[idx].branchName)
+        )
+    }
 
     return (
         <FormItem className="flex flex-col">
-            <FormLabel>{label}</FormLabel>
+            <div className="flex justify-between">
+                <FormLabel>{label}</FormLabel>
+                <div className="flex">
+                    <span className={"inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full " +
+                        (tokenIsValid === "connecting"
+                            ?
+                            "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+                            :
+                            (tokenIsValid === "connected"
+                                ?
+                                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                :
+                                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300")
+                        )
+                    }>
+                        {tokenIsValid === "connecting" || tokenIsValid === "connected"
+                            ?
+                            (<span
+                                className={"w-2 h-2 me-1 rounded-full " +
+                                    (tokenIsValid === "connecting" ? "bg-orange-500" : "bg-green-500")
+                                }
+                            />)
+                            :
+                            <span className="relative me-1 flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                        }
+
+                        {tokenIsValid === "invalid token"
+                            ?
+                            (<a href="http://localhost:3000/api/github/token" target="_blank">invalid token</a>)
+                            :
+                            (<div className="cursor-default">{tokenIsValid}</div>)
+                        }
+                    </span>
+                </div>
+            </div>
             <div className="flex">
                 <Input
                     {...register(name + ".repo", { onBlur: handleSubmit(() => { }) })} // why must something be entered...?
@@ -81,7 +136,21 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                         <TableRow>
                             <TableHead className="w-[20vw]">Feature title</TableHead>
                             <TableHead className="w-[20vw]">Branch name</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>
+                                <div className="flex">
+                                    Status
+                                    <button onClick={() => refreshBranchStatuses()}>
+                                        <img src="/refresh.svg" className={"w-[24px] " +
+                                            (numberOfCurrentlyFetchingStatus === 0 || tokenIsValid === "connecting"
+                                                ?
+                                                "animate-spin"
+                                                :
+                                                "")}
+                                        />
+
+                                    </button>
+                                </div>
+                            </TableHead>
                             <TableHead className="w-[10vw]" />
                         </TableRow>
                     </TableHeader>
