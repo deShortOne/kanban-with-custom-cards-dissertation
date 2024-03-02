@@ -65,7 +65,7 @@ const SelectKanbanPage = async ({
     return (
         <main className="min-h-[95vh]">
             <SettingModalProvider id={kanban.id} title={kanban.title} />
-            <KanbanNavBar title={kanban.title} />
+            <KanbanNavBar title={kanban.title} role={userRoleKanban.permission} />
             <Table
                 id={kanban.id}
                 columns={kanban.KanbanColumns}

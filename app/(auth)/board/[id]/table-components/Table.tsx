@@ -5,8 +5,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import React, { useEffect, useState } from 'react'
 import TableCell from './TableCell'
 
-import { DraggableColumn } from "./DraggableColumn"
-import { DraggableSwimLane } from "./DraggableSwimLane"
 import { AddNewCardButton } from "./NewCardButton"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -14,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { useCardModal } from "./card-modal/useDialog"
 import { CustomDragLayer } from "./kanban-card-display/drag/CustomDragLayer"
 import { CardInfoProvider } from "./kanban-card-display/CardInfoProvider"
+import { DraggableHeader } from "./DraggableHeader"
 
 interface TableInformationProps {
     id: number
@@ -41,7 +40,7 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, columns, swimlanes, cards
+    id, columns, swimlanes, cards, role
 }: TableInformationProps) => {
     const boardId = id
 
@@ -94,12 +93,12 @@ export const Table = ({
     }
 
     // remove column
-    const removeColumn = async (columnId: number, columnOrder: number) => {
-        let hasNoCards = cardsInfo.findIndex(card => card.columnId === columnId) === -1
+    const removeColumn = async (headerId: number, headerOrder: number) => {
+        let hasNoCards = cardsInfo.findIndex(card => card.columnId === headerId) === -1
         if (hasNoCards) {
             const newColumns = [...stateColumns]
 
-            newColumns.splice(columnOrder, 1)
+            newColumns.splice(headerOrder, 1)
             setColumns(newColumns)
 
             fetch('/api/headers/remove', {
@@ -108,7 +107,7 @@ export const Table = ({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: columnId,
+                    id: headerId,
                     type: "COLUMN",
                     boardId: boardId,
                 }),
@@ -167,12 +166,12 @@ export const Table = ({
     }
 
     // remove swim lane
-    const removeSwimLane = async (swimLaneId: number, swimLaneOrder: number) => {
-        let hasNoCards = cardsInfo.findIndex(card => card.swimLaneId === swimLaneId) === -1
+    const removeSwimLane = async (headerId: number, headerOrder: number) => {
+        let hasNoCards = cardsInfo.findIndex(card => card.swimLaneId === headerId) === -1
         if (hasNoCards) {
             const newSwimLane = [...stateSwimLanes]
 
-            newSwimLane.splice(swimLaneOrder, 1)
+            newSwimLane.splice(headerOrder, 1)
             setSwimLanes(newSwimLane)
 
             fetch('/api/headers/remove', {
@@ -181,7 +180,7 @@ export const Table = ({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: swimLaneId,
+                    id: headerId,
                     type: "SWIMLANE",
                     boardId: boardId,
                 }),
@@ -350,7 +349,10 @@ export const Table = ({
             <CustomDragLayer key={new Date().getTime()} />
             <div className="flex min-h-[85vh] h-5 space-x-4">
                 <div>
-                    <AddNewCardButton kanbanId={boardId} newCardAction={addCard} />
+                    <AddNewCardButton
+                        kanbanId={boardId}
+                        role={role}
+                        newCardAction={addCard} />
                     <ScrollArea className="h-[80vh] w-full rounded-md border">
                         <table>
                             <tbody>
@@ -387,22 +389,41 @@ export const Table = ({
                             <tr>
                                 <th />
                                 {stateColumns.map((column, index) => (
-                                    <DraggableColumn key={column.id} column={column} index={index} moveColumn={moveColumn} removeColumn={removeColumn} />
+                                    <DraggableHeader
+                                        key={column.id}
+                                        item={column}
+                                        index={index}
+                                        role={role}
+                                        typeName="COLUMN"
+                                        moveHeader={moveColumn}
+                                        removeHeader={removeColumn}
+                                    />
                                 ))}
-                                <th>
-                                    <button
-                                        type="button"
-                                        onClick={addColumn}
-                                    >
-                                        Add new
-                                    </button>
-                                </th>
+                                {
+                                    role === "EDITOR" &&
+                                    <th>
+                                        <button
+                                            type="button"
+                                            onClick={addColumn}
+                                        >
+                                            Add new
+                                        </button>
+                                    </th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
                             {stateSwimLanes.map((swimLane, index) => (
                                 <tr key={swimLane.id} className="min-w-[100px]">
-                                    <DraggableSwimLane key={swimLane.id} swimLane={swimLane} index={index} moveSwimLane={moveSwimLane} removeSwimLane={removeSwimLane} />
+                                    <DraggableHeader
+                                        key={swimLane.id}
+                                        item={swimLane}
+                                        index={index}
+                                        role={role}
+                                        typeName="SWIMLANE"
+                                        moveHeader={moveSwimLane}
+                                        removeHeader={removeSwimLane}
+                                    />
                                     {stateColumns.map((cell) => (
                                         <TableCell
                                             onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
@@ -424,16 +445,19 @@ export const Table = ({
                                     ))}
                                 </tr>
                             ))}
-                            <tr>
-                                <td>
-                                    <button
-                                        type="button"
-                                        onClick={addSwimLane}
-                                    >
-                                        Add new
-                                    </button>
-                                </td>
-                            </tr>
+                            {
+                                role === "EDITOR" &&
+                                <tr>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            onClick={addSwimLane}
+                                        >
+                                            Add new
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                     <div />
