@@ -188,7 +188,11 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                     <li className="flex justify-between">
                         <span>Rows:</span>
                         <div className="inline-flex">
-                            <button onClick={() => updateNumber(-1, "ROW")}>
+                            <button
+                                disabled={cardData.tabs[tabIdx].sizeX < 2}
+                                className={cardData.tabs[tabIdx].sizeX < 2 ? "brightness-50" : ""}
+                                onClick={() => updateNumber(-1, "ROW")}
+                            >
                                 <ChevronDown />
                             </button>
                             <span className="inline-block align-middle">
@@ -202,7 +206,11 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                     <li className="flex justify-between">
                         <span>Columns:</span>
                         <div className="inline-flex">
-                            <button onClick={() => updateNumber(-1, "COL")}>
+                            <button
+                                disabled={cardData.tabs[tabIdx].sizeY < 2}
+                                className={cardData.tabs[tabIdx].sizeY < 2 ? "brightness-50" : ""}
+                                onClick={() => updateNumber(-1, "COL")}
+                            >
                                 <ChevronDown />
                             </button>
                             <span className="inline-block align-middle">
