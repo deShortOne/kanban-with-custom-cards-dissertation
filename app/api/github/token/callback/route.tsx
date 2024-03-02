@@ -50,5 +50,9 @@ export async function GET(request: Request): Promise<Response> {
         }
     })
 
-    return NextResponse.json("01")
+    return new NextResponse(
+        `<div>Token added successfully</div>
+        <div>I'm yet to discover how to close this tab, so please close by yourself, sorry!</div>`,
+        { status: 200, headers: { 'content-type': 'text/html' } }
+    )
 }
