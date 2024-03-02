@@ -3,24 +3,24 @@ import { OPTIONS } from "../../../auth/[...nextauth]/route"
 import { prisma } from "@/lib/prisma"
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"
+import { CheckToken, CheckTokenReturnProp } from "../../TokenCheck"
 
 export async function GET(request: Request) {
     const session = await getServerSession(OPTIONS)
     if (!session?.user?.email) {
         return Response.error()
     }
-    const user = await prisma.user.findFirstOrThrow({
-        where: {
-            email: session.user.email
-        }
-    })
+    const attemptToGetToken = await CheckToken({ email: session.user.email }) as CheckTokenReturnProp
+    if (!attemptToGetToken.isGood) {
+        return Response.json("Invalid token", { status: 501 })
+    }
 
     const octokit = new Octokit({
         authStrategy: createOAuthUserAuth,
         auth: {
             clientId: process.env.GITHUB_ID!,
             clientSecret: process.env.GITHUB_SECRET!,
-            token: user?.token!,
+            token: attemptToGetToken.token,
         },
     })
 

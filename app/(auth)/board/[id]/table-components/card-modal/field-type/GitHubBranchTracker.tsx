@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const loadingText = "...loading..."
 
 export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+    const [tokenIsValid, setTokenIsValid] = useState<"connecting" | "connected" | "invalid token">("connecting")
 
     const data = fieldTypeData.split(";")
 
@@ -36,8 +37,13 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
             },
         })
 
-        const data = await response.json()
-        updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
+        if (response.status === 498) {
+            setTokenIsValid("invalid token")
+        } else {
+            const data = await response.json()
+            updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
+            setTokenIsValid("connected")
+        }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
     useEffect(() => {
@@ -53,7 +59,40 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
     return (
         <FormItem className="flex flex-col">
-            <FormLabel>{label}</FormLabel>
+            <div className="flex justify-between">
+                <FormLabel>{label}</FormLabel>
+                <div className="flex">
+                    <span className={"inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full " +
+                        (tokenIsValid === "connecting"
+                            ?
+                            "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+                            :
+                            (tokenIsValid === "connected"
+                                ?
+                                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                :
+                                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300")
+                        )
+                    }>
+                        <span
+                            className={"w-2 h-2 me-1 rounded-full " +
+                                (
+                                    tokenIsValid === "connecting"
+                                        ?
+                                        "bg-orange-500"
+                                        :
+                                        (tokenIsValid === "connected"
+                                            ?
+                                            "bg-green-500"
+                                            :
+                                            "bg-red-500")
+                                )
+                            }
+                        />
+                        {tokenIsValid}
+                    </span>
+                </div>
+            </div>
             <div className="flex">
                 <Input
                     {...register(name + ".repo", { onBlur: handleSubmit(() => { }) })} // why must something be entered...?
