@@ -85,7 +85,7 @@ const CardInfo: React.FC<CardPropExtra> = (
         <Card
             onClick={() => cardModal.onOpen(id)}
             ref={ref}
-            className={(isDragging || dragCardId === id) ? "opacity-0" : CardClassName}
+            className={CardClassName + (isDragging || dragCardId === id ? " opacity-0" : "")}
             key={id}
         >
             <CardDisplay
