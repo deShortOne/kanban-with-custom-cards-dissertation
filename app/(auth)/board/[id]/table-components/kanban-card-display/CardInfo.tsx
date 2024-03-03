@@ -65,7 +65,10 @@ const CardInfo: React.FC<CardPropExtra> = (
         item: { id, title, cardTemplate, order, columnId, swimLaneId },
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
-        })
+        }),
+        end: () => {
+            setDragCardId(-1)
+        },
     }), [id, title, cardTemplate])
 
     const cardModal = useCardModal()
