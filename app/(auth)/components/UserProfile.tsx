@@ -23,6 +23,7 @@ export const UserAccount = ({ session }: { session: Session }) => {
                     alt="User Setting button"
                     width={32}
                     height={32}
+                    className="rounded-full"
                 />
             </SheetTrigger>
             <SheetContent>
