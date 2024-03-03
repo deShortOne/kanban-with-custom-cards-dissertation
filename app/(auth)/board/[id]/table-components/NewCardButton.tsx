@@ -62,7 +62,7 @@ export const AddNewCardButton = (
         }
 
         fetchData()
-    }, [])
+    }, [kanbanId])
 
     if (isLoading) {
         return (

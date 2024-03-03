@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { OPTIONS } from "../../auth/[...nextauth]/route"
+import { OPTIONS } from "@/utils/authOptions"
 import { prisma } from "@/lib/prisma"
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"

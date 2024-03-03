@@ -1,4 +1,4 @@
-import { OPTIONS } from '../auth/[...nextauth]/route'
+import { OPTIONS } from "@/utils/authOptions"
 import { NextResponse } from "next/server";
 import { getServerSession } from 'next-auth/next'
 import { prisma } from "@/lib/prisma"

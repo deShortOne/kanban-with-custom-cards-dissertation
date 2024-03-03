@@ -4,7 +4,7 @@ import { createAppAuth } from '@octokit/auth-app'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
-import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
+import { OPTIONS } from "@/utils/authOptions"
 import { GitHubAppUserAuthenticationWithExpiration } from "@octokit/auth-app"
 
 export async function GET(request: Request): Promise<Response> {

@@ -1,5 +1,3 @@
-'use client'
-
 import { prisma } from "@/lib/prisma";
 
 const SelectKanbanPage = async () => {
@@ -22,7 +20,10 @@ const SelectKanbanPage = async () => {
                 <div className="w-full">
                     <div className="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         {boards.map((board) => (
-                            <a href={"http://localhost:3000/board/" + board.id} className="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
+                            <a
+                                href={"http://localhost:3000/board/" + board.id}
+                                key={board.id}
+                                className="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
                                 {board.title}
                             </a>
                         ))}

@@ -27,7 +27,7 @@ export const CardTypeDropDown = ({ cardType, register }: prop) => {
         <select {...register(cardType + "-cardType")} defaultValue={cardType}>
             {cardTypes.map(i => {
                 return (
-                    <option value={i.id}>{i.name}</option>
+                    <option key={i.id} value={i.id}>{i.name}</option>
                 )
             })}
         </select>

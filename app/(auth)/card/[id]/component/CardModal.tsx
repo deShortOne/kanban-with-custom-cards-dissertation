@@ -18,12 +18,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Image from "next/image";
 
 interface prop {
     data: string
     fieldType: FieldTypeProp
     cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp | undefined>>
+    setData: Dispatch<SetStateAction<DataProp>>
     position: number[]
 }
 
@@ -149,7 +150,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         <Dialog open={openModal} onOpenChange={setOpenModal}>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    <img src="/setting.svg" />
+                    <Image src="/setting.svg" alt="update field data" width={24} height={24} />
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[400px]">
@@ -215,7 +216,12 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                                     <Tooltip>
                                                         <TooltipTrigger asChild className="h-[20px]">
                                                             <button type="button">
-                                                                <img src="/help.svg" className="h-[20px]" />
+                                                                <Image
+                                                                    src="/help.svg"
+                                                                    alt="default date rules"
+                                                                    width={20}
+                                                                    height={20}
+                                                                />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
@@ -262,7 +268,12 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                             className="my-1"
                                         />
                                         <button onClick={() => remove(index)}>
-                                            <img src="/delete.svg" />
+                                            <Image
+                                                src="/delete.svg"
+                                                alt="remove option"
+                                                width={24}
+                                                height={24}
+                                            />
                                         </button>
                                     </div>
                                 ))}

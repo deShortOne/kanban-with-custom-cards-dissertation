@@ -27,6 +27,7 @@ import { useQuery } from "@tanstack/react-query"
 import { CardTemplate } from "./Base"
 import { useState } from "react"
 import Link from 'next/link';
+import Image from "next/image"
 
 export const CardTab = ({ id }: { id: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
@@ -123,7 +124,11 @@ export const CardTab = ({ id }: { id: number }) => {
                                                         <TableCell className="text-right">
                                                             <Link href={"/card/" + i.id}>
                                                                 <Button variant="ghost">
-                                                                    <img src="/setting.svg" />
+                                                                    <Image
+                                                                        src="/setting.svg"
+                                                                        alt="Settings"
+                                                                        width={24} height={24}
+                                                                    />
                                                                 </Button>
                                                             </Link>
                                                         </TableCell>

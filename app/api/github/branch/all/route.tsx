@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth"
-import { OPTIONS } from "../../../auth/[...nextauth]/route"
-import { prisma } from "@/lib/prisma"
+import { OPTIONS } from "@/utils/authOptions"
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"
 import { CheckToken, CheckTokenReturnProp } from "../../TokenCheck"

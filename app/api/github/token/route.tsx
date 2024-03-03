@@ -1,7 +1,7 @@
 import { GitHub, generateState } from "arctic"
 import { getServerSession } from "next-auth"
 import { cookies } from "next/headers"
-import { OPTIONS } from "../../auth/[...nextauth]/route"
+import { OPTIONS } from "@/utils/authOptions"
 import { prisma } from "@/lib/prisma"
 
 const github = new GitHub(process.env.GITHUB_ID!, process.env.GITHUB_SECRET!)

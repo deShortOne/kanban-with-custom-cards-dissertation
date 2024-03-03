@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import Image from "next/image"
 
 const loadingText = "...loading..."
 
@@ -51,16 +52,6 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
         }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
-    useEffect(() => {
-        fields.forEach(async (i, idx) =>
-            branchStatus.hasOwnProperty(convertIdToString(i.id))
-                ?
-                null
-                :
-                await getBranchStatus(i.id, getValues()[name].branches[idx].branchName)
-        )
-
-    }, [])
     const refreshBranchStatuses = () => {
         updateBranchStatuses({})
         setNumberOfCurrentlyFetchingStatus(0)
@@ -68,6 +59,9 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
             await getBranchStatus(i.id, getValues()[name].branches[idx].branchName)
         )
     }
+    useEffect(() => {
+        refreshBranchStatuses()
+    }, [refreshBranchStatuses])
 
     return (
         <FormItem className="flex flex-col">
@@ -120,7 +114,12 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                     <Tooltip>
                         <TooltipTrigger asChild className="h-[20px]">
                             <button type="button">
-                                <img src="/help.svg" className="h-[20px]" />
+                                <Image
+                                    src="/help.svg"
+                                    alt="help with repo name and adding branch"
+                                    width={20}
+                                    height={20}
+                                />
                             </button>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -140,12 +139,15 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                 <div className="flex">
                                     Status
                                     <button onClick={() => refreshBranchStatuses()}>
-                                        <img src="/refresh.svg" className={"w-[24px] " +
-                                            (numberOfCurrentlyFetchingStatus === 0 || tokenIsValid === "connecting"
+                                        <Image src="/refresh.svg" className={
+                                            numberOfCurrentlyFetchingStatus === 0 || tokenIsValid === "connecting"
                                                 ?
                                                 "animate-spin"
                                                 :
-                                                "")}
+                                                ""}
+                                            alt="refresh github branch statuses"
+                                            width={24}
+                                            height={24}
                                         />
 
                                     </button>
@@ -191,7 +193,12 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                 </TableCell>
                                 <TableCell>
                                     <button onClick={() => remove(index)}>
-                                        <img src="/delete.svg" />
+                                        <Image
+                                            src="/delete.svg"
+                                            alt="delete branch status checker"
+                                            width={24}
+                                            height={24}
+                                        />
                                     </button>
                                 </TableCell>
                             </TableRow>

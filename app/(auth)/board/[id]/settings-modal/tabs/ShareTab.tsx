@@ -107,8 +107,10 @@ export const ShareTab = ({ id }: { id: number }) => {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Button onClick={() => removeUser(i.user.id)}>
-                                            <TrashIcon />
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => removeUser(i.user.id)}>
+                                            <TrashIcon width={24} height={24} />
                                         </Button>
                                     </TableCell>
                                 </TableRow>
