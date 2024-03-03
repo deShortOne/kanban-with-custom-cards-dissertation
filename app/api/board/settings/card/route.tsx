@@ -14,8 +14,10 @@ export async function GET(request: Request) {
             version: true
         }
     })
+
     const latestCardTypeWithIdFlat = latestCardTypeWithId.flatMap(i => {
         return {
+            kanbanId: kanbanId,
             cardTypeId: i.cardTypeId,
             version: i._max.version as number
         }
