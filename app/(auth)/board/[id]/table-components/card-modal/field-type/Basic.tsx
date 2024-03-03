@@ -44,7 +44,7 @@ export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
                 <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Input placeholder={placeHolder} {...field} />
+                        <Textarea placeholder={placeHolder} {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
