@@ -12,7 +12,7 @@ import { FieldCell } from "./FieldCell"
 interface prop {
     allFieldTypes: FieldTypeProp[]
     cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp | undefined>>
+    setData: Dispatch<SetStateAction<DataProp>>
     currTabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
 }

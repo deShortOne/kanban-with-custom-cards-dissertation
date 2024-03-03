@@ -4,43 +4,20 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { DataProp, FieldProp, Tab } from "./Base"
+import { DataProp, EmptyTab, FieldProp, NewField, Tab } from "./Base"
 import { Dispatch, SetStateAction } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 
 interface prop {
     cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp | undefined>>
-    nullField: FieldProp
+    setData: Dispatch<SetStateAction<DataProp>>
     tabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
     saveDataToDB: () => Promise<void>
 }
 
-const newField = {
-    data: "New input",
-    posX: 1,
-    posY: 1,
-    fieldType: {
-        id: -1,
-        name: "null",
-        description: ""
-    }
-    // instead of using nullField from page, it returns
-    // rEfErEnCeeRrOr: cAnNoT aCcEsS 'nullField' bEfOrE iNiTiAlIzAtIoN
-    // I could put it in SideBar, but
-}
-
-const emptyTab: Tab = {
-    name: "New tab",
-    order: -1,
-    sizeX: 1,
-    sizeY: 1,
-    tabFields: [JSON.parse(JSON.stringify(newField))]
-}
-
-export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx, saveDataToDB }: prop) => {
+export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataToDB }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -54,7 +31,7 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
                 const field = tabFields.find(i => i.posX === x && i.posY === y)
                 if (!field) {
                     tabFields.push({
-                        ...nullField,
+                        ...NewField,
                         posX: x,
                         posY: y,
                     })
@@ -103,7 +80,7 @@ export const SideBar = ({ cardData, setData, tabIdx, nullField, setCurrentTabIdx
         const cardDataTabs = JSON.parse(JSON.stringify(cardData["tabs"]))
         if (value === -1) {
             cardDataTabs.push({
-                ...emptyTab,
+                ...EmptyTab,
                 name: "Tab " + (cardDataTabs.length + 1),
                 order: cardDataTabs.length + 1
             })

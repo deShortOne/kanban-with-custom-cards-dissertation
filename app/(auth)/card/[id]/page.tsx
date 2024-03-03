@@ -1,126 +1,62 @@
-"use client"
 
-import { useEffect, useState } from "react"
-import { SideBar } from "./component/SideBar"
-import { DataProp, FieldTypeProp } from "./component/Base"
-import { CardContent } from "./component/CardContent"
+import { getServerSession } from 'next-auth/next'
 import { prisma } from "@/lib/prisma"
+import MainContent from "./MainContent"
+import { OPTIONS } from '@/app/api/auth/[...nextauth]/route'
+import { Role } from '@prisma/client'
+import { getCardTemplate, getFieldTypes } from './actions'
 
-export const nullField = {
-    id: -1,
-    name: "null",
-    description: ""
-}
-
-export const newField = {
-    data: "Select field",
-    posX: -1,
-    posY: -1,
-    fieldType: nullField
-}
-
-const SelectKanbanPage = ({
+const UpdateCardPage = async ({
     params
 }: {
     params: { id: string }
 }) => {
-    const [data, setData] = useState<DataProp>()
-    const [fieldType, setFieldType] = useState<FieldTypeProp[]>()
-    const [currentTabIdx, setCurrentTabIdx] = useState<number>(0)
-    const [isLoading, setLoading] = useState(true)
-    const [mode, setMode] = useState<"Card contents" | "Card display">();
+    const cardId = parseInt(params.id)
+    const session = await getServerSession(OPTIONS)
 
-    useEffect(() => {
-        const getCardTemplate = async () => {
-            const response = await fetch('/api/card/template?'
-                + new URLSearchParams({
-                    cardTemplateId: params.id,
-                }), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-
-            return await response.json()
-        }
-
-        const getFieldTypes = async () => {
-            const response = await fetch('/api/card/fieldType', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-
-            return await response.json()
-        }
-
-        const fetchBoth = async () => {
-            const dataTemplate = await getCardTemplate() as DataProp
-            const dataField = await getFieldTypes() as FieldTypeProp[]
-
-
-            dataField.unshift(nullField)
-
-            dataTemplate.tabs.forEach(tab => {
-                for (let x = 1; x <= tab.sizeX; x++) {
-                    for (let y = 1; y <= tab.sizeY; y++) {
-                        const field = tab.tabFields.find(i => i.posX === x && i.posY === y)
-                        if (!field) {
-                            tab.tabFields.push({
-                                ...newField,
-                                posX: x,
-                                posY: y,
-                            })
-                        }
+    const userRole = await prisma.userRoleKanban.findFirst({
+        where: {
+            kanban: {
+                CardTemplate: {
+                    some: {
+                        id: cardId
                     }
                 }
-            })
-
-            setData(dataTemplate)
-            setFieldType(dataField)
-            setLoading(false)
-        }
-
-        fetchBoth()
-    }, [])
-
-    const saveDataToDB = async () => {
-        const response = await fetch('/api/card/template', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
-        })
-        if (response.redirected) {
-            window.location.href = response.url;
+            user: {
+                githubId: session?.user.id
+            }
+        },
+        include: {
+            kanban: {
+                select: {
+                    title: true
+                }
+            }
         }
+    })
+
+    if (userRole === null) {
+        return (
+            <div>
+                You do not have access to this board
+            </div>
+        )
+    }
+    if (userRole.permission !== Role.EDITOR) {
+        return (
+            <div>
+                {"You must be an editor on the kanban board, " + userRole.kanban.title + ", to edit cards"}
+            </div>
+        )
     }
 
-    if (isLoading)
-        return <p>Loading</p>
+    const cardTemplate = await getCardTemplate(cardId)
+    const fieldTypes = await getFieldTypes()
 
     return (
-        <main className="min-h-[90vh] flex">
-            <SideBar
-                cardData={data as DataProp}
-                setData={setData}
-                nullField={newField}
-                tabIdx={currentTabIdx}
-                setCurrentTabIdx={setCurrentTabIdx}
-                saveDataToDB={saveDataToDB}
-            />
-            <CardContent
-                allFieldTypes={fieldType as FieldTypeProp[]}
-                cardData={data as DataProp}
-                setData={setData}
-                currTabIdx={currentTabIdx}
-                setCurrentTabIdx={setCurrentTabIdx}
-            />
-        </main>
+        <MainContent cardTemplate={cardTemplate} fieldTypes={fieldTypes} />
     )
 }
 
-export default SelectKanbanPage;
+export default UpdateCardPage;
