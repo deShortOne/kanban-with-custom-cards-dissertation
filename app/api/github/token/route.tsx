@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
     const state = generateState()
     const url = await github.createAuthorizationURL(state)
-    url.searchParams.set("redirect_uri", "http://localhost:3000/api/github/token/callback")
+    url.searchParams.set("redirect_uri", process.env.NEXTAUTH_URL + "/api/github/token/callback")
 
     cookies().set("github_oauth_state", state, {
         path: "/",
