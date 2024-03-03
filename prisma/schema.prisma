@@ -2,179 +2,191 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  token     String?
-  expiresAt DateTime?
+    id       Int     @id @default(autoincrement())
+    email    String? @unique
+    githubId Int     @unique
 
-  kanbans UserRoleKanban[] @relation("AvailableKanbans")
+    kanbans   UserRoleKanban[] @relation("AvailableKanbans")
+    UserToken UserToken?
+}
+
+model UserToken {
+    githubId         Int      @id
+    token            String
+    expiresAt        DateTime
+    refreshToken     String
+    refreshExpiresAt DateTime
+
+    user User @relation(fields: [githubId], references: [githubId])
+
+    @@index([githubId])
 }
 
 model Kanban {
-  id    Int              @id @default(autoincrement())
-  title String
-  users UserRoleKanban[] @relation("KanbanHasUsers")
+    id    Int              @id @default(autoincrement())
+    title String
+    users UserRoleKanban[] @relation("KanbanHasUsers")
 
-  KanbanColumns   KanbanColumn[]
-  KanbanSwimLanes KanbanSwimLane[]
-  Cards           Card[]
-  CardTemplate    CardTemplate[]
+    KanbanColumns   KanbanColumn[]
+    KanbanSwimLanes KanbanSwimLane[]
+    Cards           Card[]
+    CardTemplate    CardTemplate[]
 }
 
 enum Role {
-  EDITOR
-  VIEWER
+    EDITOR
+    VIEWER
 }
 
 model UserRoleKanban {
-  userId     Int
-  user       User   @relation("AvailableKanbans", fields: [userId], references: [id])
-  kanbanId   Int
-  kanban     Kanban @relation("KanbanHasUsers", fields: [kanbanId], references: [id])
-  permission Role
+    userId     Int
+    user       User   @relation("AvailableKanbans", fields: [userId], references: [id])
+    kanbanId   Int
+    kanban     Kanban @relation("KanbanHasUsers", fields: [kanbanId], references: [id])
+    permission Role
 
-  @@id([userId, kanbanId])
-  @@index([userId])
-  @@index([kanbanId])
+    @@id([userId, kanbanId])
+    @@index([userId])
+    @@index([kanbanId])
 }
 
 model KanbanColumn {
-  id    Int    @id @default(autoincrement())
-  title String
-  order Int
+    id    Int    @id @default(autoincrement())
+    title String
+    order Int
 
-  boardId Int
-  board   Kanban @relation(fields: [boardId], references: [id])
+    boardId Int
+    board   Kanban @relation(fields: [boardId], references: [id])
 
-  cards Card[]
+    cards Card[]
 
-  @@index([boardId])
+    @@index([boardId])
 }
 
 model KanbanSwimLane {
-  id    Int    @id @default(autoincrement())
-  title String
-  order Int
+    id    Int    @id @default(autoincrement())
+    title String
+    order Int
 
-  boardId Int
-  board   Kanban @relation(fields: [boardId], references: [id])
+    boardId Int
+    board   Kanban @relation(fields: [boardId], references: [id])
 
-  cards Card[]
+    cards Card[]
 
-  @@index([boardId])
+    @@index([boardId])
 }
 
 // e.g. text area, text field, file upload, checkboxes etc.
 model FieldType {
-  id            Int     @id @default(autoincrement())
-  name          String
-  description   String
-  implemented Boolean @default(false)
+    id          Int     @id @default(autoincrement())
+    name        String
+    description String
+    implemented Boolean @default(false)
 
-  a CardTemplateTabField[]
+    a CardTemplateTabField[]
 }
 
 // e.g. task, bug
 model CardType {
-  id   Int    @id @default(autoincrement())
-  name String
+    id   Int    @id @default(autoincrement())
+    name String
 
-  cards CardTemplate[]
+    cards CardTemplate[]
 }
 
 model CardTemplate {
-  id        Int     @id @default(autoincrement())
-  name      String
-  version   Int
-  isDefault Boolean @default(false)
+    id        Int     @id @default(autoincrement())
+    name      String
+    version   Int
+    isDefault Boolean @default(false)
 
-  cardTypeId Int
-  cardType   CardType @relation(fields: [cardTypeId], references: [id])
-  kanbanId   Int
-  kanban     Kanban   @relation(fields: [kanbanId], references: [id])
+    cardTypeId Int
+    cardType   CardType @relation(fields: [cardTypeId], references: [id])
+    kanbanId   Int
+    kanban     Kanban   @relation(fields: [kanbanId], references: [id])
 
-  tabs CardTemplateTab[]
-  Card Card[]
+    tabs CardTemplateTab[]
+    Card Card[]
 
-  @@index([cardTypeId])
-  @@index([kanbanId])
+    @@index([cardTypeId])
+    @@index([kanbanId])
 }
 
 model CardTemplateTab {
-  id    Int    @id @default(autoincrement())
-  name  String
-  order Int
-  sizeX Int
-  sizeY Int
+    id    Int    @id @default(autoincrement())
+    name  String
+    order Int
+    sizeX Int
+    sizeY Int
 
-  cardTemplateId Int
-  cardTemplate   CardTemplate @relation(fields: [cardTemplateId], references: [id])
+    cardTemplateId Int
+    cardTemplate   CardTemplate @relation(fields: [cardTemplateId], references: [id])
 
-  tabFields CardTemplateTabField[]
+    tabFields CardTemplateTabField[]
 
-  @@unique([order, cardTemplateId])
-  @@index([cardTemplateId])
+    @@unique([order, cardTemplateId])
+    @@index([cardTemplateId])
 }
 
 model CardTemplateTabField {
-  id   Int    @id @default(autoincrement())
-  data String
-  posX Int
-  posY Int
+    id   Int    @id @default(autoincrement())
+    data String
+    posX Int
+    posY Int
 
-  fieldTypeId       Int
-  fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id])
-  cardTemplateTabId Int
-  cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id])
+    fieldTypeId       Int
+    fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id])
+    cardTemplateTabId Int
+    cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id])
 
-  cardTemplateTabField CardTabField[]
+    cardTemplateTabField CardTabField[]
 
-  @@index([fieldTypeId])
-  @@index([cardTemplateTabId])
+    @@index([fieldTypeId])
+    @@index([cardTemplateTabId])
 }
 
 model CardTabField {
-  id   Int    @id @default(autoincrement())
-  data String
+    id   Int    @id @default(autoincrement())
+    data String
 
-  cardId                 Int
-  card                   Card                 @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  cardTemplateTabFieldId Int
-  cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id])
+    cardId                 Int
+    card                   Card                 @relation(fields: [cardId], references: [id], onDelete: Cascade)
+    cardTemplateTabFieldId Int
+    cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id])
 
-  @@index([cardId])
-  @@index([cardTemplateTabFieldId])
+    @@index([cardId])
+    @@index([cardTemplateTabFieldId])
 }
 
 model Card {
-  id          Int     @id @default(autoincrement())
-  title       String
-  order       Int
-  description String? @db.Text
+    id          Int     @id @default(autoincrement())
+    title       String
+    order       Int
+    description String? @db.Text
 
-  columnId       Int
-  column         KanbanColumn   @relation(fields: [columnId], references: [id])
-  swimLaneId     Int
-  swimLane       KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
-  kanbanId       Int
-  kanban         Kanban         @relation(fields: [kanbanId], references: [id])
-  cardTemplateId Int
-  cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id])
+    columnId       Int
+    column         KanbanColumn   @relation(fields: [columnId], references: [id])
+    swimLaneId     Int
+    swimLane       KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+    kanbanId       Int
+    kanban         Kanban         @relation(fields: [kanbanId], references: [id])
+    cardTemplateId Int
+    cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id])
 
-  allTabsFieldInformation CardTabField[]
+    allTabsFieldInformation CardTabField[]
 
-  @@index([columnId])
-  @@index([swimLaneId])
-  @@index([kanbanId])
-  @@index([cardTemplateId])
+    @@index([columnId])
+    @@index([swimLaneId])
+    @@index([kanbanId])
+    @@index([cardTemplateId])
 }

@@ -9,7 +9,7 @@ import { GitHubAppUserAuthenticationWithExpiration } from "@octokit/auth-app"
 
 export async function GET(request: Request): Promise<Response> {
     const session = await getServerSession(OPTIONS)
-    if (!session?.user?.email) {
+    if (!session?.user) {
         return NextResponse.error()
     }
 
@@ -40,13 +40,15 @@ export async function GET(request: Request): Promise<Response> {
 
     const userAuthentication = await auth({ type: "oauth-user", code: code }) as GitHubAppUserAuthenticationWithExpiration
 
-    await prisma.user.update({
+    await prisma.userToken.update({
         where: {
-            email: session.user.email
+            githubId: session.user.id
         },
         data: {
             token: userAuthentication.token,
             expiresAt: userAuthentication.expiresAt,
+            refreshToken: userAuthentication.refreshToken,
+            refreshExpiresAt: userAuthentication.refreshTokenExpiresAt,
         }
     })
 

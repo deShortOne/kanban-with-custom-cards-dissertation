@@ -180,7 +180,7 @@ async function getUserId() {
     }
     const user = await prisma.user.findUniqueOrThrow({
         where: {
-            email: session.user.email as string
+            githubId: session.user.id
         }
     })
     return user.id

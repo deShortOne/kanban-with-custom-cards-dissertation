@@ -6,12 +6,15 @@ import { Octokit } from "@octokit/rest"
 
 export async function GET() {
     const session = await getServerSession(OPTIONS)
-    if (!session?.user?.email) {
+    if (!session?.user) {
         return Response.error()
     }
     const user = await prisma.user.findFirstOrThrow({
         where: {
-            email: session.user.email
+            githubId: session.user.id
+        },
+        include: {
+            UserToken: true,
         }
     })
 
@@ -20,7 +23,7 @@ export async function GET() {
         auth: {
             clientId: process.env.GITHUB_ID!,
             clientSecret: process.env.GITHUB_SECRET!,
-            token: user?.token!,
+            token: user?.UserToken?.token!,
         },
     })
 

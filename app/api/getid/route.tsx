@@ -11,13 +11,13 @@ export async function GET() {
             status: 500,
         })
     }
-    
+
     const user = await prisma.user.findUniqueOrThrow({
         where: {
-            email: session.user.email as string
+            githubId: session.user.id
         }
     })
 
     // the response is something I don't know how to unpack!!
-    return NextResponse.json({ message: user.id});
+    return NextResponse.json({ message: user.id });
 }

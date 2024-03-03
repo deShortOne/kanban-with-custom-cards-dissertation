@@ -3,7 +3,10 @@ import { Role } from "@prisma/client";
 
 async function main() {
     const person = await prisma.user.create({
-        data: { email: 'jingshianggu@gmail.com' }
+        data: {
+            email: 'jingshianggu@gmail.com',
+            githubId: 55034724, // taken from GH
+        }
     })
 
     const kanban = await prisma.kanban.create({

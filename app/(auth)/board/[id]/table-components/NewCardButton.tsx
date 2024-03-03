@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react"
 import { useKanbanModalSetting } from "../settings-modal/components/useDialog"
 import { Badge } from "@/components/ui/badge"
+import { Role } from "@prisma/client"
 
 interface NewCardInfo {
     id: number
@@ -23,9 +24,10 @@ interface NewCardInfo {
 }
 
 export const AddNewCardButton = (
-    { kanbanId, newCardAction }:
+    { kanbanId, role, newCardAction }:
         {
-            kanbanId: number,
+            kanbanId: number
+            role: Role
             newCardAction: (cardTemplateId: number, cardTypeName: string) => void
         }
 ) => {
@@ -121,10 +123,15 @@ export const AddNewCardButton = (
                             </DropdownMenuItem>
                         )
                     })}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen("card")}>
-                        <Pencil2Icon className="mr-2 h-4 w-4" /> Update cards
-                    </DropdownMenuItem>
+                    {
+                        role === Role.EDITOR &&
+                        <div>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen("card")}>
+                                <Pencil2Icon className="mr-2 h-4 w-4" /> Update cards
+                            </DropdownMenuItem>
+                        </div>
+                    }
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

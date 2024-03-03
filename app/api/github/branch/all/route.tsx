@@ -7,10 +7,10 @@ import { CheckToken, CheckTokenReturnProp } from "../../TokenCheck"
 
 export async function GET(request: Request) {
     const session = await getServerSession(OPTIONS)
-    if (!session?.user?.email) {
+    if (!session?.user) {
         return Response.error()
     }
-    const attemptToGetToken = await CheckToken({ email: session.user.email }) as CheckTokenReturnProp
+    const attemptToGetToken = await CheckToken({ githubId: session.user.id }) as CheckTokenReturnProp
     if (!attemptToGetToken.isGood) {
         return Response.json("Invalid token", { status: 501 })
     }

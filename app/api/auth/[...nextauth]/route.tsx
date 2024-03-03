@@ -11,7 +11,55 @@ export const OPTIONS: NextAuthOptions = {
         }),
     ],
     session: { strategy: 'jwt' },
-    secret: process.env.NEXTAUTH_SECRET
+    secret: process.env.NEXTAUTH_SECRET,
+    callbacks: {
+        async signIn({ user, account }) {
+            const gitHubId = parseInt(user.id!)
+            await prisma.user.upsert({
+                where: {
+                    githubId: gitHubId,
+                },
+                create: {
+                    githubId: gitHubId,
+                    email: user.email,
+                },
+                update: {
+
+                }
+            })
+
+            const expiresAtDate = new Date(0)
+            expiresAtDate.setUTCSeconds(account?.expires_at as number)
+            const refreshExpiresAtDate = new Date(0)
+            refreshExpiresAtDate.setUTCSeconds(account?.refresh_token_expires_in as number)
+
+            await prisma.userToken.upsert({
+                where: {
+                    githubId: gitHubId,
+                },
+                create: {
+                    githubId: gitHubId,
+                    token: account?.access_token as string,
+                    expiresAt: expiresAtDate,
+                    refreshToken: account?.refresh_token as string,
+                    refreshExpiresAt: refreshExpiresAtDate,
+                },
+                update: {
+                    token: account?.access_token as string,
+                    expiresAt: expiresAtDate,
+                    refreshToken: account?.refresh_token as string,
+                    refreshExpiresAt: refreshExpiresAtDate,
+                }
+            })
+            return true
+        },
+        async session({ session, token }) {
+            if (session?.user)
+                session.user.id = parseInt(token.sub!)
+
+            return session
+        },
+    }
 }
 
 const handler = NextAuth(OPTIONS)

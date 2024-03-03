@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prisma"
 
-
 interface prop {
-    email: string
+    githubId: number
 }
 
 export interface CheckTokenReturnProp {
@@ -11,19 +10,22 @@ export interface CheckTokenReturnProp {
     errorMessage?: string
 }
 
-export const CheckToken = async ({ email }: prop) => {
+export const CheckToken = async ({ githubId }: prop) => {
     const user = await prisma.user.findFirstOrThrow({
         where: {
-            email: email
+            githubId: githubId
+        },
+        include: {
+            UserToken: true
         }
     })
 
-    if (user.token === null) {
+    if (user.UserToken === null || user.UserToken.token === null) {
         return ({
             isGood: false,
             errorMessage: "No token found"
         })
-    } else if (user.expiresAt !== null && user.expiresAt < new Date()) {
+    } else if (user.UserToken.expiresAt !== null && user.UserToken.expiresAt < new Date()) {
         return ({
             isGood: false,
             errorMessage: "Token expired"
@@ -32,6 +34,6 @@ export const CheckToken = async ({ email }: prop) => {
 
     return ({
         isGood: true,
-        token: user.token
+        token: user.UserToken.token
     })
 }
