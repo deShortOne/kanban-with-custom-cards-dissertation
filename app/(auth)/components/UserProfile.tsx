@@ -12,12 +12,18 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { Session } from "next-auth"
+import Image from "next/image"
 
 export const UserAccount = ({ session }: { session: Session }) => {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <Image
+                    src={session.user.image as string}
+                    alt="User Setting button"
+                    width={32}
+                    height={32}
+                />
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
