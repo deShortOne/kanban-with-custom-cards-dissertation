@@ -67,6 +67,7 @@ async function setBoardInitialData(name: string) {
                     name: "task",
                     version: 1,
                     cardTypeId: 1,
+                    isDefault: true,
                     tabs: {
                         create: [{
                             name: "Base information",
@@ -99,7 +100,7 @@ async function setBoardInitialData(name: string) {
                                 create: {
                                     posX: 1,
                                     posY: 1,
-                                    fieldTypeId: 1,
+                                    fieldTypeId: 8,
                                     data: "To be done",
                                 }
                             }
@@ -159,7 +160,7 @@ async function setBoardInitialData(name: string) {
                 },
                 {
                     cardTemplateTabFieldId: kanban.CardTemplate[0].tabs[0].tabFields[1].id,
-                    data: "You can create Bug cards by clicking on the down arrow next to New Task\nAlternatively, (not yet implemented), you will be able to create new formats inside the card"
+                    data: "You can create Bug cards by clicking on the down arrow next to New Task\nAlternatively, you can customise the cards as you see fit!"
                 },
                 {
                     cardTemplateTabFieldId: kanban.CardTemplate[0].tabs[1].tabFields[0].id,
