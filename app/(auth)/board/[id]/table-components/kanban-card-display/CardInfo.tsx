@@ -75,13 +75,13 @@ const CardInfo: React.FC<CardPropExtra> = (
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true })
-    }, [])
+    })
 
     useEffect(() => {
         if (isDragging) {
             setDragCardId(id)
         }
-    }, [isDragging])
+    }, [isDragging, setDragCardId, id])
 
     drag(drop(ref))
     return (

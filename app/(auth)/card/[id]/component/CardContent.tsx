@@ -8,6 +8,7 @@ import { TabsList } from "@radix-ui/react-tabs"
 import { DataProp, FieldProp, FieldTypeProp } from "./Base"
 import { Card } from "@/components/ui/card"
 import { FieldCell } from "./FieldCell"
+import Image from "next/image";
 
 interface prop {
     allFieldTypes: FieldTypeProp[]
@@ -27,7 +28,12 @@ export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setC
 
                         <Button type="submit" className="bg-cyan-500" disabled>Save</Button>
                         <Button type="button" className="bg-rose-600" disabled>
-                            <img src="/delete.svg"></img>
+                            <Image
+                                src="/delete.svg"
+                                alt="disabled delete button"
+                                width={24}
+                                height={24}
+                            />
                         </Button>
                     </div>
                     <Tabs value={cardData.tabs[currTabIdx].name}>

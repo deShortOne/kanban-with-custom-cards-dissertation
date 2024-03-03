@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import EditableText from './EditableText'
 import { KanbanColumn, Role } from '@prisma/client'
+import Image from 'next/image'
 
 interface DraggableHeaderProps {
     item: {
@@ -47,7 +48,7 @@ export const DraggableHeader: React.FC<DraggableHeaderProps> = (
         <th
             ref={canDrag && role === Role.EDITOR ? (node) => ref(drop(node)) : null}
         >
-            <div>
+            <div className="flex">
                 <EditableText
                     headerItem={item}
                     type={typeName}
@@ -57,7 +58,7 @@ export const DraggableHeader: React.FC<DraggableHeaderProps> = (
                     role === Role.EDITOR &&
                     <button
                         onClick={() => removeHeader(item.id, index)}>
-                        <img src="/delete.svg" />
+                        <Image src="/delete.svg" alt="remove header" width={24} height={24} />
                     </button>
                 }
             </div>

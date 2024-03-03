@@ -16,6 +16,7 @@ import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker";
+import Image from "next/image";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
@@ -159,11 +160,11 @@ export const CardModal = () => {
                             <div className="flex px-5">
                                 <Button type="submit" className="bg-cyan-500">Save</Button>
                                 <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
-                                    <img src="/delete.svg"></img>
+                                    <Image src="/delete.svg" alt="delete card" width={24} height={24} />
                                 </Button>
                             </div>
                         </div>
-                        
+
                         <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
                             <TabsList>
                                 {cardData.cardTemplate.tabs.map(tab => {
@@ -236,7 +237,7 @@ export const CardModal = () => {
                                                         name={"a" + field.id}
                                                         key={field.id} />
                                             }
-                                            return <p></p>
+                                            return <p key={index + tab.name}>Field not implemented!</p>
                                         })}
                                     </div>
                                 </TabsContent>

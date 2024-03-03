@@ -2,9 +2,9 @@
 import { getServerSession } from 'next-auth/next'
 import { prisma } from "@/lib/prisma"
 import MainContent from "./MainContent"
-import { OPTIONS } from '@/app/api/auth/[...nextauth]/route'
 import { Role } from '@prisma/client'
 import { getCardTemplate, getFieldTypes } from './actions'
+import { OPTIONS } from '@/utils/authOptions'
 
 const UpdateCardPage = async ({
     params

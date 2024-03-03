@@ -23,7 +23,7 @@ import { CardTemplateTabFieldModal } from "./CardModal"
 interface prop {
     allFieldTypes: FieldTypeProp[]
     cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp | undefined>>
+    setData: Dispatch<SetStateAction<DataProp>>
     position: number[]
     fieldData: FieldProp
 }

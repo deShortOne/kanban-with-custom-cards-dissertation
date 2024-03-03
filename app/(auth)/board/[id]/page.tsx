@@ -5,7 +5,7 @@ import { SettingModalProvider } from "./settings-modal/components/SettingModalPr
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { getServerSession } from 'next-auth/next'
-import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
+import { OPTIONS } from "@/utils/authOptions"
 
 const SelectKanbanPage = async ({
     params
@@ -29,7 +29,11 @@ const SelectKanbanPage = async ({
     })
 
     if (userRoleKanban === null) {
-        return (<div>You're not authorised to visit this board</div>)
+        return (
+            <div>
+                You&apos;re not authorised to visit this board
+            </div>
+        )
     }
 
     const kanban = await prisma.kanban.findUnique({

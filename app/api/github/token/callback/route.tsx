@@ -4,7 +4,7 @@ import { createAppAuth } from '@octokit/auth-app'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
-import { OPTIONS } from "@/app/api/auth/[...nextauth]/route"
+import { OPTIONS } from "@/utils/authOptions"
 import { GitHubAppUserAuthenticationWithExpiration } from "@octokit/auth-app"
 
 export async function GET(request: Request): Promise<Response> {
@@ -40,11 +40,18 @@ export async function GET(request: Request): Promise<Response> {
 
     const userAuthentication = await auth({ type: "oauth-user", code: code }) as GitHubAppUserAuthenticationWithExpiration
 
-    await prisma.userToken.update({
+    await prisma.userToken.upsert({
         where: {
             githubId: session.user.id
         },
-        data: {
+        update: {
+            token: userAuthentication.token,
+            expiresAt: userAuthentication.expiresAt,
+            refreshToken: userAuthentication.refreshToken,
+            refreshExpiresAt: userAuthentication.refreshTokenExpiresAt,
+        },
+        create: {
+            githubId: session.user.id,
             token: userAuthentication.token,
             expiresAt: userAuthentication.expiresAt,
             refreshToken: userAuthentication.refreshToken,
