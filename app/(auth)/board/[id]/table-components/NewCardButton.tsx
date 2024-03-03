@@ -40,7 +40,7 @@ export const AddNewCardButton = (
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const idAndTypes = await fetch('/api/card/types?' +
+                const idAndTypes = await fetch('/api/board/settings/card?' +
                     new URLSearchParams({
                         kanbanId: kanbanId.toString(),
                     }), {
