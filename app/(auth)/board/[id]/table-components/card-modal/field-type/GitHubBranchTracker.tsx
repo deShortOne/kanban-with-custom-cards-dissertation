@@ -2,7 +2,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input"
 import { FieldTypeProp } from "./Base"
 import { useFieldArray, useFormContext } from "react-hook-form"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -61,7 +61,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
     }
     useEffect(() => {
         refreshBranchStatuses()
-    }, [refreshBranchStatuses])
+    }, []) // only want run once
 
     return (
         <FormItem className="flex flex-col">
