@@ -96,7 +96,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
                         {tokenIsValid === "invalid token"
                             ?
-                            (<a href="http://localhost:3000/api/github/token" target="_blank">invalid token</a>)
+                            (<a href="/api/github/token" target="_blank">invalid token</a>)
                             :
                             (<div className="cursor-default">{tokenIsValid}</div>)
                         }
