@@ -507,7 +507,7 @@ async function main() {
             cardTemplateTabFieldId: 12
         },
         {
-            data: 'prac-diss-project;Feat1:1,Feat2:2,Feat3:3,Feat4:4,Feat5:5,Feat6:6,Feat7:7',
+            data: 'deShortOne/prac-diss-project;Feat1:1,Feat2:2,Feat3:3,Feat4:4,Feat5:5,Feat6:6,Feat7:7',
             cardId: 3,
             cardTemplateTabFieldId: 13
         },
