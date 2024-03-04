@@ -19,6 +19,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import Image from "next/image";
+import { DefaultDate } from "./card-modal-components/DefaultDate";
 
 interface prop {
     data: string
@@ -202,61 +203,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                     </FormItem>
                                 )} />
                         }
-                        {"defaultDate" in fieldSchema &&
-                            <div className="flex">
-                                <FormField
-                                    control={form.control}
-                                    name="defaultDate"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex">
-                                                <FormLabel className="inline-block align-bottom">Default date</FormLabel>
-
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild className="h-[20px]">
-                                                            <button type="button">
-                                                                <Image
-                                                                    src="/help.svg"
-                                                                    alt="default date rules"
-                                                                    width={20}
-                                                                    height={20}
-                                                                />
-                                                            </button>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            <p>There are 2 options</p>
-                                                            <ul>
-                                                                <li>Option 1 is today</li>
-                                                                <li>Option 2 is made up of 3 parts</li>
-                                                                <ul>
-                                                                    <li>Part 1 is add or sub</li>
-                                                                    <li>Part 2 is the number</li>
-                                                                    <li>Part 3 is days, weeks, months or year</li>
-                                                                </ul>
-                                                                <li>Examples:</li>
-                                                                <ul>
-                                                                    <li>add 15 days</li>
-                                                                    <li>sub 1 month</li>
-                                                                    <li>add 1 year</li>
-                                                                    <li>add 1 years</li>
-                                                                </ul>
-                                                            </ul>
-                                                            <p>Currently case sensitive - all needs to be lowercase</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
-                                            </div>
-
-                                            <FormControl>
-                                                <Input placeholder="today" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-
-                            </div>
-                        }
+                        {"defaultDate" in fieldSchema && <DefaultDate />}
                         {
                             "options" in fieldSchema &&
                             <div className="">
