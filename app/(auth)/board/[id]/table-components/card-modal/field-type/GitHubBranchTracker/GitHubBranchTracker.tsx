@@ -1,6 +1,6 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { FieldTypeProp } from "./Base"
+import { FieldTypeProp } from "../Base"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import { useEffect, useState, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Image from "next/image"
+import { SelectOwnerRepo } from "./SelectOwnerRepo"
 
 const loadingText = "...loading..."
 
@@ -19,7 +20,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
     const label = data[0]
 
-    const { getValues, control, register, handleSubmit } = useFormContext();
+    const { getValues, control, register, handleSubmit, setValue } = useFormContext();
 
     const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
         control,
@@ -104,11 +105,11 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                 </div>
             </div>
             <div className="flex">
-                <Input
-                    {...register(name + ".repo", { onBlur: handleSubmit(() => { }) })} // why must something be entered...?
-                    className="w-48"
-                    placeholder="repo"
-                    disabled={getValues()[name].branches?.length !== 0}
+                <SelectOwnerRepo
+                    name={name}
+                    repo={getValues()[name].repo}
+                    isDisabled={getValues()[name].branches?.length !== 0}
+                    setValue={setValue}
                 />
                 <TooltipProvider>
                     <Tooltip>
