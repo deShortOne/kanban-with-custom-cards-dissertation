@@ -13,14 +13,15 @@ export const CustomDefaultDate = () => {
     }
 
     return (
-        <div>
+        <div className="grid grid-cols-3 mt-2">
             <Select
                 onValueChange={(val) => updateCustomDefaultDate(0, val)}
                 defaultValue={"add"}
             >
                 <FormControl>
                     <SelectTrigger>
-                        <SelectValue placeholder="Select to add or subtract" />
+                        <SelectValue
+                            placeholder="Select to add or subtract" />
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent>
