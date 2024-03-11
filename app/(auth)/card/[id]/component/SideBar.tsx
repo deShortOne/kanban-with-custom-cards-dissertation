@@ -3,7 +3,7 @@
 import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
 import { DataProp, EmptyTab, NewField, Tab } from "./Base"
 import { Dispatch, SetStateAction } from "react"
 import { Separator } from '@/components/ui/separator'
@@ -149,7 +149,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                                 className={tabIdx === 0 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx - 1)}
                             >
-                                <ChevronDown />
+                                <ChevronLeft />
                             </button>
                             <span className="inline-block align-middle">
                                 {tabIdx + 1}
@@ -159,7 +159,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                                 className={tabIdx === cardData["tabs"].length - 1 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx + 1)}
                             >
-                                <ChevronUp />
+                                <ChevronRight />
                             </button>
                         </div>
                     </li>
@@ -171,13 +171,13 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                                 className={cardData.tabs[tabIdx].sizeX < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "ROW")}
                             >
-                                <ChevronDown />
+                                <ChevronUp />
                             </button>
                             <span className="inline-block align-middle">
                                 {cardData.tabs[tabIdx].sizeX}
                             </span>
                             <button onClick={() => updateNumber(1, "ROW")}>
-                                <ChevronUp />
+                                <ChevronDown />
                             </button>
                         </div>
                     </li>
@@ -189,13 +189,13 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                                 className={cardData.tabs[tabIdx].sizeY < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "COL")}
                             >
-                                <ChevronDown />
+                                <ChevronLeft />
                             </button>
                             <span className="inline-block align-middle">
                                 {cardData.tabs[tabIdx].sizeY}
                             </span>
                             <button onClick={() => updateNumber(1, "COL")}>
-                                <ChevronUp />
+                                <ChevronRight />
                             </button>
                         </div>
                     </li>
