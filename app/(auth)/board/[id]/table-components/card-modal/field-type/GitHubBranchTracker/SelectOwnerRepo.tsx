@@ -66,7 +66,7 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
                             <SelectGroup>
                                 {
                                     repoData.map(i =>
-                                        <SelectItem value={i}>
+                                        <SelectItem value={i} key={i}>
                                             {i}
                                         </SelectItem>
                                     )
