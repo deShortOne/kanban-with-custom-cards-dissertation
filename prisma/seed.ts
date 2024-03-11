@@ -343,14 +343,14 @@ async function main() {
             fieldTypeId: 3,
         },
         {
-            data: "Date picker 2 weeks ago optional;sub 2 weeks;0",
+            data: "Date picker 2 weeks ago optional;sub 2 week;0",
             posX: 1,
             posY: 2,
             cardTemplateTabId: 7,
             fieldTypeId: 3,
         },
         {
-            data: "Date picker 3 months hence optional;add 3 months;0",
+            data: "Date picker 3 months hence optional;add 3 month;0",
             posX: 2,
             posY: 2,
             cardTemplateTabId: 7,
@@ -507,7 +507,7 @@ async function main() {
             cardTemplateTabFieldId: 12
         },
         {
-            data: 'prac-diss-project;Feat1:1,Feat2:2,Feat3:3,Feat4:4,Feat5:5,Feat6:6,Feat7:7',
+            data: 'deShortOne/prac-diss-project;Feat1:1,Feat2:2,Feat3:3,Feat4:4,Feat5:5,Feat6:6,Feat7:7',
             cardId: 3,
             cardTemplateTabFieldId: 13
         },

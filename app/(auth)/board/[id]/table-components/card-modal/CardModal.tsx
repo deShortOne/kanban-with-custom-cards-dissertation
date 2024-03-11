@@ -15,7 +15,7 @@ import { DatePicker } from "./field-type/DatePicker";
 import { CheckboxMultiple } from "./field-type/CheckBox";
 import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker";
+import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBranchTracker"
 import Image from "next/image";
 
 // This is used to check if fields for card has already been input
