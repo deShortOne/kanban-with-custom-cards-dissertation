@@ -21,8 +21,8 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
-        const sizeX = cardData["tabs"][tabIdx]["sizeX"] + (type === "ROW" ? value : 0)
-        const sizeY = cardData["tabs"][tabIdx]["sizeY"] + (type === "COL" ? value : 0)
+        const sizeX = cardData["tabs"][tabIdx]["sizeX"] + (type === "COL" ? value : 0)
+        const sizeY = cardData["tabs"][tabIdx]["sizeY"] + (type === "ROW" ? value : 0)
         const tabFields = cardData["tabs"][tabIdx]["tabFields"]
 
         // will only ever add, when user submits, then when saving to db, reduce to only necessary fields
@@ -39,7 +39,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
             }
         }
 
-        const sizeType = type === "ROW" ? "sizeX" : "sizeY"
+        const sizeType = type === "COL" ? "sizeX" : "sizeY"
         const newCardData = update(cardData, {
             tabs: {
                 [tabIdx]: {
@@ -167,14 +167,14 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <span>Rows:</span>
                         <div className="inline-flex">
                             <button
-                                disabled={cardData.tabs[tabIdx].sizeX < 2}
-                                className={cardData.tabs[tabIdx].sizeX < 2 ? "text-black/50" : ""}
+                                disabled={cardData.tabs[tabIdx].sizeY < 2}
+                                className={cardData.tabs[tabIdx].sizeY < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "ROW")}
                             >
                                 <ChevronUp />
                             </button>
                             <span className="inline-block align-middle">
-                                {cardData.tabs[tabIdx].sizeX}
+                                {cardData.tabs[tabIdx].sizeY}
                             </span>
                             <button onClick={() => updateNumber(1, "ROW")}>
                                 <ChevronDown />
@@ -185,14 +185,14 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <span>Columns:</span>
                         <div className="inline-flex">
                             <button
-                                disabled={cardData.tabs[tabIdx].sizeY < 2}
-                                className={cardData.tabs[tabIdx].sizeY < 2 ? "text-black/50" : ""}
+                                disabled={cardData.tabs[tabIdx].sizeX < 2}
+                                className={cardData.tabs[tabIdx].sizeX < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "COL")}
                             >
                                 <ChevronLeft />
                             </button>
                             <span className="inline-block align-middle">
-                                {cardData.tabs[tabIdx].sizeY}
+                                {cardData.tabs[tabIdx].sizeX}
                             </span>
                             <button onClick={() => updateNumber(1, "COL")}>
                                 <ChevronRight />
