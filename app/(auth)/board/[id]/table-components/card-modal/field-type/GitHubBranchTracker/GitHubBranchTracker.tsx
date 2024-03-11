@@ -32,8 +32,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
 
         const response = await fetch('/api/github/branch/status?'
             + new URLSearchParams({
-                owner: "deShortOne", // TODO !!!!!!
-                repo: getValues()[name].repo,
+                ownerRepo: getValues()[name].repo,
                 branch: branchName
             }), {
             method: 'GET',

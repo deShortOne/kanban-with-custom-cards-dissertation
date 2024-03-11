@@ -7,9 +7,12 @@ import { CheckToken, CheckTokenReturnProp } from "../../TokenCheck"
 
 export async function GET(request: Request) {
     const url = new URL(request.url)
-    const owner = url.searchParams.get("owner")!
-    const repo = url.searchParams.get("repo")!
+    const ownerRepo = url.searchParams.get("ownerRepo")!
     const branch = url.searchParams.get("branch")!
+
+    const ownerRepoSplit = ownerRepo.split("/")
+    const owner = ownerRepoSplit[0]
+    const repo = ownerRepoSplit[1]
     if (!owner || !repo || !branch) {
         return Response.json("Invalid data")
     }
