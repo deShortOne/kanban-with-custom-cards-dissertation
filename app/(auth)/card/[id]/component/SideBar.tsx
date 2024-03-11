@@ -4,7 +4,7 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { DataProp, EmptyTab, FieldProp, NewField, Tab } from "./Base"
+import { DataProp, EmptyTab, NewField, Tab } from "./Base"
 import { Dispatch, SetStateAction } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -143,9 +143,10 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                     <li className="flex justify-between">
                         <span>Position:</span>
                         <div className="inline-flex">
+
                             <button
                                 disabled={tabIdx === 0}
-                                className={tabIdx === 0 ? "brightness-50" : ""}
+                                className={tabIdx === 0 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx - 1)}
                             >
                                 <ChevronDown />
@@ -155,7 +156,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                             </span>
                             <button
                                 disabled={tabIdx === cardData["tabs"].length - 1}
-                                className={tabIdx === cardData["tabs"].length - 1 ? "brightness-50" : ""}
+                                className={tabIdx === cardData["tabs"].length - 1 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx + 1)}
                             >
                                 <ChevronUp />
@@ -167,7 +168,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <div className="inline-flex">
                             <button
                                 disabled={cardData.tabs[tabIdx].sizeX < 2}
-                                className={cardData.tabs[tabIdx].sizeX < 2 ? "brightness-50" : ""}
+                                className={cardData.tabs[tabIdx].sizeX < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "ROW")}
                             >
                                 <ChevronDown />
@@ -185,7 +186,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <div className="inline-flex">
                             <button
                                 disabled={cardData.tabs[tabIdx].sizeY < 2}
-                                className={cardData.tabs[tabIdx].sizeY < 2 ? "brightness-50" : ""}
+                                className={cardData.tabs[tabIdx].sizeY < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "COL")}
                             >
                                 <ChevronDown />
@@ -206,7 +207,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                     <li>
                         <Button
                             disabled={cardData.tabs.length < 2}
-                            className={cardData.tabs.length < 2 ? "brightness-50" : ""}
+                            className={cardData.tabs.length < 2 ? "text-black/50" : ""}
                             variant="destructive"
                             onClick={() => updateNumberOfTabs(tabIdx)}>
                             Remove current tab
