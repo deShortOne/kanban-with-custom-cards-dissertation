@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFormContext } from "react-hook-form"
 
-export const CustomDefaultDate = () => {
+export const CustomDefaultDate = ({ isDefault }: { isDefault: boolean }) => {
     const { setValue, getValues } = useFormContext()
 
     const updateCustomDefaultDate = (position: number, value: string) => {
@@ -12,11 +12,22 @@ export const CustomDefaultDate = () => {
         setValue("defaultDate", newVal.join(" "))
     }
 
+    let defaultOperator = "add"
+    let defaultValue = "1"
+    let defaultPeriod = "day"
+
+    if (isDefault) {
+        const data = getValues("defaultDate").split(" ")
+        defaultOperator = data[0]
+        defaultValue = data[1]
+        defaultPeriod = data[2]
+    }
+
     return (
         <div className="grid grid-cols-3 mt-2">
             <Select
                 onValueChange={(val) => updateCustomDefaultDate(0, val)}
-                defaultValue={"add"}
+                defaultValue={defaultOperator}
             >
                 <FormControl>
                     <SelectTrigger>
@@ -33,12 +44,12 @@ export const CustomDefaultDate = () => {
             <Input
                 onBlur={(val) => updateCustomDefaultDate(1, val.target.value)}
                 placeholder="1"
-                defaultValue="1"
+                defaultValue={defaultValue}
             />
 
             <Select
                 onValueChange={(val) => updateCustomDefaultDate(2, val)}
-                defaultValue={"day"}
+                defaultValue={defaultPeriod}
             >
                 <FormControl>
                     <SelectTrigger>

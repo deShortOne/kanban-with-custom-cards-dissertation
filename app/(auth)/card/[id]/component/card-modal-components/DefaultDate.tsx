@@ -1,15 +1,15 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input";
+import { FormControl, FormItem, FormLabel } from "@/components/ui/form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
 import Image from "next/image";
-import { useState } from "react";
-import { useForm, useFormContext } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { CustomDefaultDate } from "./CustomDefaultDate";
+
 
 export const DefaultDate = () => {
 
-    const { setValue } = useFormContext()
+    const { setValue, getValues } = useFormContext()
     const [showCustom, setShowCustom] = useState(false)
 
     const radioGroupChange = (val: string) => {
@@ -21,6 +21,14 @@ export const DefaultDate = () => {
             setValue("defaultDate", "add 1 day")
         }
     }
+
+    const customDateRegex = /^(add|sub) \d+ (day|week|month|year)s?$/;
+    const foundCustomDateRegex = getValues("defaultDate").match(customDateRegex) !== null;
+
+    const defaultValueRadio = foundCustomDateRegex ? "Custom" : getValues("defaultDate");
+    useEffect(() => {
+        setShowCustom(foundCustomDateRegex)
+    }, [setShowCustom, foundCustomDateRegex])
 
     return (
         <div>
@@ -49,7 +57,7 @@ export const DefaultDate = () => {
             </div>
             <RadioGroup
                 onValueChange={radioGroupChange}
-                defaultValue={""}
+                defaultValue={defaultValueRadio}
                 className="flex flex-col space-y-1"
             >
                 <FormItem className="flex items-center space-x-3 space-y-0">
@@ -78,7 +86,7 @@ export const DefaultDate = () => {
                 </FormItem>
             </RadioGroup>
 
-            {showCustom && <CustomDefaultDate />}
+            {showCustom && <CustomDefaultDate isDefault={foundCustomDateRegex} />}
         </div>
     )
 }
