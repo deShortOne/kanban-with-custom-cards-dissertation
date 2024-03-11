@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFormContext } from "react-hook-form"
 
-export const CustomDefaultDate = ({ isDefault }: { isDefault: boolean }) => {
+export const CustomDefaultDate = ({ isDefault, defaultDate }: { isDefault: boolean, defaultDate: string }) => {
     const { setValue, getValues } = useFormContext()
 
     const updateCustomDefaultDate = (position: number, value: string) => {
@@ -17,7 +17,7 @@ export const CustomDefaultDate = ({ isDefault }: { isDefault: boolean }) => {
     let defaultPeriod = "day"
 
     if (isDefault) {
-        const data = getValues("defaultDate").split(" ")
+        const data = defaultDate.split(" ")
         defaultOperator = data[0]
         defaultValue = data[1]
         defaultPeriod = data[2]

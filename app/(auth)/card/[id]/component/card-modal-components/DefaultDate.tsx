@@ -7,7 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { CustomDefaultDate } from "./CustomDefaultDate";
 
 
-export const DefaultDate = () => {
+export const DefaultDate = ({ defaultDate }: { defaultDate: string }) => {
 
     const { setValue, getValues } = useFormContext()
     const [showCustom, setShowCustom] = useState(false)
@@ -18,14 +18,14 @@ export const DefaultDate = () => {
             setValue("defaultDate", val)
         } else {
             setShowCustom(true)
-            setValue("defaultDate", "add 1 day")
+            setValue("defaultDate", foundCustomDateRegex ? defaultDate : "add 1 day")
         }
     }
 
     const customDateRegex = /^(add|sub) \d+ (day|week|month|year)s?$/;
-    const foundCustomDateRegex = getValues("defaultDate").match(customDateRegex) !== null;
+    const foundCustomDateRegex = defaultDate.match(customDateRegex) !== null;
 
-    const defaultValueRadio = foundCustomDateRegex ? "Custom" : getValues("defaultDate");
+    const defaultValueRadio = foundCustomDateRegex ? "Custom" : defaultDate;
     useEffect(() => {
         setShowCustom(foundCustomDateRegex)
     }, [setShowCustom, foundCustomDateRegex])
@@ -86,7 +86,7 @@ export const DefaultDate = () => {
                 </FormItem>
             </RadioGroup>
 
-            {showCustom && <CustomDefaultDate isDefault={foundCustomDateRegex} />}
+            {showCustom && <CustomDefaultDate isDefault={foundCustomDateRegex} defaultDate={defaultDate} />}
         </div>
     )
 }

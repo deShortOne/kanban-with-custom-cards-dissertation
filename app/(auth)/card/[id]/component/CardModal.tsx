@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/tooltip"
 import Image from "next/image";
 import { DefaultDate } from "./card-modal-components/DefaultDate";
+import { getRandomValues } from "crypto";
 
 interface prop {
     data: string
@@ -203,7 +204,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                     </FormItem>
                                 )} />
                         }
-                        {"defaultDate" in fieldSchema && <DefaultDate />}
+                        {"defaultDate" in fieldSchema && <DefaultDate defaultDate={form.getValues("defaultDate")} />}
                         {
                             "options" in fieldSchema &&
                             <div className="">
