@@ -197,8 +197,10 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                                         <Image
                                             src="/delete.svg"
                                             alt="delete branch status checker"
+                                            className="dark:invert"
                                             width={24}
                                             height={24}
+                                            priority
                                         />
                                     </button>
                                 </TableCell>

@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query"
-import { useFieldArray, useForm, useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useCardModal } from "./useDialog"
@@ -160,7 +160,13 @@ export const CardModal = () => {
                             <div className="flex px-5">
                                 <Button type="submit" className="bg-cyan-500">Save</Button>
                                 <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
-                                    <Image src="/delete.svg" alt="delete card" width={24} height={24} />
+                                    <Image
+                                        src="/delete.svg"
+                                        alt="delete card"
+                                        width={24}
+                                        height={24}
+                                        className="invert dark:invert-0"
+                                    />
                                 </Button>
                             </div>
                         </div>
