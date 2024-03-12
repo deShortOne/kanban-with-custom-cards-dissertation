@@ -1,26 +1,20 @@
 'use client'
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react"
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod"
 import update from 'immutability-helper'
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DataProp, FieldTypeProp } from "./Base";
-import { useFieldArray, useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { DataProp, FieldTypeProp } from "./Base"
+import { useFieldArray, useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
-import Image from "next/image";
-import { DefaultDate } from "./card-modal-components/DefaultDate";
-import { getRandomValues } from "crypto";
+
+import Image from "next/image"
+import { DefaultDate } from "./card-modal-components/DefaultDate"
 
 interface prop {
     data: string
@@ -244,7 +238,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                             <div className="">
                                 {fields.map((field, index) => (
                                     <div className="flex" key={field.id}>
-                                        <input
+                                        <Input
                                             key={field.id}
                                             {...register(`options.${index}.value`)}
                                             className="my-1"
