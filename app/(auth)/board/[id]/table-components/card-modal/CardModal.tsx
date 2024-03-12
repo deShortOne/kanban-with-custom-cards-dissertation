@@ -258,27 +258,41 @@ export const CardModal = () => {
 
 function fieldTypeToZodType(fieldType: string, data: string) {
     const temp = data.split(";")
-    const optional = temp[temp.length - 1] === "0"
+    const optional = temp[2] === "0"
 
     switch (fieldType) {
         case 'Text field':
         case 'Text area':
             if (optional)
                 return z.string().optional()
+            if (temp[3] != "")
+                return z.string().min(1, temp[3])
             return z.string().min(1)
         case 'Date picker':
             if (optional)
                 return z.date().optional()
+            if (temp[3] != "")
+                return z.string().min(1, temp[3])
             return z.date()
         case 'Check boxes':
             if (optional)
                 return z.array(z.string()).optional()
+            if (temp[3] != "")
+                return z.array(z.string()).refine((value) => value.some((item) => item), {
+                    message: temp[3],
+                })
             return z.array(z.string()).refine((value) => value.some((item) => item), {
                 message: "You have to select at least one item.",
             })
         case 'Drop down':
             if (optional)
                 return z.string().optional()
+            if (temp[3] != "")
+                return z.string({
+                    required_error: temp[3],
+                }).min(1, {
+                    message: temp[3]
+                })
             return z.string({
                 required_error: "You have to select at least one item.",
             }).min(1, {
