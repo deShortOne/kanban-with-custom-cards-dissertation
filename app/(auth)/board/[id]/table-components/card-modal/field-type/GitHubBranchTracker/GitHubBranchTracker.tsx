@@ -129,7 +129,7 @@ export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp
                     </Tooltip>
                 </TooltipProvider>
             </div>
-            <ScrollArea className="h-[50vh]">
+            <ScrollArea className="h-[60vh]">
                 <Table>
                     <TableHeader>
                         <TableRow>
