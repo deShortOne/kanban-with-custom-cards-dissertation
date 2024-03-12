@@ -199,12 +199,12 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                             </button>
                         </div>
                     </li>
-                    <li>
-                        <Button onClick={() => updateNumberOfTabs(-1)}>
+                    <li className="flex justify-center">
+                        <Button variant="outline" onClick={() => updateNumberOfTabs(-1)}>
                             Add new tab
                         </Button>
                     </li>
-                    <li>
+                    <li className="flex justify-center">
                         <Button
                             disabled={cardData.tabs.length < 2}
                             className={cardData.tabs.length < 2 ? "text-black/50" : ""}
