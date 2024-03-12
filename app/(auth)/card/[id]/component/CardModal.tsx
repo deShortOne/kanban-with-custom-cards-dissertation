@@ -31,7 +31,6 @@ interface prop {
 }
 
 export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, position }: prop) => {
-
     const [openModal, setOpenModal] = useState(false);
 
     const splitData = data.split(";")
@@ -39,6 +38,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         label: splitData[0]
     }
 
+    let errorMsgPlaceHolder = "";
     const fieldSchema: any = {
         label: z.string().min(1, "Please enter a title")
     }
@@ -50,6 +50,11 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
             fieldSchema["required"] = z.boolean()
             defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for text input"
             break;
         case 'Drop down':
         case 'Check boxes':
@@ -68,6 +73,11 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
             fieldSchema["required"] = z.boolean().default(false)
             defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for checking options"
             break
         case 'Date picker':
             fieldSchema["defaultDate"] = z.string()
@@ -77,6 +87,11 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
             fieldSchema["required"] = z.boolean().default(false)
             defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for date picker"
             break
         case 'Track Github branch':
             break
@@ -108,6 +123,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                     dataToBeStored += values.placeholder
                 }
                 dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break;
             case 'Drop down':
             case 'Check boxes':
@@ -118,6 +134,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 dataToBeStored += listOptions.toString()
 
                 dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break
             case 'Date picker':
                 dataToBeStored += ";"
@@ -125,6 +142,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                     dataToBeStored += values.defaultDate
                 }
                 dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break
             case 'Track Github branch':
                 break
@@ -191,6 +209,21 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                     )} />
                             }
                         </div>
+                        {"required" in fieldSchema &&
+                            form.getValues("required") &&
+                            <FormField
+                                control={form.control}
+                                name="errorMessage"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Error message</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={errorMsgPlaceHolder} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                        }
                         {"placeholder" in fieldSchema &&
                             <FormField
                                 control={form.control}
