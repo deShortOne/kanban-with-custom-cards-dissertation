@@ -31,6 +31,7 @@ interface prop {
 }
 
 export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, position }: prop) => {
+
     const [openModal, setOpenModal] = useState(false);
 
     const splitData = data.split(";")
@@ -47,8 +48,8 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
             fieldSchema["placeholder"] = z.string().optional()
             defaultValues["placeholder"] = splitData[1]
 
-            fieldSchema["optional"] = z.boolean()
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean()
+            defaultValues["required"] = splitData[2] === "1"
             break;
         case 'Drop down':
         case 'Check boxes':
@@ -65,8 +66,8 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 })
             defaultValues["options"] = options
 
-            fieldSchema["optional"] = z.boolean().default(false)
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean().default(false)
+            defaultValues["required"] = splitData[2] === "1"
             break
         case 'Date picker':
             fieldSchema["defaultDate"] = z.string()
@@ -74,8 +75,8 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
             defaultValues["defaultDate"] = splitData[1]
 
-            fieldSchema["optional"] = z.boolean().default(false)
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean().default(false)
+            defaultValues["required"] = splitData[2] === "1"
             break
         case 'Track Github branch':
             break
@@ -106,7 +107,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 if (values.placeholder) {
                     dataToBeStored += values.placeholder
                 }
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
                 break;
             case 'Drop down':
             case 'Check boxes':
@@ -116,14 +117,14 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 const listOptions = listOfOptions.map((i: { value: string }, idx: number) => idx + ":" + i.value)
                 dataToBeStored += listOptions.toString()
 
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
                 break
             case 'Date picker':
                 dataToBeStored += ";"
                 if (values.defaultDate) {
                     dataToBeStored += values.defaultDate
                 }
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
                 break
             case 'Track Github branch':
                 break
@@ -171,13 +172,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                         <FormMessage />
                                     </FormItem>
                                 )} />
-                            {"optional" in fieldSchema &&
+                            {"required" in fieldSchema &&
                                 <FormField
                                     control={form.control}
-                                    name="optional"
+                                    name="required"
                                     render={({ field }) => (
                                         <FormItem className="mx-5">
-                                            <FormLabel>Optional input</FormLabel>
+                                            <FormLabel>Required</FormLabel>
                                             <br />
                                             <FormControl>
                                                 <Switch
