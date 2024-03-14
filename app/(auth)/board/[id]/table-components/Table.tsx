@@ -13,6 +13,15 @@ import { useCardModal } from "./card-modal/useDialog"
 import { CustomDragLayer } from "./kanban-card-display/drag/CustomDragLayer"
 import { CardInfoProvider } from "./kanban-card-display/CardInfoProvider"
 import { DraggableHeader } from "./DraggableHeader"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface TableInformationProps {
     id: number
@@ -43,6 +52,8 @@ export const Table = ({
     id, columns, swimlanes, cards, role
 }: TableInformationProps) => {
     const boardId = id
+
+    const [alertMsg, setAlertMsg] = useState("")
 
     /* COLUMN */
     // move column
@@ -113,7 +124,7 @@ export const Table = ({
                 }),
             })
         } else {
-            alert("Remove all cards from this column")
+            setAlertMsg("Remove all cards from this column")
         }
     }
 
@@ -186,7 +197,7 @@ export const Table = ({
                 }),
             })
         } else {
-            alert("Remove all cards from this swim lane")
+            setAlertMsg("Remove all cards from this swim lane")
         }
     }
 
@@ -345,93 +356,41 @@ export const Table = ({
     }, [cardModal.deletedId])
 
     return (
-        <DndProvider backend={HTML5Backend}>
-            <CustomDragLayer key={new Date().getTime()} />
-            <div className="flex min-h-[85vh] h-5 space-x-4">
-                <div>
-                    <AddNewCardButton
-                        kanbanId={boardId}
-                        role={role}
-                        newCardAction={addCard} />
-                    <ScrollArea className="h-[80vh] w-full rounded-md border">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <TableCell
-                                        onDrop={(item) => handleCardDrop(item.id, -1, -1)}
-                                        onHover={(item) => moveCardCell(item.id, -1, -1)}
-                                        key={"-1 -1"}
-                                        className="absolute h-full min-w-[220px] max-w-[400px] align-top p-1"
-                                    >
-                                        {cardsInfo.map((card) =>
-                                            card.columnId === -1 && card.swimLaneId === -1 ? (
-                                                <CardInfoProvider
-                                                    {...card}
-                                                    key={card.id}
-                                                    moveCard={moveCard}
-                                                    dragCardId={dragCardId}
-                                                    setDragCardId={setDragCardId}
-                                                />
-                                            ) : null
-                                        )}
-                                    </TableCell>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </ScrollArea>
-                </div>
+        <div>
+            <AlertDialog open={alertMsg !== ""}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Error!</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {alertMsg}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onClick={() => { setAlertMsg("") }}>Ok</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
-                <Separator orientation="vertical" />
-
-                <ScrollArea className="h-[87vh] w-full">
-                    <table className="table-fixed">
-                        <thead>
-                            <tr>
-                                <th />
-                                {stateColumns.map((column, index) => (
-                                    <DraggableHeader
-                                        key={column.id}
-                                        item={column}
-                                        index={index}
-                                        role={role}
-                                        typeName="COLUMN"
-                                        moveHeader={moveColumn}
-                                        removeHeader={removeColumn}
-                                    />
-                                ))}
-                                {
-                                    role === "EDITOR" &&
-                                    <th>
-                                        <button
-                                            type="button"
-                                            onClick={addColumn}
-                                        >
-                                            Add new
-                                        </button>
-                                    </th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {stateSwimLanes.map((swimLane, index) => (
-                                <tr key={swimLane.id} className="min-w-[100px]">
-                                    <DraggableHeader
-                                        key={swimLane.id}
-                                        item={swimLane}
-                                        index={index}
-                                        role={role}
-                                        typeName="SWIMLANE"
-                                        moveHeader={moveSwimLane}
-                                        removeHeader={removeSwimLane}
-                                    />
-                                    {stateColumns.map((cell) => (
+            <DndProvider backend={HTML5Backend}>
+                <CustomDragLayer key={new Date().getTime()} />
+                <div className="flex min-h-[85vh] h-5 space-x-4">
+                    <div>
+                        <AddNewCardButton
+                            kanbanId={boardId}
+                            role={role}
+                            newCardAction={addCard} />
+                        <ScrollArea className="h-[80vh] w-full rounded-md border">
+                            <table>
+                                <tbody>
+                                    <tr>
                                         <TableCell
-                                            onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
-                                            onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
-                                            key={cell.id + " " + swimLane.id}
+                                            onDrop={(item) => handleCardDrop(item.id, -1, -1)}
+                                            onHover={(item) => moveCardCell(item.id, -1, -1)}
+                                            key={"-1 -1"}
+                                            className="absolute h-full min-w-[220px] max-w-[400px] align-top p-1"
                                         >
                                             {cardsInfo.map((card) =>
-                                                card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                                card.columnId === -1 && card.swimLaneId === -1 ? (
                                                     <CardInfoProvider
                                                         {...card}
                                                         key={card.id}
@@ -442,27 +401,95 @@ export const Table = ({
                                                 ) : null
                                             )}
                                         </TableCell>
-                                    ))}
-                                </tr>
-                            ))}
-                            {
-                                role === "EDITOR" &&
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ScrollArea>
+                    </div>
+
+                    <Separator orientation="vertical" />
+
+                    <ScrollArea className="h-[87vh] w-full">
+                        <table className="table-fixed">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <button
-                                            type="button"
-                                            onClick={addSwimLane}
-                                        >
-                                            Add new
-                                        </button>
-                                    </td>
+                                    <th />
+                                    {stateColumns.map((column, index) => (
+                                        <DraggableHeader
+                                            key={column.id}
+                                            item={column}
+                                            index={index}
+                                            role={role}
+                                            typeName="COLUMN"
+                                            moveHeader={moveColumn}
+                                            removeHeader={removeColumn}
+                                        />
+                                    ))}
+                                    {
+                                        role === "EDITOR" &&
+                                        <th>
+                                            <button
+                                                type="button"
+                                                onClick={addColumn}
+                                            >
+                                                Add new
+                                            </button>
+                                        </th>
+                                    }
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                    <div />
-                </ScrollArea>
-            </div>
-        </DndProvider>
+                            </thead>
+                            <tbody>
+                                {stateSwimLanes.map((swimLane, index) => (
+                                    <tr key={swimLane.id} className="min-w-[100px]">
+                                        <DraggableHeader
+                                            key={swimLane.id}
+                                            item={swimLane}
+                                            index={index}
+                                            role={role}
+                                            typeName="SWIMLANE"
+                                            moveHeader={moveSwimLane}
+                                            removeHeader={removeSwimLane}
+                                        />
+                                        {stateColumns.map((cell) => (
+                                            <TableCell
+                                                onDrop={(item) => handleCardDrop(item.id, cell.id, swimLane.id)}
+                                                onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
+                                                key={cell.id + " " + swimLane.id}
+                                            >
+                                                {cardsInfo.map((card) =>
+                                                    card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                                        <CardInfoProvider
+                                                            {...card}
+                                                            key={card.id}
+                                                            moveCard={moveCard}
+                                                            dragCardId={dragCardId}
+                                                            setDragCardId={setDragCardId}
+                                                        />
+                                                    ) : null
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </tr>
+                                ))}
+                                {
+                                    role === "EDITOR" &&
+                                    <tr>
+                                        <td>
+                                            <button
+                                                type="button"
+                                                onClick={addSwimLane}
+                                            >
+                                                Add new
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div />
+                    </ScrollArea>
+                </div>
+            </DndProvider>
+        </div>
     )
 }
