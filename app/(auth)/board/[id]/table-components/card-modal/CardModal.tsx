@@ -5,6 +5,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useCardModal } from "./useDialog"
 import { CardData } from "./field-type/Base"
@@ -134,15 +145,6 @@ export const CardModal = () => {
 
     const onError = (errors: any, e: any) => console.log(errors, e)
 
-    const deleteCard = (id: number) => {
-        const cardDeleteConfirmMessage = "Are you sure you want to delete this card?\nThis action is irreversable!"
-
-        if (confirm(cardDeleteConfirmMessage)) {
-            cardModal.setDeletedId(id)
-            onClose()
-        }
-    }
-
     if (!cardData)
         return null
 
@@ -151,107 +153,134 @@ export const CardModal = () => {
             open={isOpen}
             onOpenChange={onClose}
         >
-            <DialogContent className="h-[90vh] min-w-[90vw]">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
-                        <div className="flex justify-between">
-                            <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
+            <AlertDialog>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete this card?
+                            This action is irreversable!
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                cardModal.setDeletedId(id!)
+                                onClose()
+                            }}
+                        >
+                            Continue
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
 
-                            <div className="flex px-5">
-                                <Button type="submit" className="bg-cyan-500">Save</Button>
-                                <Button type="button" className="bg-rose-600" onClick={() => deleteCard(id!)}>
-                                    <Image
-                                        src="/delete.svg"
-                                        alt="delete card"
-                                        width={24}
-                                        height={24}
-                                        className="invert dark:invert-0"
-                                    />
-                                </Button>
+                <DialogContent className="h-[90vh] min-w-[90vw]">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
+                            <div className="flex justify-between">
+                                <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
+
+                                <div className="flex px-5">
+                                    <Button type="submit" className="bg-cyan-500">Save</Button>
+
+                                    <AlertDialogTrigger asChild>
+                                        <Button type="button" className="bg-rose-600">
+                                            <Image
+                                                src="/delete.svg"
+                                                alt="delete card"
+                                                width={24}
+                                                height={24}
+                                                className="invert dark:invert-0"
+                                            />
+                                        </Button>
+                                    </AlertDialogTrigger>
+
+                                </div>
                             </div>
-                        </div>
 
-                        <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
-                            <TabsList>
+                            <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
+                                <TabsList>
+                                    {cardData.cardTemplate.tabs.map(tab => {
+                                        return <TabsTrigger value={tab.name} key={tab.name}>{tab.name}</TabsTrigger>
+                                    })}
+                                </TabsList>
+
                                 {cardData.cardTemplate.tabs.map(tab => {
-                                    return <TabsTrigger value={tab.name} key={tab.name}>{tab.name}</TabsTrigger>
-                                })}
-                            </TabsList>
+                                    const fields = []
+                                    for (let y = 1; y <= tab.sizeY; y++) {
+                                        for (let x = 1; x <= tab.sizeX; x++) {
+                                            const tmp = tab.tabFields.find(i => i.posX === x && i.posY === y)
+                                            if (!tmp) {
+                                                fields.push(undefined)
+                                                continue
+                                            }
 
-                            {cardData.cardTemplate.tabs.map(tab => {
-                                const fields = []
-                                for (let y = 1; y <= tab.sizeY; y++) {
-                                    for (let x = 1; x <= tab.sizeX; x++) {
-                                        const tmp = tab.tabFields.find(i => i.posX === x && i.posY === y)
-                                        if (!tmp) {
-                                            fields.push(undefined)
-                                            continue
+                                            // deep copy object to prevent changing original data because this component is
+                                            // loaded twice so the wrong data could be loaded
+                                            const templateField = JSON.parse(
+                                                JSON.stringify(tmp)
+                                            )
+
+                                            // updates template field id to data field id 
+                                            const id = cardData.allTabsFieldInformation
+                                                .find(i => i.cardTemplateTabFieldId === templateField.id)
+
+                                            if (id) {
+                                                templateField.id = id.id
+                                            }
+
+                                            fields.push(templateField)
                                         }
-
-                                        // deep copy object to prevent changing original data because this component is
-                                        // loaded twice so the wrong data could be loaded
-                                        const templateField = JSON.parse(
-                                            JSON.stringify(tmp)
-                                        )
-
-                                        // updates template field id to data field id 
-                                        const id = cardData.allTabsFieldInformation
-                                            .find(i => i.cardTemplateTabFieldId === templateField.id)
-
-                                        if (id) {
-                                            templateField.id = id.id
-                                        }
-
-                                        fields.push(templateField)
                                     }
-                                }
-                                return <TabsContent value={tab.name} key={tab.name}>
-                                    <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
-                                        {fields.map((field, index) => {
-                                            if (!field) {
-                                                return <div key={index + tab.name} />
-                                            }
-                                            switch (field.fieldType.name) {
-                                                case 'Text field':
-                                                    return <TextField form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                                case 'Text area':
-                                                    return <TextArea form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                                case 'Date picker':
-                                                    return <DatePicker form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                                case 'Check boxes':
-                                                    return <CheckboxMultiple form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                                case 'Drop down':
-                                                    return <ComboboxForm form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                                case 'Track Github branch':
-                                                    return <GitHubBranchTracker form={form}
-                                                        fieldTypeData={field.data}
-                                                        name={"a" + field.id}
-                                                        key={field.id} />
-                                            }
-                                            return <p key={index + tab.name}>Field not implemented!</p>
-                                        })}
-                                    </div>
-                                </TabsContent>
-                            })}
-                        </Tabs>
-                    </form>
-                </Form>
-            </DialogContent>
+                                    return <TabsContent value={tab.name} key={tab.name}>
+                                        <div className={"grid grid-cols-" + tab.sizeX + " gap-10"}>
+                                            {fields.map((field, index) => {
+                                                if (!field) {
+                                                    return <div key={index + tab.name} />
+                                                }
+                                                switch (field.fieldType.name) {
+                                                    case 'Text field':
+                                                        return <TextField form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                    case 'Text area':
+                                                        return <TextArea form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                    case 'Date picker':
+                                                        return <DatePicker form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                    case 'Check boxes':
+                                                        return <CheckboxMultiple form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                    case 'Drop down':
+                                                        return <ComboboxForm form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                    case 'Track Github branch':
+                                                        return <GitHubBranchTracker form={form}
+                                                            fieldTypeData={field.data}
+                                                            name={"a" + field.id}
+                                                            key={field.id} />
+                                                }
+                                                return <p key={index + tab.name}>Field not implemented!</p>
+                                            })}
+                                        </div>
+                                    </TabsContent>
+                                })}
+                            </Tabs>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </AlertDialog>
         </Dialog >
     )
 }
