@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -45,23 +46,32 @@ export async function POST(req: Request) {
         }
     })
 
+    const badLis: string[] = []
     for (var i in dataInArray) {
-        await prisma.userRoleKanban.create({
-            data: {
-                user: {
-                    connect: {
-                        email: dataInArray[i].email
-                    }
+        try {
+            await prisma.userRoleKanban.create({
+                data: {
+                    user: {
+                        connect: {
+                            email: dataInArray[i].email
+                        }
+                    },
+                    permission: dataInArray[i].permission,
+                    kanban: {
+                        connect: {
+                            id: kanbanId
+                        }
+                    },
                 },
-                permission: dataInArray[i].permission,
-                kanban: {
-                    connect: {
-                        id: kanbanId
-                    }
-                },
-            },
-        })
+            })
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    badLis.push(i)
+                }
+            }
+        }
     }
 
-    return NextResponse.json(1)
+    return NextResponse.json(badLis)
 }

@@ -19,7 +19,15 @@ import { Button } from "@/components/ui/button"
 import { TrashIcon } from "@radix-ui/react-icons"
 
 export const ShareTab = ({ id }: { id: number }) => {
-    const { register, handleSubmit, unregister, setValue } = useForm()
+    const { register,
+        handleSubmit,
+        unregister,
+        setValue,
+        setError,
+        formState: { errors },
+    } = useForm<any>({
+        reValidateMode: "onSubmit", // so errors don't get cleared when typing
+    })
 
     const [userPermissions, setUserPermissions] = useState<UserPermission[]>([])
     const [negativeCounter, setNegativeCounter] = useState(-1)
@@ -41,8 +49,8 @@ export const ShareTab = ({ id }: { id: number }) => {
         }))
     })
 
-    function onSubmit(data: any) {
-        fetch("/api/board/settings/share", {
+    async function onSubmit(data: any) {
+        const lis = await fetch("/api/board/settings/share", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,6 +60,10 @@ export const ShareTab = ({ id }: { id: number }) => {
                 ...data
             }),
         })
+        const response = await lis.json() as string[]
+        for (let i = 0; i < response.length; i++) {
+            setError(response[i] + '~useremail', { type: 'custom', message: "Invalid email" })
+        }
     }
 
     const addNewUser = () => {
@@ -78,9 +90,11 @@ export const ShareTab = ({ id }: { id: number }) => {
         unregister(userId + "~user")
     }
 
+    const onError = (errors: any, e: any) => console.log(errors, e)
+
     return (
         <TabsContent value="share">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit, onError)}>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -96,8 +110,11 @@ export const ShareTab = ({ id }: { id: number }) => {
                                         <Input
                                             {...register(i.user.id + "~useremail")}
                                             defaultValue={i.user.email}
-                                            placeholder="email"
+                                            placeholder={i.user.id + "~useremail"}
                                         />
+                                        {errors[i.user.id + "~useremail"] &&
+                                            <p>{errors[i.user.id + "~useremail"]!.message as string}</p>
+                                        }
                                     </TableCell>
                                     <TableCell>
                                         <UserPermissionDropDown
@@ -119,12 +136,12 @@ export const ShareTab = ({ id }: { id: number }) => {
                     </TableBody>
                 </Table>
                 <div className="flex justify-between">
-                    <Button onClick={addNewUser} variant={"secondary"}>
+                    <Button onClick={addNewUser} variant={"secondary"} type="button">
                         Add new user
                     </Button>
                     <Button type="submit" variant={"outline"}>Save</Button>
                 </div>
             </form>
-        </TabsContent>
+        </TabsContent >
     )
 }
