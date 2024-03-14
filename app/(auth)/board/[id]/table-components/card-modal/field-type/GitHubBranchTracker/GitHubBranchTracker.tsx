@@ -12,7 +12,7 @@ import { SelectOwnerRepo } from "./SelectOwnerRepo"
 
 const loadingText = "...loading..."
 
-export const GitHubBranchTracker = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
     const [tokenIsValid, setTokenIsValid] = useState<"connecting" | "connected" | "invalid token">("connecting")
     const [numberOfCurrentlyFetchingStatus, setNumberOfCurrentlyFetchingStatus] = useState(0)
 

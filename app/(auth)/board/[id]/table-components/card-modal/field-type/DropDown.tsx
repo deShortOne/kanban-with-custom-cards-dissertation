@@ -25,8 +25,10 @@ import {
 } from "@/components/ui/popover"
 import { FieldTypeProp, requiredIndicator } from "./Base"
 import { useState } from "react"
+import { useFormContext } from "react-hook-form"
 
-export const ComboboxForm = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const ComboboxForm = ({ fieldTypeData, name }: FieldTypeProp) => {
+    const form = useFormContext()
     const [open, setOpen] = useState(false)
 
     const data = fieldTypeData.split(";")

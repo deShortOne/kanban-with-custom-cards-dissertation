@@ -179,7 +179,7 @@ export const CardModal = () => {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
                             <div className="flex justify-between">
-                                <Title form={form} fieldTypeData={cardData.title} name={"title" + cardData.id} />
+                                <Title fieldTypeData={cardData.title} name={"title" + cardData.id} />
 
                                 <div className="flex px-5">
                                     <Button type="submit" className="bg-cyan-500">Save</Button>
@@ -241,32 +241,32 @@ export const CardModal = () => {
                                                 }
                                                 switch (field.fieldType.name) {
                                                     case 'Text field':
-                                                        return <TextField form={form}
+                                                        return <TextField
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
                                                     case 'Text area':
-                                                        return <TextArea form={form}
+                                                        return <TextArea
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
                                                     case 'Date picker':
-                                                        return <DatePicker form={form}
+                                                        return <DatePicker
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
                                                     case 'Check boxes':
-                                                        return <CheckboxMultiple form={form}
+                                                        return <CheckboxMultiple
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
                                                     case 'Drop down':
-                                                        return <ComboboxForm form={form}
+                                                        return <ComboboxForm
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
                                                     case 'Track Github branch':
-                                                        return <GitHubBranchTracker form={form}
+                                                        return <GitHubBranchTracker
                                                             fieldTypeData={field.data}
                                                             name={"a" + field.id}
                                                             key={field.id} />
