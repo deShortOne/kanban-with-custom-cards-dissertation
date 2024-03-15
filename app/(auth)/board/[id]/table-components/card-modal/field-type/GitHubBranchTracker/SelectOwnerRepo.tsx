@@ -34,7 +34,6 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
         })
 
         const res = await response.json()
-
         setRepoData(res)
     }
 
@@ -55,7 +54,7 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
                             ?
                             (
                                 <div>
-                                    <SelectItem value={repo}>
+                                    <SelectItem value={repo == "" ? "__" : repo}>
                                         {repo}
                                     </SelectItem>
                                     <Skeleton className="my-2 h-2 w-[250px]" />
@@ -66,7 +65,7 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
                             <SelectGroup>
                                 {
                                     repoData.map(i =>
-                                        <SelectItem value={i}>
+                                        <SelectItem value={i} key={i}>
                                             {i}
                                         </SelectItem>
                                     )

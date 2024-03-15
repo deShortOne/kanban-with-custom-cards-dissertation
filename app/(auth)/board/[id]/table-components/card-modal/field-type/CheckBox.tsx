@@ -9,8 +9,10 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { FieldTypeProp, requiredIndicator } from "./Base"
+import { useFormContext } from "react-hook-form"
 
-export const CheckboxMultiple = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const CheckboxMultiple = ({ fieldTypeData, name }: FieldTypeProp) => {
+    const form = useFormContext()
     const data = fieldTypeData.split(";")
 
     const isRequired = data[2] === "1"

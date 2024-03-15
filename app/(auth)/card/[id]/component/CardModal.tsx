@@ -1,26 +1,20 @@
 'use client'
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react"
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod"
 import update from 'immutability-helper'
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DataProp, FieldTypeProp } from "./Base";
-import { useFieldArray, useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { DataProp, FieldTypeProp } from "./Base"
+import { useFieldArray, useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
-import Image from "next/image";
-import { DefaultDate } from "./card-modal-components/DefaultDate";
-import { getRandomValues } from "crypto";
+
+import Image from "next/image"
+import { DefaultDate } from "./card-modal-components/DefaultDate"
 
 interface prop {
     data: string
@@ -38,6 +32,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         label: splitData[0]
     }
 
+    let errorMsgPlaceHolder = "";
     const fieldSchema: any = {
         label: z.string().min(1, "Please enter a title")
     }
@@ -47,8 +42,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
             fieldSchema["placeholder"] = z.string().optional()
             defaultValues["placeholder"] = splitData[1]
 
-            fieldSchema["optional"] = z.boolean()
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean()
+            defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for text input"
             break;
         case 'Drop down':
         case 'Check boxes':
@@ -65,8 +65,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 })
             defaultValues["options"] = options
 
-            fieldSchema["optional"] = z.boolean().default(false)
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean().default(false)
+            defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for checking options"
             break
         case 'Date picker':
             fieldSchema["defaultDate"] = z.string()
@@ -74,8 +79,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
 
             defaultValues["defaultDate"] = splitData[1]
 
-            fieldSchema["optional"] = z.boolean().default(false)
-            defaultValues["optional"] = splitData[2] === "0"
+            fieldSchema["required"] = z.boolean().default(false)
+            defaultValues["required"] = splitData[2] === "1"
+
+            fieldSchema["errorMessage"] = z.string().optional()
+            defaultValues["errorMessage"] = splitData[3]
+
+            errorMsgPlaceHolder = "Error message for date picker"
             break
         case 'Track Github branch':
             break
@@ -106,7 +116,8 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 if (values.placeholder) {
                     dataToBeStored += values.placeholder
                 }
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break;
             case 'Drop down':
             case 'Check boxes':
@@ -116,14 +127,16 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                 const listOptions = listOfOptions.map((i: { value: string }, idx: number) => idx + ":" + i.value)
                 dataToBeStored += listOptions.toString()
 
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break
             case 'Date picker':
                 dataToBeStored += ";"
                 if (values.defaultDate) {
                     dataToBeStored += values.defaultDate
                 }
-                dataToBeStored += ";" + (values.optional ? 1 : 0)
+                dataToBeStored += ";" + (values.required ? 1 : 0)
+                dataToBeStored += ";" + values.errorMessage
                 break
             case 'Track Github branch':
                 break
@@ -171,13 +184,13 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                         <FormMessage />
                                     </FormItem>
                                 )} />
-                            {"optional" in fieldSchema &&
+                            {"required" in fieldSchema &&
                                 <FormField
                                     control={form.control}
-                                    name="optional"
+                                    name="required"
                                     render={({ field }) => (
                                         <FormItem className="mx-5">
-                                            <FormLabel>Optional input</FormLabel>
+                                            <FormLabel>Required</FormLabel>
                                             <br />
                                             <FormControl>
                                                 <Switch
@@ -190,6 +203,21 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                                     )} />
                             }
                         </div>
+                        {"required" in fieldSchema &&
+                            form.getValues("required") &&
+                            <FormField
+                                control={form.control}
+                                name="errorMessage"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Error message</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={errorMsgPlaceHolder} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                        }
                         {"placeholder" in fieldSchema &&
                             <FormField
                                 control={form.control}
@@ -210,7 +238,7 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
                             <div className="">
                                 {fields.map((field, index) => (
                                     <div className="flex" key={field.id}>
-                                        <input
+                                        <Input
                                             key={field.id}
                                             {...register(`options.${index}.value`)}
                                             className="my-1"

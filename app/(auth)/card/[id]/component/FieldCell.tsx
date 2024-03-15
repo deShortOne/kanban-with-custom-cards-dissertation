@@ -63,7 +63,7 @@ export const FieldCell = ({ allFieldTypes, cardData, setData, position, fieldDat
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                         <Button
-                            variant="default"
+                            variant="outline"
                             role="combobox"
                             aria-expanded={open}
                             className="w-[250px] justify-between"

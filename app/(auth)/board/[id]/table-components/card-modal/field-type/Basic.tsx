@@ -2,8 +2,10 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { FieldTypeProp, requiredIndicator } from "./Base"
+import { useFormContext } from "react-hook-form"
 
-export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const TextField = ({ fieldTypeData, name }: FieldTypeProp) => {
+    const form = useFormContext()
     const splitData = fieldTypeData.split(";")
 
     const isRequired = splitData[2] === "1"
@@ -28,7 +30,8 @@ export const TextField = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     )
 }
 
-export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const TextArea = ({ fieldTypeData, name }: FieldTypeProp) => {
+    const form = useFormContext()
     const splitData = fieldTypeData.split(";")
 
     const isRequired = splitData[2] === "1"
@@ -53,7 +56,8 @@ export const TextArea = ({ form, fieldTypeData, name }: FieldTypeProp) => {
     )
 }
 
-export const Title = ({ form, fieldTypeData, name }: FieldTypeProp) => {
+export const Title = ({ fieldTypeData, name }: FieldTypeProp) => {
+    const form = useFormContext()
     if (!form.getValues()[name])
         form.setValue(name, fieldTypeData)
 

@@ -3,6 +3,7 @@ import { OPTIONS } from "@/utils/authOptions"
 import { prisma } from "@/lib/prisma"
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user'
 import { Octokit } from "@octokit/rest"
+import { CheckToken, CheckTokenReturnProp } from "../TokenCheck"
 
 export async function GET() {
     const session = await getServerSession(OPTIONS)
@@ -17,6 +18,11 @@ export async function GET() {
             UserToken: true,
         }
     })
+
+    const attemptToGetToken = await CheckToken({ githubId: session.user.id }) as CheckTokenReturnProp
+    if (!attemptToGetToken.isGood) {
+        return Response.json("Invalid token", { status: 498 })
+    }
 
     const octokit = new Octokit({
         authStrategy: createOAuthUserAuth,

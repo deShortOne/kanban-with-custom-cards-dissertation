@@ -19,8 +19,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { FieldTypeProp, requiredIndicator } from "./Base"
+import { useFormContext } from "react-hook-form"
 
-export function DatePicker({ form, fieldTypeData, name }: FieldTypeProp) {
+export function DatePicker({ fieldTypeData, name }: FieldTypeProp) {
+    const form = useFormContext()
     const data = fieldTypeData.split(";")
 
     const isRequired = data[2] === "1"

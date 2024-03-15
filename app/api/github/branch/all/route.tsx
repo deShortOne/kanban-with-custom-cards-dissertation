@@ -24,8 +24,14 @@ export async function GET(request: Request) {
     })
 
     const url = new URL(request.url)
-    const owner = url.searchParams.get("owner")!
-    const repo = url.searchParams.get("repo")!
+    const ownerRepo = url.searchParams.get("ownerRepo")!
+
+    const ownerRepoSplit = ownerRepo.split("/")
+    const owner = ownerRepoSplit[0]
+    const repo = ownerRepoSplit[1]
+    if (!owner || !repo) {
+        return Response.json("Invalid data")
+    }
 
     const { data } = await octokit.request("GET /repos/{owner}/{repo}/branches", {
         owner: owner,
