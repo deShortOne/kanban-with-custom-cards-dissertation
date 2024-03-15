@@ -9,6 +9,15 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Image from "next/image"
 import { SelectOwnerRepo } from "./SelectOwnerRepo"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const loadingText = "...loading..."
 
@@ -62,6 +71,32 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
     useEffect(() => {
         refreshBranchStatuses()
     }, []) // only want run once
+
+    const [branches, setBranches] = useState<string[]>([])
+    const getBranches = async () => {
+        if (branches.length !== 0) {
+            return
+        }
+
+        const response = await fetch('/api/github/branch/all?' +
+            new URLSearchParams({
+                ownerRepo: getValues()[name].repo,
+            }), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        console.log(response)
+
+        if (response.status === 498) {
+            setTokenIsValid("invalid token")
+        } else {
+            const data = await response.json()
+            setBranches(data)
+        }
+    }
 
     return (
         <FormItem className="flex flex-col">
@@ -167,21 +202,42 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <Input
-                                        key={field.id}
-                                        {...register(name + `.branches.${index}.branchName`)}
-                                        className="font-medium aria-readonly"
-                                        placeholder="branch name"
-                                        onBlur={() => {
-                                            updateBranchStatuses((prevInfo: any) => (
-                                                {
-                                                    ...prevInfo,
-                                                    [convertIdToString(field.id)]: loadingText
-                                                }
-                                            ))
-                                            getBranchStatus(field.id, getValues()[name].branches[index].branchName)
-                                        }}
-                                    />
+                                    <Select
+                                        onValueChange={(val) => setValue(name + `.branches.${index}.branchName`, val)}
+                                        onOpenChange={() => { getBranches() }}
+                                        defaultValue={getValues(name + `.branches.${index}.branchName`)}
+                                    >
+                                        <SelectTrigger className="w-96">
+                                            <SelectValue placeholder="Select branch" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {
+                                                branches.length === 0
+                                                    ?
+                                                    (
+                                                        <div>
+                                                            <SelectItem value={
+                                                                getValues(name + `.branches.${index}.branchName`) == "" ? "__" : getValues(name + `.branches.${index}.branchName`)
+                                                            }>
+                                                                {getValues(name + `.branches.${index}.branchName`)}
+                                                            </SelectItem>
+                                                            <Skeleton className="my-2 h-2 w-[250px]" />
+                                                            <Skeleton className="my-2 h-2 w-[250px]" />
+                                                        </div>
+                                                    )
+                                                    :
+                                                    <SelectGroup>
+                                                        {
+                                                            branches.map(i =>
+                                                                <SelectItem value={i} key={i}>
+                                                                    {i}
+                                                                </SelectItem>
+                                                            )
+                                                        }
+                                                    </SelectGroup>
+                                            }
+                                        </SelectContent>
+                                    </Select>
                                 </TableCell>
                                 <TableCell>
                                     {branchStatus.hasOwnProperty(convertIdToString(field.id))
@@ -215,7 +271,7 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
             >
                 Add
             </Button>
-        </FormItem>
+        </FormItem >
     )
 }
 
