@@ -335,9 +335,9 @@ function fieldTypeToZodType(fieldType: string, data: string) {
                         title: z.string(),
                         branchName: z.string(),
                     })
-                )
+                ).optional()
             }).transform(i => i.repo + ";" +
-                i.branches.flatMap(j => j.title + ":" + j.branchName).join(","))
+                i.branches?.flatMap(j => j.title + ":" + j.branchName).join(","))
         default:
             return z.string() // should probs be returning error instead
     }
