@@ -92,6 +92,10 @@ export async function GET(request: Request) {
     if (getPulls[0].state === "open") {
         return Response.json("Open pull request")
     }
+    if (getPulls[0].merged_at === null) {
+        return Response.json("Pull request denied")
+    }
+
     if (getPulls[0].base.ref === defaultBranch) {
         if (getPulls[0].head.sha === branchInfo.data.commit.sha) {
             return Response.json("Merged squash")
