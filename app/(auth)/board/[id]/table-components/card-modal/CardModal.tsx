@@ -28,6 +28,7 @@ import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBranchTracker"
 import Image from "next/image";
+import { useState } from "react";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
@@ -38,6 +39,8 @@ export const CardModal = () => {
     const id = cardModal.id
     const isOpen = cardModal.isOpen
     const onClose = cardModal.onClose
+
+    const [badTabs, setBadTabs] = useState<string[]>([])
 
     const { data: cardData } = useQuery<CardData>({
         queryKey: ["card", id],
@@ -56,14 +59,17 @@ export const CardModal = () => {
     const fieldIdAndType = cardData?.cardTemplate
         .tabs
         .flatMap(i => i.tabFields)
-        .map(i => ({ key: i.id, value: i.fieldType.name, data: i.data }))
+        .map(i => ({ tabId: i.cardTemplateTabId, key: i.id, value: i.fieldType.name, data: i.data }))
 
     // converts field template id to actual data id
     const templateFieldIdToDataId: any = {}
+    const templateDataIdToFieldId: any = {}
     cardData?.allTabsFieldInformation.forEach(item => {
         const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
-        if (dict)
+        if (dict) {
             templateFieldIdToDataId[dict.key] = item.id
+            templateDataIdToFieldId[item.id] = dict.key
+        }
     })
 
     const schemaForFields = fieldIdAndType ? fieldIdAndType
@@ -130,6 +136,7 @@ export const CardModal = () => {
     }
 
     function onSubmit(values: z.infer<typeof formSchema>) {
+        setBadTabs([])
         // Do something with the form values.
         // âœ… This will be type-safe and validated.
         fetch("/api/card/update/content", {
@@ -143,7 +150,33 @@ export const CardModal = () => {
         })
     }
 
-    const onError = (errors: any, e: any) => console.log(errors, e)
+    const onError = (errors: any, e: any) => {
+        const lis: string[] = []
+        for (var i in errors) {
+            lis.push(i.split("a")[1])
+        }
+
+        if (cardData == null) {
+            console.log(errors, e)
+            return;
+        }
+        const newBadTabs: string[] = []
+
+        for (let i = 0; i < cardData.cardTemplate.tabs.length; i++) {
+            const tab = cardData.cardTemplate.tabs[i]
+            for (let j = 0; j < tab.tabFields.length; j++) {
+                const dict = templateFieldIdToDataId[tab.tabFields[j].id]
+
+                if (lis.findIndex(i => i == dict) !== -1) { // ! Double equality
+                    newBadTabs.push(tab.name)
+                    break
+                }
+            }
+        }
+
+        setBadTabs(newBadTabs)
+        console.log(errors, e)
+    }
 
     if (!cardData)
         return null
@@ -202,7 +235,22 @@ export const CardModal = () => {
                             <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
                                 <TabsList>
                                     {cardData.cardTemplate.tabs.map(tab => {
-                                        return <TabsTrigger value={tab.name} key={tab.name}>{tab.name}</TabsTrigger>
+                                        return <TabsTrigger
+                                            value={tab.name}
+                                            key={tab.name}
+                                            className="relative inline-flex"
+                                        >
+                                            {tab.name}
+                                            {badTabs.find(i => i === tab.name) &&
+                                                <>
+                                                    &nbsp;
+                                                    <span className="relative flex h-3 w-3">
+                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                                    </span>
+                                                </>
+                                            }
+                                        </TabsTrigger>
                                     })}
                                 </TabsList>
 
