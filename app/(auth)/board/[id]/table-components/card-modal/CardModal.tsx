@@ -63,12 +63,10 @@ export const CardModal = () => {
 
     // converts field template id to actual data id
     const templateFieldIdToDataId: any = {}
-    const templateDataIdToFieldId: any = {}
     cardData?.allTabsFieldInformation.forEach(item => {
         const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
         if (dict) {
             templateFieldIdToDataId[dict.key] = item.id
-            templateDataIdToFieldId[item.id] = dict.key
         }
     })
 
