@@ -40,27 +40,6 @@ const SelectKanbanPage = async ({
         where: {
             id: kanbanId,
         },
-        include: {
-            KanbanColumns: {
-                orderBy: {
-                    order: "asc",
-                }
-            },
-            KanbanSwimLanes: {
-                orderBy: {
-                    order: "asc",
-                }
-            },
-            Cards: {
-                include: {
-                    cardTemplate: {
-                        select: {
-                            cardType: true,
-                        }
-                    }
-                }
-            }
-        }
     })
     if (kanban === null) {
         redirect("/select-board")
@@ -72,9 +51,6 @@ const SelectKanbanPage = async ({
             <KanbanNavBar title={kanban.title} role={userRoleKanban.permission} />
             <Table
                 id={kanban.id}
-                columns={kanban.KanbanColumns}
-                swimlanes={kanban.KanbanSwimLanes}
-                cards={kanban.Cards}
                 role={userRoleKanban.permission}
             />
         </main>

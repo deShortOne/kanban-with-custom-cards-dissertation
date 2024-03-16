@@ -22,12 +22,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+    useQuery,
+} from '@tanstack/react-query'
 
 interface TableInformationProps {
     id: number
-    columns: KanbanColumn[]
-    swimlanes: KanbanSwimLane[]
-    cards: CardProps[]
     role: Role
 }
 
@@ -49,15 +49,37 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, columns, swimlanes, cards, role
+    id, role
 }: TableInformationProps) => {
     const boardId = id
 
     const [alertMsg, setAlertMsg] = useState("")
 
+    const { status, data, error, isFetching } = useQuery({
+        queryKey: ['todos'],
+        queryFn: () => (fetch('/api/board?' +
+            new URLSearchParams({
+                "kanbanId": boardId.toString(),
+            }), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json())),
+        // Refetch the data every 5 seconds
+        refetchInterval: 5000,
+    })
+    useEffect(() => {
+        if (isFetching)
+            return
+        setColumns(data.KanbanColumns)
+        setSwimLanes(data.KanbanSwimLanes)
+        setCard(data.Cards)
+    }, [isFetching, data])
+
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState(columns)
+    const [stateColumns, setColumns] = useState<KanbanColumn[]>([])
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex]
         const newColumns = [...stateColumns]
@@ -130,7 +152,7 @@ export const Table = ({
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState(swimlanes)
+    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>([])
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex]
         const newSwimLanes = [...stateSwimLanes]
@@ -203,8 +225,7 @@ export const Table = ({
 
     /* CARD */
     // move card
-    cards.sort(sortCardPropsByOrder)
-    const [cardsInfo, setCard] = useState<CardProps[]>(cards)
+    const [cardsInfo, setCard] = useState<CardProps[]>([])
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
 
