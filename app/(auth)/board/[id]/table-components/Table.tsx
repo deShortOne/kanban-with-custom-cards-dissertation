@@ -25,23 +25,11 @@ import {
 import {
     useQuery,
 } from '@tanstack/react-query'
+import { BoardApiData, CardProps } from "@/app/types/Board"
 
 interface TableInformationProps {
     id: number
     role: Role
-}
-
-export interface CardProps {
-    id: number
-    title: string
-    order: number
-    columnId: number
-    swimLaneId: number
-    cardTemplate: {
-        cardType: {
-            name: string,
-        }
-    }
 }
 
 function sortCardPropsByOrder(a: CardProps, b: CardProps) {
@@ -52,14 +40,16 @@ export const Table = ({
     id, role
 }: TableInformationProps) => {
     const boardId = id
+    let LastKanbanUpdateServer = 0
 
     const [alertMsg, setAlertMsg] = useState("")
 
-    const { status, data, error, isFetching } = useQuery({
+    const { status, data, error, isFetching } = useQuery<BoardApiData>({
         queryKey: ['todos'],
         queryFn: () => (fetch('/api/board?' +
             new URLSearchParams({
                 "kanbanId": boardId.toString(),
+                "lastKanbanUpdate": LastKanbanUpdateServer.toString(),
             }), {
             method: 'GET',
             headers: {
@@ -72,9 +62,16 @@ export const Table = ({
     useEffect(() => {
         if (isFetching)
             return
-        setColumns(data.KanbanColumns)
-        setSwimLanes(data.KanbanSwimLanes)
-        setCard(data.Cards)
+        if (!data)
+            return
+        if (data.updateCardPositions)
+            setCard(data.Cards)
+        if (data.updateColumnPositions)
+            setColumns(data.KanbanColumns)
+        if (data.updateSwimLanePositions)
+            setSwimLanes(data.KanbanSwimLanes)
+
+        LastKanbanUpdateServer = data.LastKanbanUpdate
     }, [isFetching, data])
 
     /* COLUMN */
