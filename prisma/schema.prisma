@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["views"]
 }
 
 datasource db {
@@ -38,11 +39,12 @@ model Kanban {
     title String
     users UserRoleKanban[] @relation("KanbanHasUsers")
 
-    KanbanColumns   KanbanColumn[]
-    KanbanSwimLanes KanbanSwimLane[]
-    Cards           Card[]
-    CardTemplate    CardTemplate[]
-    TrackChanges    TrackChanges[]
+    KanbanColumns    KanbanColumn[]
+    KanbanSwimLanes  KanbanSwimLane[]
+    Cards            Card[]
+    CardTemplate     CardTemplate[]
+    TrackChanges     TrackChanges[]
+    LastKanbanUpdate LastKanbanUpdate[]
 }
 
 enum Role {
@@ -220,4 +222,13 @@ model TrackChanges {
     @@index([userId])
     @@index([kanbanId])
     @@index([updatedCardId])
+}
+
+view LastKanbanUpdate {
+    kanbanId   Int @id
+    lastChange Int
+
+    kanban Kanban @relation(fields: [kanbanId], references: [id])
+
+    @@index([kanbanId])
 }
