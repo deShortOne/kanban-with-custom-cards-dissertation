@@ -2,7 +2,7 @@
 import { KanbanColumn, KanbanSwimLane, Role } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import TableCell from './TableCell'
 
 import { AddNewCardButton } from "./NewCardButton"
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import {
     useQuery,
+    useQueryClient,
 } from '@tanstack/react-query'
 import { BoardApiData, CardProps } from "@/app/types/Board"
 
@@ -40,7 +41,8 @@ export const Table = ({
     id, role
 }: TableInformationProps) => {
     const boardId = id
-    let LastKanbanUpdateServer = 0
+    const queryClient = useQueryClient()
+    const LastKanbanUpdateServer = useRef(0);
 
     const [alertMsg, setAlertMsg] = useState("")
 
@@ -49,7 +51,7 @@ export const Table = ({
         queryFn: () => (fetch('/api/board?' +
             new URLSearchParams({
                 "kanbanId": boardId.toString(),
-                "lastKanbanUpdate": LastKanbanUpdateServer.toString(),
+                "lastKanbanUpdate": LastKanbanUpdateServer.current.toString(),
             }), {
             method: 'GET',
             headers: {
@@ -70,9 +72,11 @@ export const Table = ({
             setColumns(data.KanbanColumns)
         if (data.updateSwimLanePositions)
             setSwimLanes(data.KanbanSwimLanes)
+        if (data.updateCardTemplates)
+            queryClient.invalidateQueries({ queryKey: ["addNewCard"] })
 
-        LastKanbanUpdateServer = data.LastKanbanUpdate
-    }, [isFetching, data])
+        LastKanbanUpdateServer.current = data.LastKanbanUpdate
+    }, [isFetching, data, queryClient])
 
     /* COLUMN */
     // move column

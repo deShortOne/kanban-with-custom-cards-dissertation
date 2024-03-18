@@ -15,6 +15,7 @@ import { useEffect, useState } from "react"
 import { useKanbanModalSetting } from "../settings-modal/components/useDialog"
 import { Badge } from "@/components/ui/badge"
 import { Role } from "@prisma/client"
+import { useQuery } from "@tanstack/react-query"
 
 interface NewCardInfo {
     id: number
@@ -33,38 +34,35 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModalSetting()
 
-    const [isLoading, setLoading] = useState(true)
-    const [data, setData] = useState<NewCardInfo[]>([])
     const [defaultNewCard, setDefaultNewCard] = useState<NewCardInfo>()
 
+    const { status, data, error, isFetching } = useQuery<NewCardInfo[]>({
+        queryKey: ['addNewCard'],
+        queryFn: () => (fetch('/api/board/settings/card?' +
+            new URLSearchParams({
+                "kanbanId": kanbanId.toString(),
+            }), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json())),
+    })
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const idAndTypes = await fetch('/api/board/settings/card?' +
-                    new URLSearchParams({
-                        kanbanId: kanbanId.toString(),
-                    }), {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-
-                const idAndTypesData = await idAndTypes.json()
-                setData(idAndTypesData)
-                setDefaultNewCard(idAndTypesData[0])
-                idAndTypesData.forEach((i: NewCardInfo) => i.isDefault ? setDefaultNewCard(i) : null)
-
-                setLoading(false)
-            } catch (error) {
-                console.error("Fetch error:", error)
+        if (isFetching)
+            return
+        if (!data)
+            return
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].isDefault) {
+                setDefaultNewCard(data[i])
+                break
             }
         }
+    }, [isFetching, data])
 
-        fetchData()
-    }, [kanbanId])
-
-    if (isLoading) {
+    if (isFetching) {
         return (
             <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
                 <Button variant="secondary" className="px-3 shadow-none min-w-[150px]" disabled>
@@ -76,6 +74,10 @@ export const AddNewCardButton = (
                 </Button>
             </div>
         )
+    }
+
+    if (!data) {
+        return <div>error! Failed to fetch</div>
     }
 
     return (
