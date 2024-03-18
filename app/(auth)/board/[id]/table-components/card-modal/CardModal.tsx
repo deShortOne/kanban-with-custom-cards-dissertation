@@ -28,17 +28,22 @@ import { ComboboxForm } from "./field-type/DropDown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBranchTracker"
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
-const cardIdsLoaded: number[] = []
+let cardIdsLoaded: number = -1
 
 export const CardModal = () => {
     const cardModal = useCardModal()
     const id = cardModal.id
     const isOpen = cardModal.isOpen
     const onClose = cardModal.onClose
+
+    // reset ids 
+    useEffect(() => {
+        cardIdsLoaded = -1
+    }, [id])
 
     const [badTabs, setBadTabs] = useState<string[]>([])
 
@@ -84,8 +89,9 @@ export const CardModal = () => {
         resolver: zodResolver(formSchema),
     })
 
-    if (cardData && cardIdsLoaded.find(i => i === cardData.id) === undefined) {
-        cardIdsLoaded.push(cardData.id)
+    // not using useEffect because data should only get reset after card modal is reopened.
+    if (cardData && cardIdsLoaded != cardData.id) {
+        cardIdsLoaded = cardData.id
 
         cardData.allTabsFieldInformation.forEach(item => {
             const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)

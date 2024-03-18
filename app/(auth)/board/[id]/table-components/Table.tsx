@@ -74,6 +74,12 @@ export const Table = ({
             setSwimLanes(data.KanbanSwimLanes)
         if (data.updateCardTemplates)
             queryClient.invalidateQueries({ queryKey: ["addNewCard"] })
+        if (data.updateCardData) {
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === 'card' && data.updatedCardIds.findIndex(i => i === query.queryKey[1]) !== -1
+            })
+        }
 
         LastKanbanUpdateServer.current = data.LastKanbanUpdate
     }, [isFetching, data, queryClient])
