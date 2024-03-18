@@ -16,8 +16,9 @@ model User {
     email    String? @unique
     githubId Int     @unique
 
-    kanbans   UserRoleKanban[] @relation("AvailableKanbans")
-    UserToken UserToken?
+    kanbans      UserRoleKanban[] @relation("AvailableKanbans")
+    UserToken    UserToken?
+    TrackChanges TrackChanges[]
 }
 
 model UserToken {
@@ -41,6 +42,7 @@ model Kanban {
     KanbanSwimLanes KanbanSwimLane[]
     Cards           Card[]
     CardTemplate    CardTemplate[]
+    TrackChanges    TrackChanges[]
 }
 
 enum Role {
@@ -184,9 +186,38 @@ model Card {
     cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id])
 
     allTabsFieldInformation CardTabField[]
+    TrackChanges            TrackChanges[]
 
     @@index([columnId])
     @@index([swimLaneId])
     @@index([kanbanId])
     @@index([cardTemplateId])
+}
+
+model TrackChanges {
+    timestamp      BigInt
+    dataCenterId   Int
+    machineId      Int
+    sequenceNumber Int
+
+    userId   Int
+    user     User   @relation(fields: [userId], references: [id])
+    kanbanId Int
+    kanban   Kanban @relation(fields: [kanbanId], references: [id])
+
+    updateCardPositions     Boolean @default(false)
+    updateColumnPositions   Boolean @default(false)
+    updateSwimLanePositions Boolean @default(false)
+    updateCardTemplates     Boolean @default(false)
+
+    // would add a constraint check here to ensure if updateCardData is true
+    // then updatedCardId is also filled in
+    updateCardData Boolean @default(false)
+    updatedCardId  Int?
+    updatedCard    Card?   @relation(fields: [updatedCardId], references: [id])
+
+    @@id([timestamp, dataCenterId, machineId, sequenceNumber])
+    @@index([userId])
+    @@index([kanbanId])
+    @@index([updatedCardId])
 }
