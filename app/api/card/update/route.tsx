@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { insertUpdateCardPositions } from "../../commonFunctions/Base";
 
 interface updateCardDisplay {
     id: number,
@@ -31,6 +32,8 @@ export async function POST(req: Request) {
     }
 
     Promise.all(dataLoadToDb)
+
+    insertUpdateCardPositions((await dataLoadToDb[0]).kanbanId)
 
     return new NextResponse("ok")
 }

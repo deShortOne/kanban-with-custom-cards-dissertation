@@ -1,3 +1,4 @@
+import { insertUpdateCardTemplates } from "@/app/api/commonFunctions/Base";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -66,6 +67,8 @@ export async function POST(req: Request) {
             isDefault: true,
         }
     })
+
+    insertUpdateCardTemplates(data.kanbanId)
 
     return NextResponse.json(1)
 }

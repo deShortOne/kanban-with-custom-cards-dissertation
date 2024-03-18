@@ -1,3 +1,6 @@
+import { prisma } from "@/lib/prisma"
+import { OPTIONS } from "@/utils/authOptions"
+import { getServerSession } from 'next-auth/next'
 
 const EPOCH = parseInt(process.env.EPOCH!)
 const SEQUENCE_BITS = 5
@@ -14,7 +17,59 @@ interface TwitterSnowFlake {
     sequenceNumber: number
 }
 
-export function generateTwitterSnowflake(): TwitterSnowFlake {
+export async function insertUpdateCardPositions(kanbanId: number) {
+    await addUpdate(kanbanId, "updateCardPosition")
+}
+export async function insertUpdateColumnPositions(kanbanId: number) {
+    await addUpdate(kanbanId, "updateColumnPositions")
+}
+export async function insertUpdateSwimLanePositions(kanbanId: number) {
+    await addUpdate(kanbanId, "updateSwimLanePositions")
+}
+export async function insertUpdateCardTemplates(kanbanId: number) {
+    await addUpdate(kanbanId, "updateCardTemplates")
+}
+export async function insertUpdateCardData(kanbanId: number, cardId: number) {
+    const session = await getServerSession(OPTIONS)
+    const snow = generateTwitterSnowflake()
+    await prisma.trackChanges.create({
+        data: {
+            timestamp: snow.timestamp,
+            dataCenterId: snow.dataCenterId,
+            machineId: snow.machineId,
+            sequenceNumber: snow.sequenceNumber,
+
+            userId: session?.user.id!,
+            kanbanId: kanbanId,
+            updateCardData: true,
+            updatedCardId: cardId,
+        }
+    })
+}
+
+async function addUpdate(kanbanId: number,
+    type: "updateCardPosition" | "updateColumnPositions" | "updateSwimLanePositions" | "updateCardTemplates"
+) {
+    const session = await getServerSession(OPTIONS)
+    const snow = generateTwitterSnowflake()
+    await prisma.trackChanges.create({
+        data: {
+            timestamp: snow.timestamp,
+            dataCenterId: snow.dataCenterId,
+            machineId: snow.machineId,
+            sequenceNumber: snow.sequenceNumber,
+
+            userId: session?.user.id!,
+            kanbanId: kanbanId,
+            updateCardPositions: type == "updateCardPosition",
+            updateColumnPositions: type == "updateColumnPositions",
+            updateSwimLanePositions: type == "updateSwimLanePositions",
+            updateCardTemplates: type == "updateCardTemplates",
+        }
+    })
+}
+
+function generateTwitterSnowflake(): TwitterSnowFlake {
     let timestamp = (new Date()).getTime() - EPOCH
 
     if (timestamp === lastTimestamp) {
