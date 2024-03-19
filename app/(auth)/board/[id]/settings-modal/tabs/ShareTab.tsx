@@ -110,7 +110,7 @@ export const ShareTab = ({ id }: { id: number }) => {
                                         <Input
                                             {...register(i.user.id + "~useremail")}
                                             defaultValue={i.user.email}
-                                            placeholder={i.user.id + "~useremail"}
+                                            placeholder="email"
                                         />
                                         {errors[i.user.id + "~useremail"] &&
                                             <p>{errors[i.user.id + "~useremail"]!.message as string}</p>
