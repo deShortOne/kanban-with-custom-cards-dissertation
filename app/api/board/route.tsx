@@ -1,5 +1,7 @@
 import { BoardApiData } from "@/app/types/Board"
 import { prisma } from "@/lib/prisma"
+import { OPTIONS } from "@/utils/authOptions"
+import { getServerSession } from 'next-auth/next'
 
 interface orderByOrderType {
     orderBy: {
@@ -13,6 +15,8 @@ const orderByOrder: orderByOrderType = {
 }
 
 export async function GET(request: Request) {
+    const session = await getServerSession(OPTIONS)
+
     const { searchParams } = new URL(request.url)
     const kanbanId = searchParams.get("kanbanId")
     let lastTime = searchParams.get("lastKanbanUpdate")
@@ -78,7 +82,10 @@ export async function GET(request: Request) {
                 timestamp: {
                     gt: parseInt(lastTime)
                 },
-                kanbanId: parseInt(kanbanId)
+                kanbanId: parseInt(kanbanId),
+                userId: {
+                    not: session?.user.id!
+                },
             },
             _max: {
                 updateCardPositions: true,
