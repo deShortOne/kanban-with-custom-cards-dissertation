@@ -70,6 +70,7 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
     }
     useEffect(() => {
         refreshBranchStatuses()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) // only want run once
 
     const [branches, setBranches] = useState<string[]>([])

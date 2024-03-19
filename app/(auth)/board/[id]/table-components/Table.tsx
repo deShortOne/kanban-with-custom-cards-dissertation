@@ -385,8 +385,11 @@ export const Table = ({
     // tracks changes from cardModal hook
     const cardModal = useCardModal()
     useEffect(() => {
-        removeCard(cardModal.deletedId)
-        cardModal.setDeletedId(-1)
+        if (cardModal.deletedId !== -1) {
+            removeCard(cardModal.deletedId)
+            cardModal.setDeletedId(-1)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cardModal.deletedId])
 
     return (
