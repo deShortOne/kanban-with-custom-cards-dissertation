@@ -89,8 +89,6 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
             },
         })
 
-        console.log(response)
-
         if (response.status === 498) {
             setTokenIsValid("invalid token")
         } else {
