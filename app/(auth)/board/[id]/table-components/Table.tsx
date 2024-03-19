@@ -31,6 +31,11 @@ import { BoardApiData, CardProps } from "@/app/types/Board"
 interface TableInformationProps {
     id: number
     role: Role
+
+    Cards: CardProps[]
+    KanbanColumns: KanbanColumn[]
+    KanbanSwimLanes: KanbanSwimLane[]
+    LastKanbanUpdate: number
 }
 
 function sortCardPropsByOrder(a: CardProps, b: CardProps) {
@@ -38,11 +43,11 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, role
+    id, role, Cards, KanbanColumns, KanbanSwimLanes, LastKanbanUpdate
 }: TableInformationProps) => {
     const boardId = id
     const queryClient = useQueryClient()
-    const LastKanbanUpdateServer = useRef(0);
+    const LastKanbanUpdateServer = useRef(LastKanbanUpdate);
 
     const [alertMsg, setAlertMsg] = useState("")
 
@@ -58,6 +63,7 @@ export const Table = ({
                 'Content-Type': 'application/json',
             },
         }).then((res) => res.json())),
+        staleTime: 10000,
         // Refetch the data every 5 seconds
         refetchInterval: 5000,
     })
@@ -86,7 +92,7 @@ export const Table = ({
 
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState<KanbanColumn[]>([])
+    const [stateColumns, setColumns] = useState<KanbanColumn[]>(KanbanColumns)
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex]
         const newColumns = [...stateColumns]
@@ -159,7 +165,7 @@ export const Table = ({
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>([])
+    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(KanbanSwimLanes)
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex]
         const newSwimLanes = [...stateSwimLanes]
@@ -232,7 +238,7 @@ export const Table = ({
 
     /* CARD */
     // move card
-    const [cardsInfo, setCard] = useState<CardProps[]>([])
+    const [cardsInfo, setCard] = useState<CardProps[]>(Cards)
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
 

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { getServerSession } from 'next-auth/next'
 import { OPTIONS } from "@/utils/authOptions"
+import { BoardApiData } from "@/app/types/Board"
 
 const SelectKanbanPage = async ({
     params
@@ -40,6 +41,35 @@ const SelectKanbanPage = async ({
         where: {
             id: kanbanId,
         },
+        include: {
+            KanbanColumns: {
+                orderBy: {
+                    order: "asc",
+                },
+            },
+            KanbanSwimLanes: {
+                orderBy: {
+                    order: "asc",
+                },
+            },
+            Cards: {
+                orderBy: {
+                    order: "asc",
+                },
+                include: {
+                    cardTemplate: {
+                        select: {
+                            cardType: true,
+                        }
+                    }
+                },
+            },
+            LastKanbanUpdate: {
+                select: {
+                    lastChange: true
+                }
+            }
+        }
     })
     if (kanban === null) {
         redirect("/select-board")
@@ -52,6 +82,10 @@ const SelectKanbanPage = async ({
             <Table
                 id={kanban.id}
                 role={userRoleKanban.permission}
+                Cards={kanban.Cards}
+                KanbanColumns={kanban.KanbanColumns}
+                KanbanSwimLanes={kanban.KanbanSwimLanes}
+                LastKanbanUpdate={kanban.LastKanbanUpdate[0].lastChange}
             />
         </main>
     )
