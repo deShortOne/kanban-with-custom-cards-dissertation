@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import CardInfo from "./CardInfo"
-import { CardProps } from "../Table"
+import { CardProps } from "@/app/types/Board"
 
 export interface CardPropExtra extends CardProps {
     moveCard: (dragIndex: number, hoverIndex: number) => void

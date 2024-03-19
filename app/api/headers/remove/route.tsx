@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { KanbanColumn, KanbanSwimLane } from "@prisma/client"
 import { NextResponse } from "next/server"
 import { insertUpdateColumnPositions, insertUpdateSwimLanePositions } from "../../commonFunctions/Base"
-import { updateDb } from "../reorder/route" // TODO don't like this name
+import { updateDb } from "../reorder/publicFunction" // TODO don't like this name
 
 export async function POST(req: Request) {
     const data = await req.json()

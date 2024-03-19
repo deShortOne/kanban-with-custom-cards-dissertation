@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { insertUpdateColumnPositions, insertUpdateSwimLanePositions } from "../../commonFunctions/Base";
+import { NextResponse } from "next/server"
+import { insertUpdateColumnPositions, insertUpdateSwimLanePositions } from "../../commonFunctions/Base"
+import { updateDb } from "./publicFunction"
 
 interface prop {
     boardId: number,
@@ -9,7 +9,7 @@ interface prop {
     lastUpdate: Date,
 }
 
-const lis: prop[] = [];
+const lis: prop[] = []
 
 export async function POST(req: Request) {
     const data = await req.json()
@@ -32,7 +32,7 @@ function updateHeaderValues(boardId: number, type: string, headers: number[]) {
             headers: headers,
             lastUpdate: new Date()
         })
-        setTimeout(function () { attemptToUpdateDb(boardId, type) }, 2000);
+        setTimeout(function () { attemptToUpdateDb(boardId, type) }, 2000)
     } else {
         lis[objIdx].headers = headers
         lis[objIdx].lastUpdate = new Date()
@@ -50,24 +50,7 @@ function attemptToUpdateDb(boardId: number, type: string) {
         lis.splice(objIdx, 1)
         updateDb(boardId, type, object.headers)
     } else {
-        setTimeout(function () { attemptToUpdateDb(boardId, type) }, 2000);
+        setTimeout(function () { attemptToUpdateDb(boardId, type) }, 2000)
     }
 }
 
-export async function updateDb(boardId: number, type: string, headers: number[]) {
-    let query = "UPDATE "
-    if (type === "COLUMN") {
-        query += "KanbanColumn"
-    } else {
-        query += "KanbanSwimLane"
-    }
-    query += " SET `ORDER` = CASE\n"
-
-    // create case when statements for updating id to order number
-    for (let i = 0; i < headers.length; i++) {
-        query += "WHEN id = " + headers[i] + " THEN " + (i + 1) + "\n"
-    }
-    query += "END\nWHERE id IN (" + headers.toString() + ");"
-
-    await prisma.$queryRawUnsafe(query) //!! UNSAFE!!
-}
