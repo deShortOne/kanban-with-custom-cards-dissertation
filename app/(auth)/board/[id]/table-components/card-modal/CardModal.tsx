@@ -19,16 +19,16 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useCardModal } from "./useDialog"
 import { CardData } from "./field-type/Base"
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { TextField, TextArea, Title } from "./field-type/Basic";
-import { DatePicker } from "./field-type/DatePicker";
-import { CheckboxMultiple } from "./field-type/CheckBox";
-import { ComboboxForm } from "./field-type/DropDown";
+import { Form } from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { TextField, TextArea, Title } from "./field-type/Basic"
+import { DatePicker } from "./field-type/DatePicker"
+import { CheckboxMultiple } from "./field-type/CheckBox"
+import { ComboboxForm } from "./field-type/DropDown"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBranchTracker"
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import Image from "next/image"
+import { useEffect, useState } from "react"
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
@@ -40,6 +40,8 @@ export const CardModal = () => {
     const isOpen = cardModal.isOpen
     const onClose = cardModal.onClose
 
+    const [serverHasNewData, setServerHasNewData] = useState(false)
+
     // reset ids 
     useEffect(() => {
         cardIdsLoaded = -1
@@ -47,7 +49,7 @@ export const CardModal = () => {
 
     const [badTabs, setBadTabs] = useState<string[]>([])
 
-    const { data: cardData } = useQuery<CardData>({
+    const { data: cardData, isLoading, isFetching } = useQuery<CardData>({
         queryKey: ["card", id],
         queryFn: () => (fetch("/api/card/data", {
             method: 'POST',
@@ -57,8 +59,15 @@ export const CardModal = () => {
             body: JSON.stringify({
                 id: id,
             }),
-        }).then((res) => res.json()))
+        }).then((res) => res.json())),
+        refetchOnWindowFocus: false
     })
+
+    useEffect(() => {
+        if (isFetching && !isLoading) {
+            setServerHasNewData(true)
+        }
+    }, [isLoading, isFetching])
 
     // stores information about the field template
     const fieldIdAndType = cardData?.cardTemplate
@@ -89,10 +98,10 @@ export const CardModal = () => {
         resolver: zodResolver(formSchema),
     })
 
-    // not using useEffect because data should only get reset after card modal is reopened.
-    if (cardData && cardIdsLoaded != cardData.id) {
-        cardIdsLoaded = cardData.id
-
+    const setFieldData = () => {
+        if (!cardData)
+            return
+        setServerHasNewData(false)
         cardData.allTabsFieldInformation.forEach(item => {
             const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
             if (dict) {
@@ -138,6 +147,11 @@ export const CardModal = () => {
             }
         })
     }
+    // not using useEffect because data should only get reset after card modal is reopened.
+    if (cardData && cardIdsLoaded != cardData.id) {
+        cardIdsLoaded = cardData.id
+        setFieldData()
+    }
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         setBadTabs([])
@@ -162,7 +176,7 @@ export const CardModal = () => {
 
         if (cardData == null) {
             console.log(errors, e)
-            return;
+            return
         }
         const newBadTabs: string[] = []
 
@@ -219,6 +233,27 @@ export const CardModal = () => {
                                 <Title fieldTypeData={cardData.title} name={"title" + cardData.id} />
 
                                 <div className="flex px-5">
+                                    {
+                                        serverHasNewData
+                                            ?
+                                            <button
+                                                className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                                onClick={() => setFieldData()}
+                                                type="button"
+                                            >
+                                                <span className="relative me-1 flex h-2 w-2">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                                </span>
+                                                Click to update
+                                            </button>
+                                            :
+                                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                                <span className="w-2 h-2 me-1 rounded-full bg-green-500" />
+                                                Up to date
+                                            </span>
+                                    }
+
                                     <Button type="submit" className="bg-cyan-500">Save</Button>
 
                                     <AlertDialogTrigger asChild>
