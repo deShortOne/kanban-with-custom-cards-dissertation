@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { insertUpdateCardPositions } from "../../commonFunctions/Base";
 
 export async function POST(req: Request) {
     const data = await req.json()
@@ -89,6 +90,7 @@ export async function POST(req: Request) {
         data: tabFieldData,
     })
 
+    insertUpdateCardPositions(data.boardId)
 
     if (toUpdate) {
         return NextResponse.json(toUpdate.id);

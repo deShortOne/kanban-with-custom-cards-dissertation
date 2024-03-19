@@ -2,6 +2,7 @@ import { DataProp } from "@/app/(auth)/card/[id]/component/Base"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { redirect } from 'next/navigation'
+import { insertUpdateCardTemplates } from "../../commonFunctions/Base"
 
 export async function GET(req: Request) {
     const url = new URL(req.url)
@@ -101,6 +102,8 @@ export async function POST(req: Request) {
     await prisma.cardTemplateTabField.createMany({
         data: insertTabFields
     })
+
+    insertUpdateCardTemplates(oldCardTemplate.kanbanId)
 
     redirect("/card/" + cardTemplateId)
 }

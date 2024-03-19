@@ -2,7 +2,7 @@
 import { KanbanColumn, KanbanSwimLane, Role } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import TableCell from './TableCell'
 
 import { AddNewCardButton } from "./NewCardButton"
@@ -22,26 +22,20 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query'
+import { BoardApiData, CardProps } from "@/app/types/Board"
 
 interface TableInformationProps {
     id: number
-    columns: KanbanColumn[]
-    swimlanes: KanbanSwimLane[]
-    cards: CardProps[]
     role: Role
-}
 
-export interface CardProps {
-    id: number
-    title: string
-    order: number
-    columnId: number
-    swimLaneId: number
-    cardTemplate: {
-        cardType: {
-            name: string,
-        }
-    }
+    Cards: CardProps[]
+    KanbanColumns: KanbanColumn[]
+    KanbanSwimLanes: KanbanSwimLane[]
+    LastKanbanUpdate: number
 }
 
 function sortCardPropsByOrder(a: CardProps, b: CardProps) {
@@ -49,15 +43,56 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, columns, swimlanes, cards, role
+    id, role, Cards, KanbanColumns, KanbanSwimLanes, LastKanbanUpdate
 }: TableInformationProps) => {
     const boardId = id
+    const queryClient = useQueryClient()
+    const LastKanbanUpdateServer = useRef(LastKanbanUpdate);
 
     const [alertMsg, setAlertMsg] = useState("")
 
+    const { status, data, error, isFetching } = useQuery<BoardApiData>({
+        queryKey: ['todos'],
+        queryFn: () => (fetch('/api/board?' +
+            new URLSearchParams({
+                "kanbanId": boardId.toString(),
+                "lastKanbanUpdate": LastKanbanUpdateServer.current.toString(),
+            }), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json())),
+        staleTime: 10000,
+        // Refetch the data every 5 seconds
+        refetchInterval: 5000,
+    })
+    useEffect(() => {
+        if (isFetching)
+            return
+        if (!data)
+            return
+        if (data.updateCardPositions)
+            setCard(data.Cards)
+        if (data.updateColumnPositions)
+            setColumns(data.KanbanColumns)
+        if (data.updateSwimLanePositions)
+            setSwimLanes(data.KanbanSwimLanes)
+        if (data.updateCardTemplates)
+            queryClient.invalidateQueries({ queryKey: ["addNewCard"] })
+        if (data.updateCardData) {
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === 'card' && data.updatedCardIds.findIndex(i => i === query.queryKey[1]) !== -1
+            })
+        }
+
+        LastKanbanUpdateServer.current = data.LastKanbanUpdate
+    }, [isFetching, data, queryClient])
+
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState(columns)
+    const [stateColumns, setColumns] = useState<KanbanColumn[]>(KanbanColumns)
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex]
         const newColumns = [...stateColumns]
@@ -130,7 +165,7 @@ export const Table = ({
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState(swimlanes)
+    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(KanbanSwimLanes)
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex]
         const newSwimLanes = [...stateSwimLanes]
@@ -203,8 +238,7 @@ export const Table = ({
 
     /* CARD */
     // move card
-    cards.sort(sortCardPropsByOrder)
-    const [cardsInfo, setCard] = useState<CardProps[]>(cards)
+    const [cardsInfo, setCard] = useState<CardProps[]>(Cards)
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
 

@@ -13,6 +13,21 @@ async function main() {
         data: { title: 'kanban board 1' }
     })
 
+    await prisma.trackChanges.create({
+        data: {
+            timestamp: 0,
+            dataCenterId: 0,
+            machineId: 0,
+            sequenceNumber: 0,
+
+            userId: 1,
+            kanbanId: kanban.id,
+            updateCardPositions: true,
+            updateColumnPositions: true,
+            updateSwimLanePositions: true,
+        }
+    })
+
     const userRoleKanban = await prisma.userRoleKanban.create({
         data: {
             userId: person.id,
