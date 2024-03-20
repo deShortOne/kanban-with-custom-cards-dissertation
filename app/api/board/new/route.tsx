@@ -2,6 +2,7 @@ import { Role, User } from "@prisma/client"
 import { getServerSession } from 'next-auth/next'
 import { OPTIONS } from "@/utils/authOptions"
 import { prisma } from "@/lib/prisma"
+import { insertNewKanban } from "../../commonFunctions/Base"
 
 export async function POST(request: Request) {
     const formData = await request.formData()
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
         }
     })
 
+    insertNewKanban(kanban.id)
     return Response.json({ kanban })
 }
 
