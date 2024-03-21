@@ -21,6 +21,12 @@ services:
       plugin: caching_sha2_password
     networks:
       - default
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-u", "${DOCKER_DB_UNAME}", "-p'${DOCKER_DB_PWD}'"]
+      timeout: 6s
+      retries: 10
+      interval: 5s
+      start_interval: 3s
 
   web:
     container_name: web
@@ -28,7 +34,8 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports: 
       - 3000:3000
     env_file:
