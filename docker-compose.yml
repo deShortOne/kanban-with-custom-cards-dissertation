@@ -1,0 +1,48 @@
+version: '3.8'
+
+volumes:
+  database-data:
+
+networks:
+  default:
+    driver: bridge
+    
+services:
+  database:
+    container_name: database
+    image: 'mysql'
+    restart: unless-stopped
+    ports:
+      - "${DOCKER_DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_USER: ${DOCKER_DB_UNAME}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_PWD}
+      MYSQL_DATABASE: ${DOCKER_DB_DATABASE}
+      plugin: caching_sha2_password
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-u", "${DOCKER_DB_UNAME}", "-p'${DOCKER_DB_PWD}'"]
+      timeout: 6s
+      retries: 10
+      interval: 5s
+      start_interval: 3s
+
+  web:
+    container_name: web
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    ports: 
+      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DOCKER_DATABASE_URL}
+    networks:
+      - default
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

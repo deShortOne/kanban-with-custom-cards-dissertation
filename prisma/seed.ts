@@ -56,25 +56,7 @@ async function main() {
     })
     console.log("All swim lanes added: ", kanbanSwimLanesData.length == kanbanSwimLanes.count)
 
-    const fieldTypeData = [
-        { name: 'Text field', description: "A single line text field", implemented: true },
-        { name: 'Text area', description: "A multi line text field", implemented: true },
-        { name: 'Date picker', description: "A calendar that picks a date from a calendar", implemented: true },
-        { name: 'Comment', description: "Comment section", implemented: false },
-        { name: 'File upload', description: "Area to upload and download files", implemented: false },
-        { name: 'Check boxes', description: "A checkbox area", implemented: true },
-        { name: 'Drop down', description: "Drop down", implemented: true },
-        { name: 'Track Github branch', description: "Tracks the status of branches in a repo", implemented: true },
-    ]
-    const fieldTypes = await prisma.fieldType.createMany({
-        data: fieldTypeData,
-        skipDuplicates: true,
-    })
-    console.log("Field types added: ", fieldTypeData.length == fieldTypes.count)
-
     const cardTypeData = [
-        { name: 'task' },
-        { name: 'bug' },
         { name: 'test' },
     ]
     const cardType = await prisma.cardType.createMany({

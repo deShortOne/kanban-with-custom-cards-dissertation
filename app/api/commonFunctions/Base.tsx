@@ -17,6 +17,9 @@ interface TwitterSnowFlake {
     sequenceNumber: number
 }
 
+export async function insertNewKanban(kanbanId: number) {
+    await addUpdate(kanbanId, "")
+}
 export async function insertUpdateCardPositions(kanbanId: number) {
     await addUpdate(kanbanId, "updateCardPosition")
 }
@@ -48,7 +51,7 @@ export async function insertUpdateCardData(kanbanId: number, cardId: number) {
 }
 
 async function addUpdate(kanbanId: number,
-    type: "updateCardPosition" | "updateColumnPositions" | "updateSwimLanePositions" | "updateCardTemplates"
+    type: "updateCardPosition" | "updateColumnPositions" | "updateSwimLanePositions" | "updateCardTemplates" | ""
 ) {
     const session = await getServerSession(OPTIONS)
     const snow = generateTwitterSnowflake()
