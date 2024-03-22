@@ -215,14 +215,15 @@ export const CardModal = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
+                        <Button
                             onClick={() => {
                                 cardModal.setDeletedId(id!)
                                 onClose()
                             }}
+                            variant="destructive"
                         >
                             Continue
-                        </AlertDialogAction>
+                        </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
 
