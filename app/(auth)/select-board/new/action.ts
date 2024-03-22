@@ -1,12 +1,13 @@
+"use server"
+
 import { Role, User } from "@prisma/client"
 import { getServerSession } from 'next-auth/next'
 import { OPTIONS } from "@/utils/authOptions"
 import { prisma } from "@/lib/prisma"
-import { insertNewKanban } from "../../commonFunctions/Base"
+import { insertNewKanban } from "@/app/api/commonFunctions/Base"
+import { redirect } from "next/navigation"
 
-export async function POST(request: Request) {
-    const formData = await request.formData()
-
+export async function submitFormAA(formData: FormData) {
     const kanban = await setBoardInitialData(formData.get("name") as string)
 
     const id = await getUserId();
@@ -23,7 +24,8 @@ export async function POST(request: Request) {
     })
 
     insertNewKanban(kanban.id)
-    return Response.json({ kanban })
+
+    redirect("/board/" + kanban.id)
 }
 
 async function setBoardInitialData(name: string) {
