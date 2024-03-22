@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { add, get } from "@/lib/redis"
 import { OPTIONS } from "@/utils/authOptions"
 import { getServerSession } from 'next-auth/next'
 
@@ -8,7 +9,6 @@ const SEQUENCE_BITS = 5
 const dataCenterId = parseInt(process.env.DATA_CENTER_ID!)
 const machineId = parseInt(process.env.MACHINE_ID!)
 let sequence = 0
-let lastTimestamp = -1
 
 interface TwitterSnowFlake {
     timestamp: number
@@ -34,7 +34,7 @@ export async function insertUpdateCardTemplates(kanbanId: number) {
 }
 export async function insertUpdateCardData(kanbanId: number, cardId: number) {
     const session = await getServerSession(OPTIONS)
-    const snow = generateTwitterSnowflake()
+    const snow = await generateTwitterSnowflake()
     await prisma.trackChanges.create({
         data: {
             timestamp: snow.timestamp,
@@ -54,7 +54,7 @@ async function addUpdate(kanbanId: number,
     type: "updateCardPosition" | "updateColumnPositions" | "updateSwimLanePositions" | "updateCardTemplates" | ""
 ) {
     const session = await getServerSession(OPTIONS)
-    const snow = generateTwitterSnowflake()
+    const snow = await generateTwitterSnowflake()
     await prisma.trackChanges.create({
         data: {
             timestamp: snow.timestamp,
@@ -72,9 +72,11 @@ async function addUpdate(kanbanId: number,
     })
 }
 
-function generateTwitterSnowflake(): TwitterSnowFlake {
+async function generateTwitterSnowflake(): Promise<TwitterSnowFlake> {
     let timestamp = (new Date()).getTime() - EPOCH
 
+    const lastTimestampTmp = await get("lastTimestamp")
+    const lastTimestamp = lastTimestampTmp === null ? -1 : parseInt(lastTimestampTmp)
     if (timestamp === lastTimestamp) {
         sequence = (sequence + 1) % (1 << SEQUENCE_BITS)
         if (sequence === 0) {
@@ -84,7 +86,7 @@ function generateTwitterSnowflake(): TwitterSnowFlake {
         sequence = 0
     }
 
-    lastTimestamp = timestamp
+    await add("lastTimestamp", timestamp.toString())
 
     return {
         timestamp: timestamp,
