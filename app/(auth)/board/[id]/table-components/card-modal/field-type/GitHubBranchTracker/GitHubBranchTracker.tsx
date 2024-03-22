@@ -267,6 +267,8 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
                 onClick={() => append({})}
                 type="button"
                 disabled={getValues()[name].repo === ""}
+                variant="secondary"
+                className="bg-green-300 hover:bg-green-500"
             >
                 Add
             </Button>
