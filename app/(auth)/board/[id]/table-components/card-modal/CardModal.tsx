@@ -287,7 +287,7 @@ export const CardModal = () => {
                                             {badTabs.find(i => i === tab.name) &&
                                                 <>
                                                     &nbsp;
-                                                    <span className="relative flex h-3 w-3">
+                                                    <span className="relative flex h-3 w-3" role="badTabIndicator">
                                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                                         <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                                                     </span>
@@ -392,7 +392,11 @@ function fieldTypeToZodType(fieldType: string, data: string) {
             if (optional)
                 return z.date().optional()
             if (temp[3] != "")
-                return z.string().min(1, temp[3])
+                return z.date({
+                    errorMap: (issue, { defaultError }) => ({
+                        message: issue.code === "invalid_date" ? "That's not a date!" : temp[3],
+                    }),
+                })
             return z.date()
         case 'Check boxes':
             if (optional)

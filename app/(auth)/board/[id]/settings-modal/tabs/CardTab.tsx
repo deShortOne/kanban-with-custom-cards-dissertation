@@ -79,7 +79,10 @@ export const CardTab = ({ id }: { id: number }) => {
         )
 
     return (
-        <TabsContent value="card">
+        <TabsContent
+            value="card"
+            id="tabSettingCards"
+        >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField

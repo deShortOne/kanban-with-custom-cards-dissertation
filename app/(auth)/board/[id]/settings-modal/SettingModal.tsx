@@ -20,7 +20,10 @@ export const KanbanSettingsModal = ({ id, title }: KanbanSettingsModalProps) => 
             open={isOpen}
             onOpenChange={onClose}
         >
-            <DialogContent className="h-[90vh] max-w-[500px] max-h-[60vh]">
+            <DialogContent
+                id="dialogKanbanSettings"
+                className="h-[90vh] max-w-[500px] max-h-[60vh]"
+            >
                 <Tabs defaultValue={defaultTab}>
                     <div className="flex justify-center mx-auto p-4">
                         <TabsList>

@@ -35,3 +35,59 @@
 //     }
 //   }
 // }
+declare namespace Cypress {
+    interface Chainable {
+        setCardField(cardNumber: number,
+            fieldType: string,
+            label: string,
+            isRequired: boolean,
+            requiredErrorMessage?: string): Chainable<any>;
+        checkCardField(label: string,
+            hasError: boolean,
+            errorMessage?: string): Chainable<any>;
+    }
+}
+
+Cypress.Commands.add('setCardField', (cardNumber: number, fieldType: string, label: string,
+    isRequired: boolean, requiredErrorMessage?: string) => {
+
+    cy.get("#divCardContent > form > div[dir='ltr'] > div[data-state='active']")
+        .within(() => {
+            cy.get(".bg-card").eq(cardNumber).within(() => {
+                cy.get("div").eq(1).within(() => {
+                    cy.get("button").eq(0).click()
+                })
+            })
+        })
+    cy.get("div[data-value='" + fieldType + "']").click()
+    cy.get("#divCardContent > form > div[dir='ltr'] > div[data-state='active']")
+        .within(() => {
+            cy.get(".bg-card").eq(cardNumber).within(() => {
+                cy.get("div").eq(1).within(() => {
+                    cy.get("button").eq(1).click()
+                })
+            })
+        })
+    cy.get("input[name='label']").type(label)
+    if (isRequired && fieldType !== "track github branch") {
+        cy.get("button[role='switch']").click()
+        if (requiredErrorMessage) {
+            cy.get("[name='errorMessage']").type(requiredErrorMessage)
+        }
+    }
+})
+
+Cypress.Commands.add('checkCardField', (label: string, hasError: boolean, errorMessage?: string) => {
+    cy.get("label").first().should("have.text", label)
+
+    cy.get("label").first().should('satisfy', ($el) => {
+        const classList = Array.from($el[0].classList)
+        return !hasError || classList.includes('text-destructive')
+    })
+    if (hasError) {
+        cy.get("p").should('satisfy', ($el) => {
+            const classList = Array.from($el[0].classList)
+            return classList.includes('text-destructive')
+        })
+    }
+})

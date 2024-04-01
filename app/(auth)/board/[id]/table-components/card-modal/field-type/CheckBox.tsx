@@ -33,7 +33,7 @@ export const CheckboxMultiple = ({ fieldTypeData, name }: FieldTypeProp) => {
             control={form.control}
             name={name}
             render={() => (
-                <FormItem>
+                <FormItem role="checkbox">
                     <FormLabel className="text-base">{label}</FormLabel>
                     {items.map((item) => (
                         <FormField

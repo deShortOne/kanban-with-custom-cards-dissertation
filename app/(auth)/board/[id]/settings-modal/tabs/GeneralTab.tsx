@@ -35,7 +35,11 @@ export const GeneralTab = ({ id, title }: { id: number, title: string }) => {
 
     const onError = (errors: any, e: any) => console.log(errors, e)
     return (
-        <TabsContent value="general" className="flex items-center justify-center">
+        <TabsContent
+            value="general"
+            id="tabSettingGeneral"
+            className="flex items-center justify-center"
+        >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
                     <FormField

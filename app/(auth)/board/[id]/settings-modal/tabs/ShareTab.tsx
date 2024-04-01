@@ -93,7 +93,10 @@ export const ShareTab = ({ id }: { id: number }) => {
     const onError = (errors: any, e: any) => console.log(errors, e)
 
     return (
-        <TabsContent value="share">
+        <TabsContent
+            value="share"
+            id="tabSettingShare"
+        >
             <form onSubmit={handleSubmit(onSubmit, onError)}>
                 <Table>
                     <TableHeader>
