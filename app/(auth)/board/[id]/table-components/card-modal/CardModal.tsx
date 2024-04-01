@@ -272,7 +272,10 @@ export const CardModal = () => {
                                 </div>
                             </div>
 
-                            <Tabs defaultValue={cardData.cardTemplate.tabs[0].name} key={"lol i dunno"}>
+                            <Tabs
+                                defaultValue={cardData.cardTemplate.tabs[0].name}
+                                id="cardContents"
+                            >
                                 <TabsList>
                                     {cardData.cardTemplate.tabs.map(tab => {
                                         return <TabsTrigger
