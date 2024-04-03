@@ -4,6 +4,7 @@ import { GeneralTab } from "./tabs/GeneralTab";
 import { ShareTab } from "./tabs/ShareTab";
 import { CardTab } from "./tabs/CardTab";
 import { useKanbanModalSetting } from "./components/useDialog";
+import { AdvancedTab } from "./tabs/AdvancedTab";
 
 export interface KanbanSettingsModalProps {
     id: number
@@ -30,12 +31,14 @@ export const KanbanSettingsModal = ({ id, title }: KanbanSettingsModalProps) => 
                             <TabsTrigger value="general">General</TabsTrigger>
                             <TabsTrigger value="card">Cards</TabsTrigger>
                             <TabsTrigger value="share">Share</TabsTrigger>
+                            <TabsTrigger value="advanced">Advanced</TabsTrigger>
                         </TabsList>
                     </div>
 
                     <GeneralTab id={id} title={title} />
                     <ShareTab id={id} />
                     <CardTab id={id} />
+                    <AdvancedTab id={id} />
                 </Tabs>
             </DialogContent>
         </Dialog>
