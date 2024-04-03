@@ -5,13 +5,13 @@ import { insertUpdateCardPositions } from "../../commonFunctions/Base";
 export async function POST(req: Request) {
     const data = await req.json()
 
-    await prisma.card.delete({
+    const card = await prisma.card.delete({
         where: {
             id: data.cardId,
         }
     })
 
-    insertUpdateCardPositions(data.boardId)
+    insertUpdateCardPositions(card.kanbanId)
 
     return NextResponse.json(1)
 }
