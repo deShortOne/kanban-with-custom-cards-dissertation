@@ -118,7 +118,7 @@ describe('as a new user', () => {
 
         cy.get("#dialogKanbanSettings").within(() => {
             cy.get("[role='tablist']").within(() => {
-                cy.get("button").should("have.length", 3)
+                cy.get("button").should("have.length", 4)
                 cy.contains("button", "Cards")
                     .invoke("attr", "data-state")
                     .should("eq", "active")
@@ -527,7 +527,9 @@ describe('as a new user', () => {
             })
         })
 
-        cy.contains("button", "1").click()
+        cy.get("table[role='grid']").within(() => {
+            cy.contains("button", "1").click()
+        })
 
         cy.get("[role='tabpanel']").eq(2).within(() => {
             cy.get("div").eq(0).within(() => {
@@ -674,5 +676,12 @@ describe('as a new user', () => {
         cy.get(".bg-card").should("have.length", 1)
         cy.reload()
         cy.get(".bg-card").should("have.length", 1)
+
+        cy.contains("button", "Setting").click()
+        cy.contains("button", "Advanced").click()
+        cy.contains("button", "Delete kanban board").click()
+        cy.visit(Cypress.env('URL') + "select-board")
+        cy.contains("a", testname).should("not.exist")
+
     })
 })
