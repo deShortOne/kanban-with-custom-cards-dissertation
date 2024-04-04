@@ -6,7 +6,7 @@ beforeEach(() => {
 describe('as a new user', () => {
     const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
 
-    it('create a new kanban board and verify everything is there', () => {
+    it('create a new kanban board and verify everything is there with new test card and everything', () => {
         cy.viewport(1920, 1080)
         cy.visit(Cypress.env('URL') + "select-board")
         cy.get("#createNewKanbanBtn").click()
@@ -98,11 +98,8 @@ describe('as a new user', () => {
 
         cy.get("#navSelectBoard").click()
         cy.url().should("eq", Cypress.env('URL') + "select-board")
-    })
 
-    it("Edit card", () => {
-        cy.viewport(1920, 1080)
-        cy.visit(Cypress.env('URL') + "select-board")
+        // edit card
         cy.contains("a", testname).click()
         cy.get("#kanbanTitle").should("have.text", testname)
 
@@ -412,14 +409,11 @@ describe('as a new user', () => {
             cy.contains("button", "Save changes").click()
             cy.url().should("not.eq", url)
         })
-    })
 
-    it("With the edited card", () => {
-        cy.viewport(1920, 1080)
+        // with edited card
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).click()
 
-        // if this fails, card was not saved! Previous test failed!
         cy.get("#btnCreateDefaultCard").should("have.text", "Test")
         cy.get("#btnCreateDefaultCard").click()
 
@@ -682,6 +676,5 @@ describe('as a new user', () => {
         cy.contains("button", "Delete kanban board").click()
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).should("not.exist")
-
     })
 })
