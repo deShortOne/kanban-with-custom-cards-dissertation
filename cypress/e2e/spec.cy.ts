@@ -1,9 +1,25 @@
+import { should } from "chai"
 
-beforeEach(() => {
-    cy.setCookie("next-auth.session-token", Cypress.env('TESTING_CYPRESS_TOKEN'))
+describe("as a user without a session", () => {
+    it("visit any page to then asked to be logged in", () => {
+        cy.visit(Cypress.env('URL') + "select-board")
+        cy.url().should("eq", Cypress.env('URL') + "api/auth/signin?callbackUrl=%2Fselect-board")
+
+        cy.get("form").should("have.attr", "action", "http://localhost:3000/api/auth/signin/github").within(() => {
+            cy.get("input[name='callbackUrl']")
+                .should("have.attr", "type", "hidden")
+                .should("have.value", "/select-board")
+
+            cy.get("button > span").should("have.text", "Sign in with GitHub")
+        })
+    })
 })
 
-describe('as a new user', () => {
+describe('as a logged in user', () => {
+    beforeEach(() => {
+        cy.setCookie("next-auth.session-token", Cypress.env('TESTING_CYPRESS_TOKEN'))
+    })
+
     const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
 
     it('create a new kanban board and verify everything is there with new test card and everything', () => {
