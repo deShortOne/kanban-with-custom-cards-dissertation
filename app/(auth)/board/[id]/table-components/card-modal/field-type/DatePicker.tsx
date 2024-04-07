@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { FieldTypeProp, requiredIndicator } from "./Base"
 import { useFormContext } from "react-hook-form"
+import { useState } from "react"
 
 export function DatePicker({ fieldTypeData, name }: FieldTypeProp) {
     const form = useFormContext()
@@ -28,14 +29,19 @@ export function DatePicker({ fieldTypeData, name }: FieldTypeProp) {
     const isRequired = data[2] === "1"
     const label = data[0] + (isRequired ? requiredIndicator() : "")
 
+    const [calendarOpen, setCalendarOpen] = useState(false);
+
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className="flex flex-col" role="datepicker">
                     <FormLabel>{label}</FormLabel>
-                    <Popover>
+                    <Popover
+                        open={calendarOpen}
+                        onOpenChange={setCalendarOpen}
+                    >
                         <PopoverTrigger asChild>
                             <FormControl>
                                 <Button
@@ -58,11 +64,13 @@ export function DatePicker({ fieldTypeData, name }: FieldTypeProp) {
                             <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                    date < new Date()
-                                }
-                                initialFocus
+                                onSelect={(event) => {
+                                    field.onChange(event)
+                                    setCalendarOpen(false)
+                                }}
+                            // disabled={(date) =>
+                            //     date < new Date()
+                            // }
                             />
                         </PopoverContent>
                     </Popover>

@@ -14,7 +14,9 @@ export const KanbanNavBar = ({ title, role }: prop) => {
     return (
         <nav className="bg-white border-gray-200 dark:bg-gray-900">
             <div className="flex flex-wrap items-center justify-between mx-auto p-4">
-                <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+                <span
+                    id="kanbanTitle"
+                    className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                     {title}
                 </span>
 

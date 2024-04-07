@@ -86,6 +86,7 @@ export const AddNewCardButton = (
                 defaultNewCard
                     ?
                     <Button
+                        id="btnCreateDefaultCard"
                         variant="secondary"
                         className="px-3 shadow-none min-w-[150px]"
                         onClick={() => newCardAction(defaultNewCard.id, defaultNewCard.cardType.name)}>
@@ -103,7 +104,10 @@ export const AddNewCardButton = (
             <Separator orientation="vertical" className="h-[10px]" />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" className="px-2 shadow-none min-w-[60px]">
+                    <Button
+                        id="btnOpenAllCards"
+                        variant="secondary"
+                        className="px-2 shadow-none min-w-[60px]">
                         <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -112,6 +116,7 @@ export const AddNewCardButton = (
                     alignOffset={-5}
                     className="w-[220px]"
                     forceMount
+                    id="divAllCardsDisplay"
                 >
                     {data.map(type => {
                         return (
@@ -127,12 +132,15 @@ export const AddNewCardButton = (
                     })}
                     {
                         role === Role.EDITOR &&
-                        <div>
+                        <>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => kanbanSettingModal.onOpen("card")}>
-                                <Pencil2Icon className="mr-2 h-4 w-4" /> Update cards
+                            <DropdownMenuItem
+                                id="btnOpenEditCardTab"
+                                onClick={() => kanbanSettingModal.onOpen("card")}
+                            >
+                                <Pencil2Icon className="mr-2 h-4 w-4" />Update cards
                             </DropdownMenuItem>
-                        </div>
+                        </>
                     }
                 </DropdownMenuContent>
             </DropdownMenu>

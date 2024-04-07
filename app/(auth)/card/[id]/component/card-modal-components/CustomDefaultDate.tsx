@@ -24,7 +24,10 @@ export const CustomDefaultDate = ({ isDefault, defaultDate }: { isDefault: boole
     }
 
     return (
-        <div className="grid grid-cols-3 mt-2">
+        <div
+            id="divCustomDateArea"
+            className="grid grid-cols-3 mt-2"
+        >
             <Select
                 onValueChange={(val) => updateCustomDefaultDate(0, val)}
                 defaultValue={defaultOperator}
@@ -36,8 +39,8 @@ export const CustomDefaultDate = ({ isDefault, defaultDate }: { isDefault: boole
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                    <SelectItem value="add">add</SelectItem>
-                    <SelectItem value="sub">sub</SelectItem>
+                    <SelectItem value="add" id="customDateAdd">add</SelectItem>
+                    <SelectItem value="sub" id="customDateSub">sub</SelectItem>
                 </SelectContent>
             </Select>
 
@@ -57,10 +60,10 @@ export const CustomDefaultDate = ({ isDefault, defaultDate }: { isDefault: boole
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                    <SelectItem value="day">day(s)</SelectItem>
-                    <SelectItem value="week">week(s)</SelectItem>
-                    <SelectItem value="month">month(s)</SelectItem>
-                    <SelectItem value="year">year(s)</SelectItem>
+                    <SelectItem value="day" id="customDateDay">day(s)</SelectItem>
+                    <SelectItem value="week" id="customDateWeek">week(s)</SelectItem>
+                    <SelectItem value="month" id="customDateMonth">month(s)</SelectItem>
+                    <SelectItem value="year" id="customDateYear">year(s)</SelectItem>
                 </SelectContent>
             </Select>
 

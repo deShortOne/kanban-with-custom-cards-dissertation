@@ -29,7 +29,7 @@ model UserToken {
     refreshToken     String
     refreshExpiresAt DateTime
 
-    user User @relation(fields: [githubId], references: [githubId])
+    user User @relation(fields: [githubId], references: [githubId], onDelete: Cascade)
 
     @@index([githubId])
 }
@@ -54,9 +54,9 @@ enum Role {
 
 model UserRoleKanban {
     userId     Int
-    user       User   @relation("AvailableKanbans", fields: [userId], references: [id])
+    user       User   @relation("AvailableKanbans", fields: [userId], references: [id], onDelete: Cascade)
     kanbanId   Int
-    kanban     Kanban @relation("KanbanHasUsers", fields: [kanbanId], references: [id])
+    kanban     Kanban @relation("KanbanHasUsers", fields: [kanbanId], references: [id], onDelete: Cascade)
     permission Role
 
     @@id([userId, kanbanId])
@@ -70,7 +70,7 @@ model KanbanColumn {
     order Int
 
     boardId Int
-    board   Kanban @relation(fields: [boardId], references: [id])
+    board   Kanban @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
     cards Card[]
 
@@ -83,7 +83,7 @@ model KanbanSwimLane {
     order Int
 
     boardId Int
-    board   Kanban @relation(fields: [boardId], references: [id])
+    board   Kanban @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
     cards Card[]
 
@@ -115,9 +115,9 @@ model CardTemplate {
     isDefault Boolean @default(false)
 
     cardTypeId Int
-    cardType   CardType @relation(fields: [cardTypeId], references: [id])
+    cardType   CardType @relation(fields: [cardTypeId], references: [id], onDelete: Cascade)
     kanbanId   Int
-    kanban     Kanban   @relation(fields: [kanbanId], references: [id])
+    kanban     Kanban   @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
     tabs CardTemplateTab[]
     Card Card[]
@@ -134,7 +134,7 @@ model CardTemplateTab {
     sizeY Int
 
     cardTemplateId Int
-    cardTemplate   CardTemplate @relation(fields: [cardTemplateId], references: [id])
+    cardTemplate   CardTemplate @relation(fields: [cardTemplateId], references: [id], onDelete: Cascade)
 
     tabFields CardTemplateTabField[]
 
@@ -149,9 +149,9 @@ model CardTemplateTabField {
     posY Int
 
     fieldTypeId       Int
-    fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id])
+    fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id], onDelete: Cascade)
     cardTemplateTabId Int
-    cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id])
+    cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id], onDelete: Cascade)
 
     cardTemplateTabField CardTabField[]
 
@@ -166,7 +166,7 @@ model CardTabField {
     cardId                 Int
     card                   Card                 @relation(fields: [cardId], references: [id], onDelete: Cascade)
     cardTemplateTabFieldId Int
-    cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id])
+    cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id], onDelete: Cascade)
 
     @@index([cardId])
     @@index([cardTemplateTabFieldId])
@@ -179,13 +179,13 @@ model Card {
     description String? @db.Text
 
     columnId       Int
-    column         KanbanColumn   @relation(fields: [columnId], references: [id])
+    column         KanbanColumn   @relation(fields: [columnId], references: [id], onDelete: Cascade)
     swimLaneId     Int
-    swimLane       KanbanSwimLane @relation(fields: [swimLaneId], references: [id])
+    swimLane       KanbanSwimLane @relation(fields: [swimLaneId], references: [id], onDelete: Cascade)
     kanbanId       Int
-    kanban         Kanban         @relation(fields: [kanbanId], references: [id])
+    kanban         Kanban         @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
     cardTemplateId Int
-    cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id])
+    cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id], onDelete: Cascade)
 
     allTabsFieldInformation CardTabField[]
     TrackChanges            TrackChanges[]
@@ -203,9 +203,9 @@ model TrackChanges {
     sequenceNumber Int
 
     userId   Int
-    user     User   @relation(fields: [userId], references: [id])
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     kanbanId Int
-    kanban   Kanban @relation(fields: [kanbanId], references: [id])
+    kanban   Kanban @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
     updateCardPositions     Boolean @default(false)
     updateColumnPositions   Boolean @default(false)
@@ -216,7 +216,7 @@ model TrackChanges {
     // then updatedCardId is also filled in
     updateCardData Boolean @default(false)
     updatedCardId  Int?
-    updatedCard    Card?   @relation(fields: [updatedCardId], references: [id])
+    updatedCard    Card?   @relation(fields: [updatedCardId], references: [id], onDelete: Cascade)
 
     @@id([timestamp, dataCenterId, machineId, sequenceNumber])
     @@index([userId])
@@ -228,7 +228,7 @@ view LastKanbanUpdate {
     kanbanId   Int @id
     lastChange Int
 
-    kanban Kanban @relation(fields: [kanbanId], references: [id])
+    kanban Kanban @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
     @@index([kanbanId])
 }

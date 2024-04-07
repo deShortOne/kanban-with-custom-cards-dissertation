@@ -22,10 +22,16 @@ export const DefaultDate = ({ defaultDate }: { defaultDate: string }) => {
         }
     }
 
-    const customDateRegex = /^(add|sub) \d+ (day|week|month|year)s?$/;
-    const foundCustomDateRegex = defaultDate.match(customDateRegex) !== null;
+    let foundCustomDateRegex = false;
+    if (defaultDate === undefined) {
+        defaultDate = ""
+        setValue("defaultDate", "")
+    } else {
+        const customDateRegex = /^(add|sub) \d+ (day|week|month|year)s?$/;
+        foundCustomDateRegex = defaultDate.match(customDateRegex) !== null;
+    }
 
-    const defaultValueRadio = foundCustomDateRegex ? "Custom" : defaultDate;
+    const defaultValueRadio = foundCustomDateRegex ? "custom" : defaultDate;
     useEffect(() => {
         setShowCustom(foundCustomDateRegex)
     }, [setShowCustom, foundCustomDateRegex])
@@ -78,7 +84,7 @@ export const DefaultDate = ({ defaultDate }: { defaultDate: string }) => {
                 </FormItem>
                 <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                        <RadioGroupItem value="Custom" />
+                        <RadioGroupItem value="custom" />
                     </FormControl>
                     <FormLabel className="font-normal">
                         Custom

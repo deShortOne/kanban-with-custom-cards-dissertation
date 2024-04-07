@@ -27,6 +27,7 @@ import {
     useQueryClient,
 } from '@tanstack/react-query'
 import { BoardApiData, CardProps } from "@/app/types/Board"
+import { Button } from "@/components/ui/button"
 
 interface TableInformationProps {
     id: number
@@ -403,7 +404,12 @@ export const Table = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => { setAlertMsg("") }}>Ok</AlertDialogAction>
+                        <Button
+                            onClick={() => { setAlertMsg("") }}
+                            variant="outline"
+                        >
+                            Ok
+                        </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -527,6 +533,6 @@ export const Table = ({
                     </ScrollArea>
                 </div>
             </DndProvider>
-        </div>
+        </div >
     )
 }

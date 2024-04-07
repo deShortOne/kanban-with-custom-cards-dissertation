@@ -24,8 +24,8 @@ const NewKanbanPage = () => {
                 <CardContent>
                     <form action={submitFormAA}>
                         <div className="space-y-4">
-                            <Input placeholder="Name" name="name" />
-                            <Button type="submit">Submit</Button>
+                            <Input placeholder="Name" name="name" id="name" />
+                            <Button type="submit" id="createKanbanBtn">Submit</Button>
                         </div>
                     </form>
                 </CardContent>

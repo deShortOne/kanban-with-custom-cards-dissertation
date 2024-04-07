@@ -52,7 +52,7 @@ export const ComboboxForm = ({ fieldTypeData, name }: FieldTypeProp) => {
             control={form.control}
             name={name}
             render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className="flex flex-col" role="dropdown">
                     <FormLabel>{label}</FormLabel>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>

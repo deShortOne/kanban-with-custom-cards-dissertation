@@ -21,12 +21,15 @@ interface prop {
 export const CardContent = ({ allFieldTypes, cardData, setData, currTabIdx, setCurrentTabIdx }: prop) => {
     return (
         <div className="flex items-center justify-center w-screen h-[80vh]">
-            <Card className="h-[70vh] min-w-[70vw]">
+            <Card
+                id="divCardContent"
+                className="h-[70vh] min-w-[70vw]"
+            >
                 <form className="space-y-8">
                     <div className="flex">
                         <Input disabled placeholder="Title"></Input>
 
-                        <Button type="submit" className="bg-cyan-500" disabled>Save</Button>
+                        <Button type="submit" className="bg-cyan-500" disabled>Save </Button>
                         <Button type="button" className="bg-rose-600" disabled>
                             <Image
                                 src="/delete.svg"

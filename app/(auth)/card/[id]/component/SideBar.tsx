@@ -5,7 +5,7 @@ import update from 'immutability-helper'
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
 import { DataProp, EmptyTab, NewField, Tab } from "./Base"
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 
@@ -118,12 +118,17 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
     }
 
     return (
-        <aside className="w-64 min-h-[94vh] transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+        <aside
+            id="asideCardSideBar"
+            className="w-64 min-h-[94vh] transition-transform -translate-x-full sm:translate-x-0"
+            aria-label="Sidebar"
+        >
             <div className="flex flex-col min-h-[94vh] px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul className="space-y-2 font-medium">
                     <li>
                         <span className="inline-block align-middle">Name of card</span>
                         <Input
+                            id="cardName"
                             className="inline-block align-middle"
                             defaultValue={cardData.name}
                             onBlur={(e) => updateCardName(e.target.value)}
@@ -135,26 +140,31 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                     <li>
                         <span className="inline-block align-middle">Tab name</span>
                         <Input
+                            id="cardTabName"
                             className="inline-block align-middle"
-                            defaultValue={cardData.tabs[tabIdx].name}
+                            value={cardData.tabs[tabIdx].name}
                             onChange={(e) => updateTabName(e.target.value)}
                         />
                     </li>
                     <li className="flex justify-between">
                         <span>Position:</span>
                         <div className="inline-flex">
-
                             <button
+                                id="btnDecrPosition"
                                 disabled={tabIdx === 0}
                                 className={tabIdx === 0 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx - 1)}
                             >
                                 <ChevronLeft />
                             </button>
-                            <span className="inline-block align-middle">
+                            <span
+                                id="tabPositionNumber"
+                                className="inline-block align-middle"
+                            >
                                 {tabIdx + 1}
                             </span>
                             <button
+                                id="btnIncrPosition"
                                 disabled={tabIdx === cardData["tabs"].length - 1}
                                 className={tabIdx === cardData["tabs"].length - 1 ? "text-black/50" : ""}
                                 onClick={() => updateTabPosition(tabIdx, tabIdx + 1)}
@@ -167,16 +177,23 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <span>Rows:</span>
                         <div className="inline-flex">
                             <button
+                                id="btnDecrRowNumber"
                                 disabled={cardData.tabs[tabIdx].sizeY < 2}
                                 className={cardData.tabs[tabIdx].sizeY < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "ROW")}
                             >
                                 <ChevronUp />
                             </button>
-                            <span className="inline-block align-middle">
+                            <span
+                                id="cardTabRowNumber"
+                                className="inline-block align-middle"
+                            >
                                 {cardData.tabs[tabIdx].sizeY}
                             </span>
-                            <button onClick={() => updateNumber(1, "ROW")}>
+                            <button
+                                id="btnIncrRowNumber"
+                                onClick={() => updateNumber(1, "ROW")}
+                            >
                                 <ChevronDown />
                             </button>
                         </div>
@@ -185,16 +202,23 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         <span>Columns:</span>
                         <div className="inline-flex">
                             <button
+                                id="btnDecrColNumber"
                                 disabled={cardData.tabs[tabIdx].sizeX < 2}
                                 className={cardData.tabs[tabIdx].sizeX < 2 ? "text-black/50" : ""}
                                 onClick={() => updateNumber(-1, "COL")}
                             >
                                 <ChevronLeft />
                             </button>
-                            <span className="inline-block align-middle">
+                            <span
+                                id="cardTabColNumber"
+                                className="inline-block align-middle"
+                            >
                                 {cardData.tabs[tabIdx].sizeX}
                             </span>
-                            <button onClick={() => updateNumber(1, "COL")}>
+                            <button
+                                id="btnIncrColNumber"
+                                onClick={() => updateNumber(1, "COL")}
+                            >
                                 <ChevronRight />
                             </button>
                         </div>

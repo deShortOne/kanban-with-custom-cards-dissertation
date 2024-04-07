@@ -53,25 +53,26 @@ export const CardTemplateTabFieldModal = ({ data, fieldType, cardData, setData, 
         case 'Drop down':
         case 'Check boxes':
             fieldSchema["options"] = z.array(z.object({ value: z.string() })).min(1)
-            const options = splitData[1]
-                .split(",")
-                .map(i => {
-                    const val = i.split(":")
-                    val.splice(0, 1)
-
-                    return ({
-                        value: val.join(":")
-                    })
-                })
-            defaultValues["options"] = options
-
             fieldSchema["required"] = z.boolean().default(false)
-            defaultValues["required"] = splitData[2] === "1"
-
             fieldSchema["errorMessage"] = z.string().optional()
-            defaultValues["errorMessage"] = splitData[3]
 
             errorMsgPlaceHolder = "Error message for checking options"
+            if (splitData.length != 1) {
+
+                const options = splitData[1]
+                    .split(",")
+                    .map(i => {
+                        const val = i.split(":")
+                        val.splice(0, 1)
+
+                        return ({
+                            value: val.join(":")
+                        })
+                    })
+                defaultValues["options"] = options
+                defaultValues["required"] = splitData[2] === "1"
+                defaultValues["errorMessage"] = splitData[3]
+            }
             break
         case 'Date picker':
             fieldSchema["defaultDate"] = z.string()
