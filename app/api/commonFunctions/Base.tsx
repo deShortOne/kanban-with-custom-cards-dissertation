@@ -8,7 +8,6 @@ const SEQUENCE_BITS = 5
 
 const dataCenterId = parseInt(process.env.DATA_CENTER_ID!)
 const machineId = parseInt(process.env.MACHINE_ID!)
-let sequence = 0
 
 interface TwitterSnowFlake {
     timestamp: number
@@ -77,22 +76,26 @@ async function generateTwitterSnowflake(): Promise<TwitterSnowFlake> {
 
     const lastTimestampTmp = await get("lastTimestamp")
     const lastTimestamp = lastTimestampTmp === null ? -1 : parseInt(lastTimestampTmp)
+
+    const lastSequenceNumberTmp = await get("sequenceNumber")
+    let lastSequenceNumber = lastSequenceNumberTmp === null ? 0 : parseInt(lastSequenceNumberTmp)
     if (timestamp === lastTimestamp) {
-        sequence = (sequence + 1) % (1 << SEQUENCE_BITS)
-        if (sequence === 0) {
+        lastSequenceNumber = (lastSequenceNumber + 1) % (1 << SEQUENCE_BITS)
+        if (lastSequenceNumber === 0) {
             timestamp = waitForNextTimestamp(lastTimestamp)
         }
     } else {
-        sequence = 0
+        lastSequenceNumber = 0
     }
 
     await add("lastTimestamp", timestamp.toString())
+    await add("sequenceNumber", lastSequenceNumber.toString())
 
     return {
         timestamp: timestamp,
         dataCenterId: dataCenterId,
         machineId: machineId,
-        sequenceNumber: sequence,
+        sequenceNumber: lastSequenceNumber,
     }
 }
 
