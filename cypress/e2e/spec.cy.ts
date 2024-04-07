@@ -1,11 +1,10 @@
-import { should } from "chai"
 
 describe("as a user without a session", () => {
     it("visit any page to then asked to be logged in", () => {
         cy.visit(Cypress.env('URL') + "select-board")
         cy.url().should("eq", Cypress.env('URL') + "api/auth/signin?callbackUrl=%2Fselect-board")
 
-        cy.get("form").should("have.attr", "action", "http://localhost:3000/api/auth/signin/github").within(() => {
+        cy.get("form").should("have.attr", "action", Cypress.env('URL') + "api/auth/signin/github").within(() => {
             cy.get("input[name='callbackUrl']")
                 .should("have.attr", "type", "hidden")
                 .should("have.value", "/select-board")
