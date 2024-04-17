@@ -8,6 +8,7 @@ import { DataProp, EmptyTab, NewField, Tab } from "./Base"
 import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { CardTypePicker } from './CardTypePicker'
 
 interface prop {
     cardData: DataProp
@@ -133,6 +134,9 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                             defaultValue={cardData.name}
                             onBlur={(e) => updateCardName(e.target.value)}
                         />
+                    </li>
+                    <li>
+                        <CardTypePicker />
                     </li>
                     <li>
                         <Separator />
