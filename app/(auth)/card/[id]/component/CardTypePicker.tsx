@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/popover"
 import { Dispatch, SetStateAction, useState } from "react"
 import { CardType, DataProp } from "./Base"
+import { Separator } from "@radix-ui/react-select"
+import { CardTypeModal } from "./card-type-modal/Modal"
 
 interface prop {
     cardData: DataProp
@@ -83,6 +85,12 @@ export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes }
                                 />
                             </CommandItem>
                         ))}
+                        <Separator />
+                        <CommandItem
+                            value="Card type settings"
+                        >
+                            <CardTypeModal />
+                        </CommandItem>
                     </CommandGroup>
                 </Command>
             </PopoverContent>
