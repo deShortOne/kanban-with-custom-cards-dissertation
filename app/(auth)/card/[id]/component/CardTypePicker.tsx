@@ -16,21 +16,29 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { useState } from "react"
-import { CardType } from "./Base"
+import { Dispatch, SetStateAction, useState } from "react"
+import { CardType, DataProp } from "./Base"
 
 interface prop {
+    cardData: DataProp
+    setData: Dispatch<SetStateAction<DataProp>>
     currentCardType: number
     cardTypes: CardType[]
 }
 
-export const CardTypePicker = ({ currentCardType, cardTypes }: prop) => {
+export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes }: prop) => {
 
     const [open, setOpen] = useState(false)
 
     const cardTypeName = cardTypes.find(
         (cardType) => cardType.id === currentCardType
     )?.name
+
+    const updateCardType = (id: number) => {
+        const newCardData = JSON.parse(JSON.stringify(cardData))
+        newCardData.cardTypeId = id
+        setData(newCardData)
+    }
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -60,6 +68,7 @@ export const CardTypePicker = ({ currentCardType, cardTypes }: prop) => {
                                 value={cardType.id.toString()}
                                 key={cardType.name}
                                 onSelect={() => {
+                                    updateCardType(cardType.id)
                                     setOpen(false)
                                 }}
                             >
