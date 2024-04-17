@@ -17,9 +17,18 @@ interface prop {
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
     saveDataToDB: () => Promise<void>
     cardTypes: CardType[]
+    kanbanId: number
 }
 
-export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataToDB, cardTypes }: prop) => {
+export const SideBar = ({
+    cardData,
+    setData,
+    tabIdx,
+    setCurrentTabIdx,
+    saveDataToDB,
+    cardTypes,
+    kanbanId
+}: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -143,6 +152,7 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                             setData={setData}
                             currentCardType={cardData.cardTypeId}
                             cardTypes={cardTypes}
+                            kanbanId={kanbanId}
                         />
                     </li>
                     <li>

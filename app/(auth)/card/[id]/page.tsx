@@ -60,6 +60,7 @@ const UpdateCardPage = async ({
             cardTemplate={cardTemplate}
             fieldTypes={fieldTypes}
             cardTypes={cardTypes}
+            kanbanId={userRole.kanbanId}
         />
     )
 }

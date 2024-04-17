@@ -12,27 +12,27 @@ interface prop {
     cardTypes: CardType[]
 }
 
-export const CardTypeModal = () => {
+export const CardTypeModal = ({ kanbanId, cardTypes }: prop) => {
 
     const form = useForm<CardType[]>()
-    const [cardTypes, setCardTypes] = useState<CardType[]>([])
+    const [cardTypesCurr, setCardTypes] = useState<CardType[]>(cardTypes)
     const [negativeCounter, setNegativeCounter] = useState(-1)
 
     async function onSubmit(data: any) {
-        await fetch("/api/board/settings/share", {
+        await fetch("/api/card/allTypes", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                kanbanId: 1,
+                kanbanId: kanbanId,
                 ...data
             }),
         })
     }
 
     const addCardType = () => {
-        const updatedList = [...cardTypes]
+        const updatedList = [...cardTypesCurr]
         updatedList.push({
             id: negativeCounter,
             name: ""
@@ -42,7 +42,7 @@ export const CardTypeModal = () => {
     }
 
     const removeCardType = (cardTypeId: number) => {
-        const updatedList = [...cardTypes]
+        const updatedList = [...cardTypesCurr]
         const posOfCardTypeToRemove = updatedList.findIndex(cardType => cardType.id === cardTypeId)
         updatedList.splice(posOfCardTypeToRemove, 1)
         setCardTypes(updatedList)
@@ -70,8 +70,7 @@ export const CardTypeModal = () => {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-
-                        {cardTypes.map(i => {
+                        {cardTypesCurr.map(i => {
                             return (
                                 <div
                                     key={i.id}
@@ -80,6 +79,7 @@ export const CardTypeModal = () => {
                                     <Input
                                         {...form.register(`${i.id}`)}
                                         className="col-span-5"
+                                        defaultValue={i.name}
                                     />
                                     <Button
                                         variant="ghost"

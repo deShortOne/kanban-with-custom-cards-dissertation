@@ -26,9 +26,10 @@ interface prop {
     setData: Dispatch<SetStateAction<DataProp>>
     currentCardType: number
     cardTypes: CardType[]
+    kanbanId: number
 }
 
-export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes }: prop) => {
+export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes, kanbanId }: prop) => {
 
     const [open, setOpen] = useState(false)
 
@@ -89,7 +90,10 @@ export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes }
                         <CommandItem
                             value="Card type settings"
                         >
-                            <CardTypeModal />
+                            <CardTypeModal
+                                kanbanId={kanbanId}
+                                cardTypes={cardTypes}
+                            />
                         </CommandItem>
                     </CommandGroup>
                 </Command>
