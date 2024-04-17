@@ -60,7 +60,7 @@ export async function POST(req: Request) {
             name: data.name,
             version: oldCardTemplate.version + 1,
             isDefault: oldCardTemplate.isDefault,
-            cardTypeId: oldCardTemplate.cardTypeId,
+            cardTypeId: data.cardTypeId,
             kanbanId: oldCardTemplate.kanbanId,
         }
     })
