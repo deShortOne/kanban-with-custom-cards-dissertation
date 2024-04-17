@@ -8,3 +8,11 @@ export async function GET() {
         return NextResponse.error()
     }
 }
+
+export async function POST(req: Request) {
+    const data = await req.json()
+
+    // TODO
+
+    return NextResponse.json(1)
+}
