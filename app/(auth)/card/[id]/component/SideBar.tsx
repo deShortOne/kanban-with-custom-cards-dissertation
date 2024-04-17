@@ -4,7 +4,7 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
-import { DataProp, EmptyTab, NewField, Tab } from "./Base"
+import { CardType, DataProp, EmptyTab, NewField, Tab } from "./Base"
 import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -16,9 +16,10 @@ interface prop {
     tabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
     saveDataToDB: () => Promise<void>
+    cardTypes: CardType[]
 }
 
-export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataToDB }: prop) => {
+export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataToDB, cardTypes }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -136,7 +137,11 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         />
                     </li>
                     <li>
-                        <CardTypePicker />
+                        <span className="inline-block align-middle">Card type</span>
+                        <CardTypePicker
+                            currentCardType={cardData.cardTypeId}
+                            cardTypes={cardTypes}
+                        />
                     </li>
                     <li>
                         <Separator />
