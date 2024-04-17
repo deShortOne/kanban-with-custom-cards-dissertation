@@ -2,17 +2,19 @@
 
 import { useState } from "react"
 import { SideBar } from "./component/SideBar"
-import { DataProp, FieldTypeProp } from "./component/Base"
+import { CardType, DataProp, FieldTypeProp } from "./component/Base"
 import { CardContent } from "./component/CardContent"
 
 interface props {
     cardTemplate: DataProp
     fieldTypes: FieldTypeProp[]
+    cardTypes: CardType[]
 }
 
 const UpdateCardMain = ({
-    cardTemplate, fieldTypes
+    cardTemplate, fieldTypes, cardTypes
 }: props) => {
+
     const [data, setData] = useState<DataProp>(cardTemplate)
     const [currentTabIdx, setCurrentTabIdx] = useState<number>(0)
     const [mode, setMode] = useState<"Card contents" | "Card display">()
