@@ -49,3 +49,28 @@ export async function getFieldTypes() {
     fieldTypes.unshift(NullField)
     return fieldTypes
 }
+
+export async function getAvailableCardTypes(kanbanId: number) {
+    const cardTypeIds = await prisma.cardTemplate.groupBy({
+        by: ["cardTypeId"],
+        where: {
+            kanbanId: kanbanId
+        }
+    })
+
+    const ids = cardTypeIds.map(elem => elem.cardTypeId)
+
+    const cardTypes = await prisma.cardType.findMany({
+        where: {
+            id: {
+                in: ids
+            }
+        },
+        select: {
+            id: true,
+            name: true,
+        }
+    })
+
+    return cardTypes
+}

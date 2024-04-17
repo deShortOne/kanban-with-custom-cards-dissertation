@@ -42,4 +42,10 @@ export interface DataProp {
     id: number
     name: string
     tabs: Tab[]
+    cardTypeId: number
+}
+
+export interface CardType {
+    id: number
+    name: string
 }

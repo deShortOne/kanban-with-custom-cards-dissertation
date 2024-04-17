@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { prisma } from "@/lib/prisma"
 import MainContent from "./MainContent"
 import { Role } from '@prisma/client'
-import { getCardTemplate, getFieldTypes } from './actions'
+import { getAvailableCardTypes, getCardTemplate, getFieldTypes } from './actions'
 import { OPTIONS } from '@/utils/authOptions'
 
 const UpdateCardPage = async ({
@@ -53,9 +53,14 @@ const UpdateCardPage = async ({
 
     const cardTemplate = await getCardTemplate(cardId)
     const fieldTypes = await getFieldTypes()
+    const cardTypes = await getAvailableCardTypes(userRole.kanbanId)
 
     return (
-        <MainContent cardTemplate={cardTemplate} fieldTypes={fieldTypes} />
+        <MainContent
+            cardTemplate={cardTemplate}
+            fieldTypes={fieldTypes}
+            cardTypes={cardTypes}
+        />
     )
 }
 
