@@ -40,6 +40,7 @@ const UpdateCardMain = ({
                 tabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
                 saveDataToDB={saveDataToDB}
+                cardTypes={cardTypes}
             />
             <CardContent
                 allFieldTypes={fieldTypes}

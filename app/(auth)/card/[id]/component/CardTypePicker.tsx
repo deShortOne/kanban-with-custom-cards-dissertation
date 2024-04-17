@@ -17,13 +17,20 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react"
+import { CardType } from "./Base"
 
-export const CardTypePicker = () => {
+interface prop {
+    currentCardType: number
+    cardTypes: CardType[]
+}
+
+export const CardTypePicker = ({ currentCardType, cardTypes }: prop) => {
 
     const [open, setOpen] = useState(false)
-    const field: { value: string } = { value: "" }
-    const items: { id: string, label: string }[] = []
-    items.push({ id: "1", label: "example card type" })
+
+    const cardTypeName = cardTypes.find(
+        (cardType) => cardType.id === currentCardType
+    )?.name
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -33,14 +40,10 @@ export const CardTypePicker = () => {
                     role="combobox"
                     className={cn(
                         "w-[200px] justify-between",
-                        !field.value && "text-muted-foreground"
+                        !cardTypeName && "text-muted-foreground"
                     )}
                 >
-                    {field.value
-                        ? items.find(
-                            (item) => item.id === field.value
-                        )?.label
-                        : "Select option"}
+                    {cardTypeName}
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -52,19 +55,19 @@ export const CardTypePicker = () => {
                     />
                     <CommandEmpty>No options found.</CommandEmpty>
                     <CommandGroup>
-                        {items.map((item) => (
+                        {cardTypes.map((cardType) => (
                             <CommandItem
-                                value={item.id}
-                                key={item.label}
+                                value={cardType.id.toString()}
+                                key={cardType.name}
                                 onSelect={() => {
                                     setOpen(false)
                                 }}
                             >
-                                {item.label}
+                                {cardType.name}
                                 <CheckIcon
                                     className={cn(
                                         "ml-auto h-4 w-4",
-                                        item.id === field.value
+                                        cardType.id === currentCardType
                                             ? "opacity-100"
                                             : "opacity-0"
                                     )}
