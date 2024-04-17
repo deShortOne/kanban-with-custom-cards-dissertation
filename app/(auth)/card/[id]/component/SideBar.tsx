@@ -139,6 +139,8 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                     <li>
                         <span className="inline-block align-middle">Card type</span>
                         <CardTypePicker
+                            cardData={cardData}
+                            setData={setData}
                             currentCardType={cardData.cardTypeId}
                             cardTypes={cardTypes}
                         />
