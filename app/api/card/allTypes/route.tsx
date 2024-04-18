@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-import { insertTemplateTabsAndFields } from "../template/route"
+import { insertTemplateTabsAndFields } from "../template/actions"
 import { insertUpdateCardTemplates } from "../../commonFunctions/Base"
 
 export async function GET() {

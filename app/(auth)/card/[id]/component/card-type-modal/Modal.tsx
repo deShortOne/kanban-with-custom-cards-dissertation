@@ -37,7 +37,8 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
         const updatedList = [...cardTypesCurr]
         updatedList.push({
             id: negativeCounter,
-            name: ""
+            name: "",
+            cardTemplateId: -1
         })
         setCardTypes(updatedList)
         setNegativeCounter(negativeCounter - 1)
