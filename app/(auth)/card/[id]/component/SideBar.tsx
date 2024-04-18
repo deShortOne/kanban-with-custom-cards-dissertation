@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { CardTypePicker } from './CardTypePicker'
+import { CardTypeSwitcher } from './CardTypeSwitcher'
 
 interface prop {
     cardData: DataProp
@@ -260,7 +261,9 @@ export const SideBar = ({
                     </li>
                 </ul>
                 <div className="flex-1" />
-                <Button variant={"outline"} onClick={() => saveDataToDB()}>
+                <span>Switch card type</span>
+                <CardTypeSwitcher cardTypes={cardTypes} currentCardType={cardData.cardTypeId} />
+                <Button variant={"outline"} onClick={() => saveDataToDB()} className='mt-2'>
                     Save changes
                 </Button>
             </div>
