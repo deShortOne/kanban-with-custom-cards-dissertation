@@ -181,14 +181,24 @@ describe('as a logged in user', () => {
         cy.url().should("contain", Cypress.env('URL') + "card/")
 
         cy.get("#asideCardSideBar").within(() => {
-            cy.get("li").should("have.length", 8)
-            cy.get("li").eq(0).within(() => {
+            cy.get("li").should("have.length", 9)
+            let i = 0
+            cy.get("li").eq(i).within(() => {
                 cy.get("#cardName").should("have.value", "task")
             })
-            cy.get("li").eq(2).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
+                cy.get("#cardTypeName").should("have.text", "task")
+            })
+
+            i += 2
+            cy.get("li").eq(i).within(() => {
                 cy.get("#cardTabName").should("have.value", "Base information")
             })
-            cy.get("li").eq(3).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrPosition").should("be.disabled")
                 cy.get("#tabPositionNumber").should("have.text", "1")
                 cy.get("#btnIncrPosition").should("not.be.disabled")
@@ -203,7 +213,9 @@ describe('as a logged in user', () => {
                 cy.get("#tabPositionNumber").should("have.text", "1")
                 cy.get("#btnIncrPosition").should("not.be.disabled")
             })
-            cy.get("li").eq(4).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrRowNumber").should("not.be.disabled")
                 cy.get("#cardTabRowNumber").should("have.text", "2")
 
@@ -215,7 +227,9 @@ describe('as a logged in user', () => {
                 cy.get("#btnDecrRowNumber").should("not.be.disabled")
                 cy.get("#cardTabRowNumber").should("have.text", "2")
             })
-            cy.get("li").eq(5).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrColNumber").should("be.disabled")
                 cy.get("#cardTabColNumber").should("have.text", "1")
 
