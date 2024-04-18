@@ -91,6 +91,7 @@ export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes, 
                             value="Card type settings"
                         >
                             <CardTypeModal
+                                cardData={cardData}
                                 kanbanId={kanbanId}
                                 cardTypes={cardTypes}
                             />
