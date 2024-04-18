@@ -54,6 +54,7 @@ const UpdateCardPage = async ({
     const cardTemplate = await getCardTemplate(cardId)
     const fieldTypes = await getFieldTypes()
     const cardTypes = await getAvailableCardTypes(userRole.kanbanId)
+    const initialCardTypeId = cardTemplate.cardTypeId
 
     return (
         <MainContent
@@ -61,6 +62,7 @@ const UpdateCardPage = async ({
             fieldTypes={fieldTypes}
             cardTypes={cardTypes}
             kanbanId={userRole.kanbanId}
+            initialCardTypeId={initialCardTypeId}
         />
     )
 }

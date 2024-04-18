@@ -10,10 +10,11 @@ interface props {
     fieldTypes: FieldTypeProp[]
     cardTypes: CardType[]
     kanbanId: number
+    initialCardTypeId: number
 }
 
 const UpdateCardMain = ({
-    cardTemplate, fieldTypes, cardTypes, kanbanId
+    initialCardTypeId, cardTemplate, fieldTypes, cardTypes, kanbanId
 }: props) => {
 
     const [data, setData] = useState<DataProp>(cardTemplate)
@@ -43,6 +44,7 @@ const UpdateCardMain = ({
                 saveDataToDB={saveDataToDB}
                 cardTypes={cardTypes}
                 kanbanId={kanbanId}
+                initialCardTypeId={initialCardTypeId}
             />
             <CardContent
                 allFieldTypes={fieldTypes}
