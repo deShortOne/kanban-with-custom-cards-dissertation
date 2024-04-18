@@ -65,7 +65,8 @@ export async function getAvailableCardTypes(kanbanId: number) {
         ON CardType.id = T1.cardTypeId
     JOIN CardTemplate
         ON CardTemplate.cardTypeId = T1.cardTypeId
-            AND CardTemplate.version = T1.version;
+            AND CardTemplate.version = T1.version
+    WHERE kanbanId = ${kanbanId};
     `
 
     const res: CardType[] = await prisma.$queryRawUnsafe(query)
