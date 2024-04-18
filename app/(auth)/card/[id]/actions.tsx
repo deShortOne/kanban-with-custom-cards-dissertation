@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { DataProp, FieldTypeProp, NewField, NullField } from "./component/Base"
+import { CardType, DataProp, FieldTypeProp, NewField, NullField } from "./component/Base"
 
 export async function getCardTemplate(cardId: number) {
     const cardTemplate = await prisma.cardTemplate.findFirst({
@@ -51,26 +51,24 @@ export async function getFieldTypes() {
 }
 
 export async function getAvailableCardTypes(kanbanId: number) {
-    const cardTypeIds = await prisma.cardTemplate.groupBy({
-        by: ["cardTypeId"],
-        where: {
-            kanbanId: kanbanId
-        }
-    })
+    const query = `
+    SELECT T1.cardTypeId as id,
+        CardType.name as name,
+        CardTemplate.id as cardTemplateId
+    FROM (
+        SELECT cardTypeId, max(version) AS version
+        FROM CardTemplate
+        WHERE kanbanId = ${kanbanId}
+        GROUP BY (cardTypeId)
+        ) AS T1
+    JOIN CardType
+        ON CardType.id = T1.cardTypeId
+    JOIN CardTemplate
+        ON CardTemplate.cardTypeId = T1.cardTypeId
+            AND CardTemplate.version = T1.version;
+    `
 
-    const ids = cardTypeIds.map(elem => elem.cardTypeId)
+    const res: CardType[] = await prisma.$queryRawUnsafe(query)
 
-    const cardTypes = await prisma.cardType.findMany({
-        where: {
-            id: {
-                in: ids
-            }
-        },
-        select: {
-            id: true,
-            name: true,
-        }
-    })
-
-    return cardTypes
+    return res
 }

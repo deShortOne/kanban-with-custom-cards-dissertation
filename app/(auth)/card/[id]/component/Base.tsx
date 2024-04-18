@@ -48,4 +48,5 @@ export interface DataProp {
 export interface CardType {
     id: number
     name: string
+    cardTemplateId: number
 }
