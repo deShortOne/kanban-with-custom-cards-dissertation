@@ -65,6 +65,14 @@ export async function POST(req: Request) {
         }
     })
 
+    insertTemplateTabsAndFields(data, cardTemplateId)
+
+    insertUpdateCardTemplates(oldCardTemplate.kanbanId)
+
+    redirect("/card/" + cardTemplateId)
+}
+
+export async function insertTemplateTabsAndFields(data: DataProp, cardTemplateId: number) {
     // Insert tabs
     const insertTabs: any = data.tabs.map(i => ({
         name: i.name,
@@ -102,8 +110,4 @@ export async function POST(req: Request) {
     await prisma.cardTemplateTabField.createMany({
         data: insertTabFields
     })
-
-    insertUpdateCardTemplates(oldCardTemplate.kanbanId)
-
-    redirect("/card/" + cardTemplateId)
 }

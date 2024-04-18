@@ -4,15 +4,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
-import { CardType } from "../Base"
+import { CardType, DataProp } from "../Base"
 import { useState } from "react"
 
 interface prop {
+    cardData: DataProp
     kanbanId: number
     cardTypes: CardType[]
 }
 
-export const CardTypeModal = ({ kanbanId, cardTypes }: prop) => {
+export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
 
     const form = useForm<CardType[]>()
     const [cardTypesCurr, setCardTypes] = useState<CardType[]>(cardTypes)
@@ -26,6 +27,7 @@ export const CardTypeModal = ({ kanbanId, cardTypes }: prop) => {
             },
             body: JSON.stringify({
                 kanbanId: kanbanId,
+                cardTemplateData: cardData,
                 ...data
             }),
         })
