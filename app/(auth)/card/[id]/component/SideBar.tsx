@@ -19,6 +19,7 @@ interface prop {
     saveDataToDB: () => Promise<void>
     cardTypes: CardType[]
     kanbanId: number
+    initialCardTypeId: number
 }
 
 export const SideBar = ({
@@ -28,7 +29,8 @@ export const SideBar = ({
     setCurrentTabIdx,
     saveDataToDB,
     cardTypes,
-    kanbanId
+    kanbanId,
+    initialCardTypeId,
 }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
@@ -262,7 +264,7 @@ export const SideBar = ({
                 </ul>
                 <div className="flex-1" />
                 <span>Switch card type</span>
-                <CardTypeSwitcher cardTypes={cardTypes} currentCardType={cardData.cardTypeId} />
+                <CardTypeSwitcher cardTypes={cardTypes} currentCardType={initialCardTypeId} />
                 <Button variant={"outline"} onClick={() => saveDataToDB()} className='mt-2'>
                     Save changes
                 </Button>
