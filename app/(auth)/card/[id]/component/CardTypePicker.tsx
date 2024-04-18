@@ -47,6 +47,7 @@ export const CardTypePicker = ({ cardData, setData, currentCardType, cardTypes, 
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
+                    id="cardTypeName"
                     variant="outline"
                     role="combobox"
                     className={cn(
