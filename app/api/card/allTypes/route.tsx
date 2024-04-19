@@ -3,14 +3,23 @@ import { NextResponse } from "next/server"
 import { insertTemplateTabsAndFields } from "../template/actions"
 import { insertUpdateCardTemplates } from "../../commonFunctions/Base"
 import { CardType } from "@/app/(auth)/card/[id]/component/Base"
-import { any } from "zod"
+import { createSearchParamsBailoutProxy } from "next/dist/client/components/searchparams-bailout-proxy"
 
-export async function GET() {
-    try {
-        return NextResponse.json(await prisma.cardType.findMany())
-    } catch {
-        return NextResponse.error()
-    }
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url)
+    const kanbanId = searchParams.get("kanbanId")
+    if (!kanbanId)
+        return NextResponse.json("Include kanban id", { status: 400 })
+
+    return NextResponse.json(await prisma.cardType.findMany({
+        where: {
+            ActiveCardTypes: {
+                every: {
+                    kanbanId: parseInt(kanbanId)
+                }
+            }
+        }
+    }))
 }
 
 export async function POST(req: Request) {
@@ -85,6 +94,17 @@ export async function POST(req: Request) {
                     cardTypeId: newCardId
                 }
             })
+            await prisma.activeCardTypes.update({
+                where: {
+                    cardTypeId_kanbanId: {
+                        cardTypeId: key,
+                        kanbanId: kanbanId,
+                    }
+                },
+                data: {
+                    cardTypeId: newCardId
+                }
+            })
 
             res.push({
                 id: newCardId,
@@ -98,6 +118,9 @@ export async function POST(req: Request) {
     })
 
     const b = new Promise((resolve) => {
+        if (newCardTypes.length === 0) {
+            resolve(true)
+        }
         newCardTypes.forEach(async (cardType, index) => {
             const preexistingCardType = await prisma.cardType.findFirst({
                 where: {
@@ -124,6 +147,13 @@ export async function POST(req: Request) {
                     kanbanId: kanbanId,
                 }
             })
+            await prisma.activeCardTypes.create({
+                data: {
+                    cardTypeId: newCardTypeId,
+                    kanbanId: kanbanId,
+                    version: 1
+                }
+            })
 
             insertTemplateTabsAndFields(cardTemplateData, newCardTemplateId)
 
@@ -139,6 +169,7 @@ export async function POST(req: Request) {
         })
     })
 
+
     await a
     await b
 
@@ -151,7 +182,7 @@ export async function POST(req: Request) {
             max(version) AS version
         FROM CardTemplate
         WHERE kanbanId = ${kanbanId}
-        AND id IN (${cardTypesToCheck.map(i => i.id)})
+        AND cardTypeId IN (${cardTypesToCheck.map(i => i.id)})
         GROUP BY (cardTypeId)
         ) AS T1
     JOIN CardTemplate
@@ -165,12 +196,21 @@ export async function POST(req: Request) {
     const c = new Promise((resolve) => {
         cardTypesToCheck.forEach((i, index) => {
             const cardTemplateId = cardTemplateIds.find(j => j.id === i.id)
-            i.cardTemplateId = cardTemplateId?.cardTemplateId ?? -1
+            i.cardTemplateId = cardTemplateId?.cardTemplateId ?? -2
             if (index === cardTypesToCheck.length - 1)
                 resolve(true)
         })
     })
     await c
+
+    await prisma.activeCardTypes.deleteMany({
+        where: {
+            kanbanId: kanbanId,
+            cardTypeId: {
+                notIn: res.map(i => i.id)
+            }
+        }
+    })
 
     insertUpdateCardTemplates(kanbanId)
 
