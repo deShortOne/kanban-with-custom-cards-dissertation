@@ -5,22 +5,23 @@ import { Label } from "@/components/ui/label"
 import { Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
 import { CardType, DataProp } from "../Base"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
 interface prop {
     cardData: DataProp
     kanbanId: number
     cardTypes: CardType[]
+    setCardTypes: Dispatch<SetStateAction<CardType[]>>
 }
 
-export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
+export const CardTypeModal = ({ cardData, kanbanId, cardTypes, setCardTypes }: prop) => {
 
     const form = useForm<CardType[]>()
-    const [cardTypesCurr, setCardTypes] = useState<CardType[]>(cardTypes)
+    const [cardTypesCurr, setCardTypesTmp] = useState<CardType[]>(cardTypes)
     const [negativeCounter, setNegativeCounter] = useState(-1)
 
     async function onSubmit(data: any) {
-        await fetch("/api/card/allTypes", {
+        const newCardTypeDataResponse = await fetch("/api/card/allTypes", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,6 +32,9 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
                 ...data
             }),
         })
+        const newCardTypeData = await newCardTypeDataResponse.json() as CardType[]
+        setCardTypes(newCardTypeData)
+        console.log(newCardTypeData)
     }
 
     const addCardType = () => {
@@ -40,7 +44,7 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
             name: "",
             cardTemplateId: -1
         })
-        setCardTypes(updatedList)
+        setCardTypesTmp(updatedList)
         setNegativeCounter(negativeCounter - 1)
     }
 
@@ -48,7 +52,7 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
         const updatedList = [...cardTypesCurr]
         const posOfCardTypeToRemove = updatedList.findIndex(cardType => cardType.id === cardTypeId)
         updatedList.splice(posOfCardTypeToRemove, 1)
-        setCardTypes(updatedList)
+        setCardTypesTmp(updatedList)
 
         // could just pass userPermissions list to api
         form.unregister(`${cardTypeId}`)
