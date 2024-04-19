@@ -53,6 +53,17 @@ export async function POST(req: Request) {
             kanbanId: oldCardTemplate.kanbanId,
         }
     })
+    await prisma.activeCardTypes.update({
+        where: {
+            cardTypeId_kanbanId: {
+                cardTypeId: data.cardTypeId,
+                kanbanId: oldCardTemplate.kanbanId
+            }
+        },
+        data: {
+            version: oldCardTemplate.version + 1
+        }
+    })
 
     insertTemplateTabsAndFields(data, cardTemplateId)
 
