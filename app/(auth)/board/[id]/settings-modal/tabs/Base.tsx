@@ -2,10 +2,12 @@ export interface CardTemplate {
     id: number
     name: string
     version: number
-    isDefault: boolean
     cardType: {
         id: number
         name: string
+    }
+    ActiveCardTypes: {
+        isDefault: boolean
     }
 }
 

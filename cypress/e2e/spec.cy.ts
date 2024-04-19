@@ -477,8 +477,18 @@ describe('as a logged in user', () => {
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).click()
 
-        cy.get("#btnCreateDefaultCard").should("have.text", "Test")
-        cy.get("#btnCreateDefaultCard").click()
+        cy.get("#btnCreateDefaultCard").should("have.text", "task")
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").should("have.length", 4)
+            cy.get("[role='menuitem']").eq(0).should("have.text", "tasktask") // FIXME
+            cy.get("[role='menuitem']").eq(1).should("have.text", "bugbug")
+            cy.get("[role='menuitem']").eq(2).should("have.text", "TestCTest")
+            cy.get("[role='menuitem']").eq(3).should("have.text", "Update cards")
+
+            cy.get("[role='menuitem']").eq(2).click()
+        })
 
         cy.get(".bg-card").should("have.length", 2)
         cy.get(".bg-card").eq(1).click()

@@ -39,28 +39,16 @@ export async function POST(req: Request) {
     const oldCardTemplate = await prisma.cardTemplate.findFirst({
         where: {
             id: data.id
-        }
+        },
     })
 
     if (!oldCardTemplate)
         return Response.json("Old card template not found")
 
-    if (oldCardTemplate.isDefault) {
-        await prisma.cardTemplate.update({
-            where: {
-                id: data.id,
-            },
-            data: {
-                isDefault: false
-            }
-        })
-    }
-
     const { id: cardTemplateId } = await prisma.cardTemplate.create({
         data: {
             name: data.name,
             version: oldCardTemplate.version + 1,
-            isDefault: oldCardTemplate.isDefault,
             cardTypeId: data.cardTypeId,
             kanbanId: oldCardTemplate.kanbanId,
         }

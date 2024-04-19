@@ -20,8 +20,13 @@ import { useQuery } from "@tanstack/react-query"
 interface NewCardInfo {
     id: number
     name: string
-    isDefault: boolean
-    cardType: { name: string }
+    cardType: {
+        id: number
+        name: string
+    }
+    ActiveCardTypes: {
+        isDefault: boolean
+    }
 }
 
 export const AddNewCardButton = (
@@ -55,7 +60,7 @@ export const AddNewCardButton = (
         if (!data)
             return
         for (let i = 0; i < data.length; i++) {
-            if (data[i].isDefault) {
+            if (data[i].ActiveCardTypes.isDefault) {
                 setDefaultNewCard(data[i])
                 break
             }

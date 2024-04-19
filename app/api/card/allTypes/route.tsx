@@ -120,7 +120,6 @@ export async function POST(req: Request) {
                 data: {
                     name: cardTemplateData.name,
                     version: 1,
-                    isDefault: false,
                     cardTypeId: newCardTypeId,
                     kanbanId: kanbanId,
                 }

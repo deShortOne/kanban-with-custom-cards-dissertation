@@ -66,12 +66,22 @@ async function setBoardInitialData(name: string) {
                     ]
                 }
             },
+            ActiveCardTypes: {
+                create: [{
+                    version: 1,
+                    cardTypeId: 1,
+                    isDefault: true,
+                }, {
+                    version: 1,
+                    cardTypeId: 2,
+                    isDefault: true,
+                }]
+            },
             CardTemplate: {
                 create: [{
                     name: "task",
                     version: 1,
                     cardTypeId: 1,
-                    isDefault: true,
                     tabs: {
                         create: [{
                             name: "Base information",
