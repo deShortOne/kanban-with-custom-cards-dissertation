@@ -44,7 +44,8 @@ export const CardTab = ({ id }: { id: number }) => {
             },
         }).then(async (res) => {
             const listCardTemplates = await res.json() as CardTemplate[]
-            const defaultCardTemplateId = listCardTemplates.find(i => i.isDefault)?.id as number
+            const defaultCardTemplateId = listCardTemplates
+                .find(i => i.ActiveCardTypes.isDefault)?.cardType.id as number
             setDefaultCard(defaultCardTemplateId)
             return listCardTemplates
         }))
@@ -112,7 +113,7 @@ export const CardTab = ({ id }: { id: number }) => {
                                                                 <FormControl>
                                                                     <RadioGroupItem
                                                                         {...field}
-                                                                        value={i.id.toString()}
+                                                                        value={i.cardType.id.toString()}
                                                                         className="ml-[15px]"
                                                                     />
                                                                 </FormControl>
@@ -122,7 +123,9 @@ export const CardTab = ({ id }: { id: number }) => {
                                                             <Label>{i.name}</Label>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <Badge className="max-h-[24px]" variant="outline">{i.cardType.name}</Badge>
+                                                            <Badge className="max-h-[24px]" variant="outline">
+                                                                {i.cardType.name}
+                                                            </Badge>
                                                         </TableCell>
                                                         <TableCell className="text-right">
                                                             <Link href={"/card/" + i.id}>
