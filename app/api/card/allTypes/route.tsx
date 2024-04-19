@@ -139,10 +139,26 @@ export async function POST(req: Request) {
                 newCardTypeId = preexistingCardType.id
             }
 
+            const isTherePreviousVersion = await prisma.cardTemplate.groupBy({
+                by: ["cardTypeId"],
+                where: {
+                    kanbanId: kanbanId,
+                    cardTypeId: newCardTypeId,
+                },
+                _max: {
+                    version: true
+                }
+            })
+
+            let newVersion = 0
+            if (isTherePreviousVersion.length === 1) {
+                newVersion = isTherePreviousVersion[0]._max.version ?? 0
+            }
+
             const { id: newCardTemplateId } = await prisma.cardTemplate.create({
                 data: {
                     name: cardTemplateData.name,
-                    version: 1,
+                    version: newVersion + 1,
                     cardTypeId: newCardTypeId,
                     kanbanId: kanbanId,
                 }
@@ -151,7 +167,7 @@ export async function POST(req: Request) {
                 data: {
                     cardTypeId: newCardTypeId,
                     kanbanId: kanbanId,
-                    version: 1
+                    version: newVersion + 1
                 }
             })
 
@@ -168,7 +184,6 @@ export async function POST(req: Request) {
             }
         })
     })
-
 
     await a
     await b

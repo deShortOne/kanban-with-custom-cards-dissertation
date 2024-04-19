@@ -750,4 +750,106 @@ describe('as a logged in user', () => {
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).should("not.exist")
     })
+
+    it('card type add and removal', () => {
+        cy.viewport(1920, 1080)
+        cy.visit(Cypress.env('URL') + "select-board")
+        cy.get("#createNewKanbanBtn").click()
+
+        cy.url().should("eq", Cypress.env('URL') + "select-board/new")
+        cy.get("#name").type(testname)
+        cy.get("#createKanbanBtn").click()
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").eq(2).click()
+        })
+
+        cy.get("#dialogKanbanSettings").within(() => {
+            cy.get("#tabSettingCards").within(() => {
+                cy.get("[role='radiogroup']").within(() => {
+                    cy.get("table").within(() => {
+                        cy.get("tbody").within(() => {
+                            cy.get("tr").eq(0).get("td").eq(3).click()
+                        })
+                    })
+                })
+            })
+        })
+
+        cy.url().should("contain", Cypress.env('URL') + "card/")
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm added
+                cy.get("div").eq(4).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("button").click() // delete
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5) // confirm deleted
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest") // readd with the same name
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+            // this can cause issue where it attempts to add a card template with the duplicated (wrt previous) information
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm readded with no error server side
+            })
+        })
+
+        cy.visit(Cypress.env('URL') + "select-board")
+        cy.contains("a", testname).click()
+        cy.get("#kanbanTitle").should("have.text", testname)
+        cy.contains("button", "Setting").click()
+        cy.contains("button", "Advanced").click()
+        cy.contains("button", "Delete kanban board").click()
+        cy.visit(Cypress.env('URL') + "select-board")
+        cy.contains("a", testname).should("not.exist")
+    })
 })
