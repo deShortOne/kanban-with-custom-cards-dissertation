@@ -289,6 +289,34 @@ describe('as a logged in user', () => {
         })
 
         cy.get("#cardName").type("{selectall}{backspace}Test")
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            cy.get("div").should("have.length", 4)
+            cy.get("div").eq(0).within(() => {
+                cy.get("h2").should("have.text", "Edit Card Types")
+                cy.get("p").should("have.text", "Add, remove or edit card types")
+            })
+            cy.get("div").eq(1).get("section").should("have.length", 2)
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).should("have.text", "Add new card type")
+                cy.get("button").eq(0).click()
+            })
+            cy.get("div").should("have.length", 4)
+            cy.get("div").eq(1).get("section").should("have.length", 3)
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).should("have.text", "Save changes")
+                cy.get("button").eq(1).click()
+            })
+        })
 
         cy.get("#divCardContent").get("div[role='tablist']").within(() => {
             cy.contains("button", "Github").click()
