@@ -30,21 +30,27 @@ export async function POST(req: Request) {
         }
     })
 
-    oldCardTypeIds.forEach(async (i) => {
-        if (cardTypes[i].name === data[i].name) {
+    Object.entries(data).forEach(async ([a, b]) => {
+        const key = parseInt(a)
+        const value = b as string
+
+        if (key <= 0)
             return
-        }
+        const cardType = cardTypes.find(i => i.id === key)
+        if (cardType == null || cardType.name === value)
+            return
+
         let newCardId = -1
         const preexistingCardType = await prisma.cardType.findFirst({
             where: {
-                name: data[i].name
+                name: value as string
             }
         })
 
         if (preexistingCardType === null) {
             const newCardType = await prisma.cardType.create({
                 data: {
-                    name: data[i].name
+                    name: value
                 }
             })
             newCardId = newCardType.id
@@ -55,7 +61,7 @@ export async function POST(req: Request) {
         await prisma.cardTemplate.updateMany({
             where: {
                 kanbanId: kanbanId,
-                cardTypeId: i
+                cardTypeId: key
             },
             data: {
                 cardTypeId: newCardId
