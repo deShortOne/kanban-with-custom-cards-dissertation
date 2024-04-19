@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
@@ -64,7 +64,10 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
                     <span>Edit Card Types</span>
                 </div>
             </DialogTrigger>
-            <DialogContent className="">
+            <DialogContent
+                id="cardTypeEditModal"
+                className=""
+            >
                 <form onSubmit={form.handleSubmit(onSubmit, onError)}>
                     <DialogHeader>
                         <DialogTitle>Edit Card Types</DialogTitle>
@@ -75,7 +78,7 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
                     <div className="grid gap-4 py-4">
                         {cardTypesCurr.map(i => {
                             return (
-                                <div
+                                <section
                                     key={i.id}
                                     className="grid grid-cols-6 items-center gap-4"
                                 >
@@ -91,7 +94,7 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
                                     >
                                         <TrashIcon width={24} height={24} />
                                     </Button>
-                                </div>
+                                </section>
                             )
                         })}
 
@@ -101,7 +104,12 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes }: prop) => {
                             Add new card type
                         </Button>
                         <div className="col-span-1" />
-                        <Button type="submit">Save changes</Button>
+                        <DialogClose
+                            type="submit"
+                        >
+                            Save changes
+                        </DialogClose>
+
                     </DialogFooter>
                 </form>
             </DialogContent>
