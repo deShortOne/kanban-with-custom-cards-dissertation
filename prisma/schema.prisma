@@ -45,6 +45,7 @@ model Kanban {
     CardTemplate     CardTemplate[]
     TrackChanges     TrackChanges[]
     LastKanbanUpdate LastKanbanUpdate[]
+    ActiveCardTypes  ActiveCardTypes[]
 }
 
 enum Role {
@@ -105,23 +106,25 @@ model CardType {
     id   Int    @id @default(autoincrement())
     name String
 
-    cards CardTemplate[]
+    cards           CardTemplate[]
+    ActiveCardTypes ActiveCardTypes[]
 }
 
 model CardTemplate {
-    id        Int     @id @default(autoincrement())
-    name      String
-    version   Int
-    isDefault Boolean @default(false)
+    id      Int    @id @default(autoincrement())
+    name    String
+    version Int
 
     cardTypeId Int
     cardType   CardType @relation(fields: [cardTypeId], references: [id], onDelete: Cascade)
     kanbanId   Int
     kanban     Kanban   @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
-    tabs CardTemplateTab[]
-    Card Card[]
+    tabs            CardTemplateTab[]
+    Card            Card[]
+    ActiveCardTypes ActiveCardTypes?
 
+    @@unique([version, cardTypeId, kanbanId])
     @@index([cardTypeId])
     @@index([kanbanId])
 }
@@ -230,5 +233,21 @@ view LastKanbanUpdate {
 
     kanban Kanban @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
+    @@index([kanbanId])
+}
+
+model ActiveCardTypes {
+    isDefault Boolean @default(false)
+
+    version      Int
+    cardTemplate CardTemplate @relation(fields: [version, cardTypeId, kanbanId], references: [version, cardTypeId, kanbanId], onDelete: Cascade)
+    cardTypeId   Int
+    cardType     CardType     @relation(fields: [cardTypeId], references: [id])
+    kanbanId     Int
+    kanban       Kanban       @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
+
+    @@id([cardTypeId, kanbanId])
+    @@unique([version, cardTypeId, kanbanId])
+    @@index([cardTypeId])
     @@index([kanbanId])
 }
