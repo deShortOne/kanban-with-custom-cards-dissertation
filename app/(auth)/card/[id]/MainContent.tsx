@@ -19,6 +19,7 @@ const UpdateCardMain = ({
 
     const [data, setData] = useState<DataProp>(cardTemplate)
     const [currentTabIdx, setCurrentTabIdx] = useState<number>(0)
+    const [availableCardTypes, setAvailableCardTypes] = useState(cardTypes)
     const [mode, setMode] = useState<"Card contents" | "Card display">()
 
     const saveDataToDB = async () => {
@@ -42,7 +43,8 @@ const UpdateCardMain = ({
                 tabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
                 saveDataToDB={saveDataToDB}
-                cardTypes={cardTypes}
+                cardTypes={availableCardTypes}
+                setCardTypes={setAvailableCardTypes}
                 kanbanId={kanbanId}
                 initialCardTypeId={initialCardTypeId}
             />

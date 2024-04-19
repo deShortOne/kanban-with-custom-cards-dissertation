@@ -317,6 +317,12 @@ describe('as a logged in user', () => {
                 cy.get("button").eq(1).click()
             })
         })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6)
+                cy.get("div").eq(2).click()
+            })
+        })
 
         cy.get("#divCardContent").get("div[role='tablist']").within(() => {
             cy.contains("button", "Github").click()
