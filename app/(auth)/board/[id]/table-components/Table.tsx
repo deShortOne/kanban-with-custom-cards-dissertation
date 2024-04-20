@@ -28,6 +28,8 @@ import {
 } from '@tanstack/react-query'
 import { BoardApiData, BoardHeaderType, CardProps } from "@/app/types/Board"
 
+type HeaderType = "COLUMN" | "SWIMLANE"
+
 interface TableInformationProps {
     id: number
     role: Role
@@ -450,7 +452,7 @@ export const Table = ({
     )
 }
 
-function moveHeader(boardId: number, type: BoardHeaderType, headers: number[]) {
+function moveHeader(boardId: number, type: HeaderType, headers: number[]) {
     fetch('/api/headers/reorder', {
         method: 'POST',
         headers: {
@@ -464,7 +466,7 @@ function moveHeader(boardId: number, type: BoardHeaderType, headers: number[]) {
     })
 }
 
-async function addHeaderAndGetId(boardId: number, type: BoardHeaderType, order: number) {
+async function addHeaderAndGetId(boardId: number, type: HeaderType, order: number) {
     const data = await fetch('/api/headers/new', {
         method: 'POST',
         headers: {
@@ -480,7 +482,7 @@ async function addHeaderAndGetId(boardId: number, type: BoardHeaderType, order: 
     return await data.json()
 }
 
-function removeHeader(boardId: number, type: BoardHeaderType, headerId: number) {
+function removeHeader(boardId: number, type: HeaderType, headerId: number) {
     fetch('/api/headers/remove', {
         method: 'POST',
         headers: {
