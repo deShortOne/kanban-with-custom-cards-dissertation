@@ -176,10 +176,9 @@ model CardTabField {
 }
 
 model Card {
-    id          Int     @id @default(autoincrement())
-    title       String
-    order       Int
-    description String? @db.Text
+    id    Int    @id @default(autoincrement())
+    title String
+    order Int
 
     columnId       Int
     column         KanbanColumn   @relation(fields: [columnId], references: [id], onDelete: Cascade)

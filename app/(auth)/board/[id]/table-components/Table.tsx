@@ -288,7 +288,6 @@ export const Table = ({
             id: await response.json(),
             title: "To be updated",
             order: orderPos,
-            description: null,
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,

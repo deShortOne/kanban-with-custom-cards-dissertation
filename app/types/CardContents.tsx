@@ -35,7 +35,6 @@ export interface CardType {
 export interface CardData {
     id: number,
     title: string,
-    description: string,
 
     allTabsFieldInformation: {
         id: number,
