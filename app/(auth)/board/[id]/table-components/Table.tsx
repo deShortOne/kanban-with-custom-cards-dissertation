@@ -27,7 +27,8 @@ import {
     useQueryClient,
 } from '@tanstack/react-query'
 import { BoardApiData, CardProps } from "@/app/types/Board"
-import { Button } from "@/components/ui/button"
+
+type HeaderType = "COLUMN" | "SWIMLANE"
 
 interface TableInformationProps {
     id: number
@@ -51,6 +52,7 @@ export const Table = ({
     const LastKanbanUpdateServer = useRef(LastKanbanUpdate);
 
     const [alertMsg, setAlertMsg] = useState("")
+    const [alertMsgOpen, setAlertMsgOpen] = useState(false)
 
     const { status, data, error, isFetching } = useQuery<BoardApiData>({
         queryKey: ['todos'],
@@ -102,36 +104,14 @@ export const Table = ({
 
         setColumns(newColumns)
 
-        fetch('/api/headers/reorder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                boardId: boardId,
-                type: "COLUMN",
-                headers: newColumns.map(cell => cell.id)
-            }),
-        })
+        moveHeader(boardId, "COLUMN", newColumns.map(cell => cell.id))
     }
 
     // add column
     const addColumn = async () => {
-        const response = await fetch('/api/headers/new', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "COLUMN",
-                order: stateColumns.length + 1,
-                boardId: boardId,
-            }),
-        })
-
         const newColumns = [...stateColumns]
         newColumns.push({
-            id: await response.json(),
+            id: await addHeaderAndGetId(boardId, "COLUMN", stateColumns.length + 1),
             title: "New Column",
             order: newColumns.length + 1,
             boardId: boardId,
@@ -147,20 +127,10 @@ export const Table = ({
 
             newColumns.splice(headerOrder, 1)
             setColumns(newColumns)
-
-            fetch('/api/headers/remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: headerId,
-                    type: "COLUMN",
-                    boardId: boardId,
-                }),
-            })
+            removeHeader(boardId, "COLUMN", headerId)
         } else {
             setAlertMsg("Remove all cards from this column")
+            setAlertMsgOpen(true)
         }
     }
 
@@ -175,36 +145,14 @@ export const Table = ({
 
         setSwimLanes(newSwimLanes)
 
-        fetch('/api/headers/reorder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                boardId: boardId,
-                type: "SWIMLANE",
-                headers: newSwimLanes.map(cell => cell.id)
-            }),
-        })
+        moveHeader(boardId, "SWIMLANE", newSwimLanes.map(cell => cell.id))
     }
 
     // add swim lane
     const addSwimLane = async () => {
-        const response = await fetch('/api/headers/new', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "SWIMLANE",
-                order: stateSwimLanes.length + 1,
-                boardId: boardId,
-            }),
-        })
-
         const draggedSwimLane = [...stateSwimLanes]
         draggedSwimLane.push({
-            id: await response.json(),
+            id: await addHeaderAndGetId(boardId, "SWIMLANE", stateSwimLanes.length + 1),
             title: "New Swimlane",
             order: draggedSwimLane.length + 1,
             boardId: boardId,
@@ -220,20 +168,10 @@ export const Table = ({
 
             newSwimLane.splice(headerOrder, 1)
             setSwimLanes(newSwimLane)
-
-            fetch('/api/headers/remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: headerId,
-                    type: "SWIMLANE",
-                    boardId: boardId,
-                }),
-            })
+            removeHeader(boardId, "SWIMLANE", headerId)
         } else {
             setAlertMsg("Remove all cards from this swim lane")
+            setAlertMsgOpen(true)
         }
     }
 
@@ -395,7 +333,7 @@ export const Table = ({
 
     return (
         <div>
-            <AlertDialog open={alertMsg !== ""}>
+            <AlertDialog open={alertMsgOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Error!</AlertDialogTitle>
@@ -404,12 +342,9 @@ export const Table = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <Button
-                            onClick={() => { setAlertMsg("") }}
-                            variant="outline"
-                        >
+                        <AlertDialogAction onClick={() => setAlertMsgOpen(false)}>
                             Ok
-                        </Button>
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -535,4 +470,48 @@ export const Table = ({
             </DndProvider>
         </div >
     )
+}
+
+function moveHeader(boardId: number, type: HeaderType, headers: number[]) {
+    fetch('/api/headers/reorder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            boardId: boardId,
+            type: type,
+            headers: headers
+        }),
+    })
+}
+
+async function addHeaderAndGetId(boardId: number, type: HeaderType, order: number) {
+    const data = await fetch('/api/headers/new', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: type,
+            order: order,
+            boardId: boardId,
+        }),
+    })
+
+    return await data.json()
+}
+
+function removeHeader(boardId: number, type: HeaderType, headerId: number) {
+    fetch('/api/headers/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: headerId,
+            type: type,
+            boardId: boardId,
+        }),
+    })
 }
