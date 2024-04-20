@@ -44,7 +44,7 @@ model Kanban {
     Cards            Card[]
     CardTemplate     CardTemplate[]
     TrackChanges     TrackChanges[]
-    LastKanbanUpdate LastKanbanUpdate[]
+    LastKanbanUpdate LastKanbanUpdate?
     ActiveCardTypes  ActiveCardTypes[]
 }
 
