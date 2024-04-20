@@ -23,7 +23,7 @@ export async function submitFormAA(formData: FormData) {
         }
     })
 
-    insertNewKanban(kanban.id)
+    await insertNewKanban(kanban.id)
 
     redirect("/board/" + kanban.id)
 }
