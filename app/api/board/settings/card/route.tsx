@@ -37,7 +37,7 @@ export async function GET(request: Request) {
                     name: true,
                 }
             },
-            ActiveCardTypes: {
+            activeCardTypes: {
                 select: {
                     isDefault: true
                 }

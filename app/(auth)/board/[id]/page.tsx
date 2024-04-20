@@ -42,17 +42,17 @@ const SelectKanbanPage = async ({
             id: kanbanId,
         },
         include: {
-            KanbanColumns: {
+            kanbanColumns: {
                 orderBy: {
                     order: "asc",
                 },
             },
-            KanbanSwimLanes: {
+            kanbanSwimLanes: {
                 orderBy: {
                     order: "asc",
                 },
             },
-            Cards: {
+            cards: {
                 orderBy: {
                     order: "asc",
                 },
@@ -64,7 +64,7 @@ const SelectKanbanPage = async ({
                     }
                 },
             },
-            LastKanbanUpdate: {
+            lastKanbanUpdate: {
                 select: {
                     lastChange: true
                 }
@@ -82,10 +82,10 @@ const SelectKanbanPage = async ({
             <Table
                 id={kanban.id}
                 role={userRoleKanban.permission}
-                Cards={kanban.Cards}
-                KanbanColumns={kanban.KanbanColumns}
-                KanbanSwimLanes={kanban.KanbanSwimLanes}
-                LastKanbanUpdate={kanban.LastKanbanUpdate[0].lastChange}
+                cards={kanban.cards}
+                kanbanColumns={kanban.kanbanColumns}
+                kanbanSwimLanes={kanban.kanbanSwimLanes}
+                lastKanbanUpdate={kanban.lastKanbanUpdate?.lastChange ?? -1}
             />
         </main>
     )

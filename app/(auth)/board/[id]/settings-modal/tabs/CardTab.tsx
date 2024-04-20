@@ -45,7 +45,7 @@ export const CardTab = ({ id }: { id: number }) => {
         }).then(async (res) => {
             const listCardTemplates = await res.json() as ActiveCardTemplate[]
             const defaultCardTemplateId = listCardTemplates
-                .find(i => i.ActiveCardTypes.isDefault)?.cardType.id as number
+                .find(i => i.activeCardTypes.isDefault)?.cardType.id as number
             setDefaultCard(defaultCardTemplateId)
             return listCardTemplates
         }))

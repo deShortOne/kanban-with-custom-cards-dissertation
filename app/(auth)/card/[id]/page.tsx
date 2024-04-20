@@ -17,7 +17,7 @@ const UpdateCardPage = async ({
     const userRole = await prisma.userRoleKanban.findFirst({
         where: {
             kanban: {
-                CardTemplate: {
+                cardTemplate: {
                     some: {
                         id: cardId
                     }

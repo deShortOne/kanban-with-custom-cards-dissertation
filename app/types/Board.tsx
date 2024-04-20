@@ -4,20 +4,20 @@ export type BoardHeaderType = "COLUMN" | "SWIMLANE"
 
 export interface BoardApiData {
     updateCardPositions: boolean
-    Cards: CardProps[]
+    cards: CardProps[]
 
     updateColumnPositions: boolean
-    KanbanColumns: KanbanColumn[]
+    kanbanColumns: KanbanColumn[]
 
     updateSwimLanePositions: boolean
-    KanbanSwimLanes: KanbanSwimLane[]
+    kanbanSwimLanes: KanbanSwimLane[]
 
     updateCardTemplates: boolean
 
     updateCardData: boolean
     updatedCardIds: number[]
 
-    LastKanbanUpdate: number
+    lastKanbanUpdate: number
 }
 
 export interface CardProps {
@@ -43,7 +43,7 @@ export interface ActiveCardTemplate extends BaseCardTemplate {
         id: number
         name: string
     }
-    ActiveCardTypes: {
+    activeCardTypes: {
         isDefault: boolean
     }
 }

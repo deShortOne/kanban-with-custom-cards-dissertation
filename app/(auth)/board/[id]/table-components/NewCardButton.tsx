@@ -49,7 +49,7 @@ export const AddNewCardButton = (
         if (!data)
             return
         for (let i = 0; i < data.length; i++) {
-            if (data[i].ActiveCardTypes.isDefault) {
+            if (data[i].activeCardTypes.isDefault) {
                 setDefaultNewCard(data[i])
                 break
             }

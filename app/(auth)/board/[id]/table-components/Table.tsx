@@ -32,10 +32,10 @@ interface TableInformationProps {
     id: number
     role: Role
 
-    Cards: CardProps[]
-    KanbanColumns: KanbanColumn[]
-    KanbanSwimLanes: KanbanSwimLane[]
-    LastKanbanUpdate: number
+    cards: CardProps[]
+    kanbanColumns: KanbanColumn[]
+    kanbanSwimLanes: KanbanSwimLane[]
+    lastKanbanUpdate: number
 }
 
 function sortCardPropsByOrder(a: CardProps, b: CardProps) {
@@ -43,11 +43,11 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, role, Cards, KanbanColumns, KanbanSwimLanes, LastKanbanUpdate
+    id, role, cards, kanbanColumns, kanbanSwimLanes, lastKanbanUpdate
 }: TableInformationProps) => {
     const boardId = id
     const queryClient = useQueryClient()
-    const LastKanbanUpdateServer = useRef(LastKanbanUpdate);
+    const LastKanbanUpdateServer = useRef(lastKanbanUpdate);
 
     const [alertMsg, setAlertMsg] = useState("")
     const [alertMsgOpen, setAlertMsgOpen] = useState(false)
@@ -74,11 +74,11 @@ export const Table = ({
         if (!data)
             return
         if (data.updateCardPositions)
-            setCard(data.Cards)
+            setCard(data.cards)
         if (data.updateColumnPositions)
-            setColumns(data.KanbanColumns)
+            setColumns(data.kanbanColumns)
         if (data.updateSwimLanePositions)
-            setSwimLanes(data.KanbanSwimLanes)
+            setSwimLanes(data.kanbanSwimLanes)
         if (data.updateCardTemplates)
             queryClient.invalidateQueries({ queryKey: ["addNewCard"] })
         if (data.updateCardData) {
@@ -88,12 +88,12 @@ export const Table = ({
             })
         }
 
-        LastKanbanUpdateServer.current = data.LastKanbanUpdate
+        LastKanbanUpdateServer.current = data.lastKanbanUpdate
     }, [isFetching, data, queryClient])
 
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState<KanbanColumn[]>(KanbanColumns)
+    const [stateColumns, setColumns] = useState<KanbanColumn[]>(kanbanColumns)
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex]
         const newColumns = [...stateColumns]
@@ -134,7 +134,7 @@ export const Table = ({
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(KanbanSwimLanes)
+    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(kanbanSwimLanes)
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex]
         const newSwimLanes = [...stateSwimLanes]
@@ -175,7 +175,7 @@ export const Table = ({
 
     /* CARD */
     // move card
-    const [cardsInfo, setCard] = useState<CardProps[]>(Cards)
+    const [cardsInfo, setCard] = useState<CardProps[]>(cards)
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
 

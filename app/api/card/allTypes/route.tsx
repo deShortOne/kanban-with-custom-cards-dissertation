@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(await prisma.cardType.findMany({
         where: {
-            ActiveCardTypes: {
+            activeCardTypes: {
                 every: {
                     kanbanId: parseInt(kanbanId)
                 }
