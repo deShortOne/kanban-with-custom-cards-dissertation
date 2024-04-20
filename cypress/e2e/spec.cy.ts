@@ -753,12 +753,7 @@ describe('as a logged in user', () => {
 
     it('card type add and removal', () => {
         cy.viewport(1920, 1080)
-        cy.visit(Cypress.env('URL') + "select-board")
-        cy.get("#createNewKanbanBtn").click()
-
-        cy.url().should("eq", Cypress.env('URL') + "select-board/new")
-        cy.get("#name").type(testname)
-        cy.get("#createKanbanBtn").click()
+        cy.createKanbanAndNavigate(testname)
 
         cy.get("#btnOpenAllCards").click()
         cy.get("#divAllCardsDisplay").within(() => {
@@ -843,13 +838,6 @@ describe('as a logged in user', () => {
             })
         })
 
-        cy.visit(Cypress.env('URL') + "select-board")
-        cy.contains("a", testname).click()
-        cy.get("#kanbanTitle").should("have.text", testname)
-        cy.contains("button", "Setting").click()
-        cy.contains("button", "Advanced").click()
-        cy.contains("button", "Delete kanban board").click()
-        cy.visit(Cypress.env('URL') + "select-board")
-        cy.contains("a", testname).should("not.exist")
+        cy.deleteKanban(testname)
     })
 })
