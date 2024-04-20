@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
-import { CardType, DataProp, FieldTypeProp, NewField, NullField } from "./component/Base"
+import { CardType, DataProp, FieldTypeProp } from "@/app/types/CardContents"
+import { NewField, NullField } from "./component/Base"
 
 export async function getCardTemplate(cardId: number) {
     const cardTemplate = await prisma.cardTemplate.findFirst({

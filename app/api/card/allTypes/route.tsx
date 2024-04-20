@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { insertTemplateTabsAndFields } from "../template/actions"
 import { insertUpdateCardTemplates } from "../../commonFunctions/Base"
-import { CardType } from "@/app/(auth)/card/[id]/component/Base"
+import { CardType } from "@/app/types/CardContents"
 import { createSearchParamsBailoutProxy } from "next/dist/client/components/searchparams-bailout-proxy"
 
 export async function GET(req: Request) {

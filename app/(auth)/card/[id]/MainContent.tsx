@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { SideBar } from "./component/SideBar"
-import { CardType, DataProp, FieldTypeProp } from "./component/Base"
+import { CardType, DataProp, FieldTypeProp } from "@/app/types/CardContents"
 import { CardContent } from "./component/CardContent"
 
 interface props {

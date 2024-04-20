@@ -24,15 +24,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
-import { CardTemplate } from "./Base"
 import { useState } from "react"
 import Link from 'next/link';
 import Image from "next/image"
+import { ActiveCardTemplate } from "@/app/types/Board"
 
 export const CardTab = ({ id }: { id: number }) => {
     const [defaultCardId, setDefaultCard] = useState(-1)
 
-    const { data: cardTemplates } = useQuery<CardTemplate[]>({
+    const { data: cardTemplates } = useQuery<ActiveCardTemplate[]>({
         queryKey: ["boardSetting", id],
         queryFn: () => (fetch("/api/board/settings/card?" +
             new URLSearchParams({
@@ -43,7 +43,7 @@ export const CardTab = ({ id }: { id: number }) => {
                 'Content-Type': 'application/json',
             },
         }).then(async (res) => {
-            const listCardTemplates = await res.json() as CardTemplate[]
+            const listCardTemplates = await res.json() as ActiveCardTemplate[]
             const defaultCardTemplateId = listCardTemplates
                 .find(i => i.ActiveCardTypes.isDefault)?.cardType.id as number
             setDefaultCard(defaultCardTemplateId)

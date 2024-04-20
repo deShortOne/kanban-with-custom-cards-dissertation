@@ -17,7 +17,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react"
-import { CardType } from "./Base"
+import { CardType } from "@/app/types/CardContents"
 
 interface prop {
     currentCardType: number

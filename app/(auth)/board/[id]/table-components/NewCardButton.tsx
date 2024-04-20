@@ -16,18 +16,7 @@ import { useKanbanModalSetting } from "../settings-modal/components/useDialog"
 import { Badge } from "@/components/ui/badge"
 import { Role } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
-
-interface NewCardInfo {
-    id: number
-    name: string
-    cardType: {
-        id: number
-        name: string
-    }
-    ActiveCardTypes: {
-        isDefault: boolean
-    }
-}
+import { ActiveCardTemplate } from "@/app/types/Board"
 
 export const AddNewCardButton = (
     { kanbanId, role, newCardAction }:
@@ -39,9 +28,9 @@ export const AddNewCardButton = (
 ) => {
     const kanbanSettingModal = useKanbanModalSetting()
 
-    const [defaultNewCard, setDefaultNewCard] = useState<NewCardInfo>()
+    const [defaultNewCard, setDefaultNewCard] = useState<ActiveCardTemplate>()
 
-    const { status, data, error, isFetching } = useQuery<NewCardInfo[]>({
+    const { status, data, error, isFetching } = useQuery<ActiveCardTemplate[]>({
         queryKey: ['addNewCard'],
         queryFn: () => (fetch('/api/board/settings/card?' +
             new URLSearchParams({

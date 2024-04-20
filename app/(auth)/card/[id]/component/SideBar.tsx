@@ -4,12 +4,13 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
-import { CardType, DataProp, EmptyTab, NewField, Tab } from "./Base"
+import { EmptyTab, NewField } from "./Base"
 import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { CardTypePicker } from './CardTypePicker'
 import { CardTypeSwitcher } from './CardTypeSwitcher'
+import { DataProp, CardType, Tab } from "@/app/types/CardContents"
 
 interface prop {
     cardData: DataProp

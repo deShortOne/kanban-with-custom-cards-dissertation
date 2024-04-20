@@ -1,4 +1,4 @@
-import { DataProp } from "@/app/(auth)/card/[id]/component/Base"
+import { DataProp } from "@/app/types/CardContents"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { redirect } from 'next/navigation'

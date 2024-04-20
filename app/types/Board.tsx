@@ -30,3 +30,18 @@ export interface CardProps {
         }
     }
 }
+
+export interface BaseCardTemplate {
+    id: number
+    name: string
+}
+
+export interface ActiveCardTemplate extends BaseCardTemplate {
+    cardType: {
+        id: number
+        name: string
+    }
+    ActiveCardTypes: {
+        isDefault: boolean
+    }
+}

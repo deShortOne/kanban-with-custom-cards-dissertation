@@ -17,7 +17,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Card } from "@/components/ui/card"
-import { DataProp, FieldProp, FieldTypeProp } from "./Base"
+import { DataProp, FieldProp, FieldTypeProp } from "@/app/types/CardContents"
 import { CardTemplateTabFieldModal } from "./CardModal"
 
 interface prop {

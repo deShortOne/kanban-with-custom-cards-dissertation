@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
-import { CardType, DataProp } from "../Base"
+import { CardType, DataProp } from "@/app/types/CardContents"
 import { Dispatch, SetStateAction, useState } from "react"
 
 interface prop {
