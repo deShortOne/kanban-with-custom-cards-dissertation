@@ -178,34 +178,13 @@ export const Table = ({
     const [cardsInfo, setCard] = useState<CardProps[]>(cards)
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
-
-        const lisOfCardsInCell = cardsInfo.filter(i => i.columnId === columnId && i.swimLaneId === rowId)
-        const orderIds = new Set(lisOfCardsInCell)
-
-        let orderPos: number;
-        if (lisOfCardsInCell.length === 0) {
-            orderPos = 1
-        } else if (lisOfCardsInCell.length !== orderIds.size) {
-            orderPos = lisOfCardsInCell.length + 1
-        } else {
-            orderPos = (cardsInfo.find(i => i.id === cardId) as CardProps).order
-        }
-
-        const updatedCard = cardsInfo.map((card) =>
-            card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId, order: orderPos } : card
-        )
-
-        updatedCard.sort(sortCardPropsByOrder)
-        setCard(updatedCard)
-        setDragCardId(-1)
-
         fetch('/api/card/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                cardList: updatedCard.map(i => ({
+                cardList: cardsInfo.map(i => ({
                     id: i.id,
                     title: i.title,
                     columnId: i.columnId,
