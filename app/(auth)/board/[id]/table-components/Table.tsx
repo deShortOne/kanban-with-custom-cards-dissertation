@@ -26,9 +26,7 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query'
-import { BoardApiData, CardProps } from "@/app/types/Board"
-
-type HeaderType = "COLUMN" | "SWIMLANE"
+import { BoardApiData, BoardHeaderType, CardProps } from "@/app/types/Board"
 
 interface TableInformationProps {
     id: number
@@ -367,8 +365,10 @@ export const Table = ({
                                             key={"-1 -1"}
                                             className="absolute h-full min-w-[220px] max-w-[400px] align-top p-1"
                                         >
-                                            {cardsInfo.map((card) =>
-                                                card.columnId === -1 && card.swimLaneId === -1 ? (
+                                            {cardsInfo
+                                                .filter(card => card.columnId === -1
+                                                    && card.swimLaneId === -1)
+                                                .map((card) =>
                                                     <CardInfoProvider
                                                         {...card}
                                                         key={card.id}
@@ -376,8 +376,7 @@ export const Table = ({
                                                         dragCardId={dragCardId}
                                                         setDragCardId={setDragCardId}
                                                     />
-                                                ) : null
-                                            )}
+                                                )}
                                         </TableCell>
                                     </tr>
                                 </tbody>
@@ -434,8 +433,10 @@ export const Table = ({
                                                 onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
                                                 key={cell.id + " " + swimLane.id}
                                             >
-                                                {cardsInfo.map((card) =>
-                                                    card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                                {cardsInfo
+                                                    .filter(card => card.columnId === cell.id
+                                                        && card.swimLaneId === swimLane.id)
+                                                    .map((card) =>
                                                         <CardInfoProvider
                                                             {...card}
                                                             key={card.id}
@@ -443,8 +444,7 @@ export const Table = ({
                                                             dragCardId={dragCardId}
                                                             setDragCardId={setDragCardId}
                                                         />
-                                                    ) : null
-                                                )}
+                                                    )}
                                             </TableCell>
                                         ))}
                                     </tr>
@@ -472,7 +472,7 @@ export const Table = ({
     )
 }
 
-function moveHeader(boardId: number, type: HeaderType, headers: number[]) {
+function moveHeader(boardId: number, type: BoardHeaderType, headers: number[]) {
     fetch('/api/headers/reorder', {
         method: 'POST',
         headers: {
@@ -486,7 +486,7 @@ function moveHeader(boardId: number, type: HeaderType, headers: number[]) {
     })
 }
 
-async function addHeaderAndGetId(boardId: number, type: HeaderType, order: number) {
+async function addHeaderAndGetId(boardId: number, type: BoardHeaderType, order: number) {
     const data = await fetch('/api/headers/new', {
         method: 'POST',
         headers: {
@@ -502,7 +502,7 @@ async function addHeaderAndGetId(boardId: number, type: HeaderType, order: numbe
     return await data.json()
 }
 
-function removeHeader(boardId: number, type: HeaderType, headerId: number) {
+function removeHeader(boardId: number, type: BoardHeaderType, headerId: number) {
     fetch('/api/headers/remove', {
         method: 'POST',
         headers: {

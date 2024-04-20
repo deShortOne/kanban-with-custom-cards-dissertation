@@ -1,5 +1,7 @@
 import { KanbanColumn, KanbanSwimLane } from "@prisma/client"
 
+export type BoardHeaderType = "COLUMN" | "SWIMLANE"
+
 export interface BoardApiData {
     updateCardPositions: boolean
     Cards: CardProps[]
