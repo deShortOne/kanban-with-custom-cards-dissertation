@@ -798,6 +798,7 @@ describe('as a logged in user', () => {
         cy.get("#cardTypeSelectorBox").within(() => {
             cy.get("div[role='group']").within(() => {
                 cy.get("div").should("have.length", 6) // confirm added
+                cy.get("div").eq(2).should("have.text", "CTest")
                 cy.get("div").eq(4).click()
             })
         })
@@ -840,4 +841,132 @@ describe('as a logged in user', () => {
 
         cy.deleteKanban(testname)
     })
+
+    it('Switch card types and confirm card types don\'t mix', () => {
+        cy.viewport(1920, 1080)
+        cy.createKanbanAndNavigate(testname)
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").eq(2).click()
+        })
+
+        cy.get("#dialogKanbanSettings").within(() => {
+            cy.get("#tabSettingCards").within(() => {
+                cy.get("[role='radiogroup']").within(() => {
+                    cy.get("table").within(() => {
+                        cy.get("tbody").within(() => {
+                            cy.get("tr").eq(0).get("td").eq(3).click()
+                        })
+                    })
+                })
+            })
+        })
+
+        cy.url().should("contain", Cypress.env('URL') + "card/")
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+
+        // refresh page
+        cy.url().then(url => {
+            cy.visit(url)
+        })
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm added
+                cy.get("div").eq(2).should("have.text", "CTest")
+            })
+        })
+        const taskUrl = cy.url()
+
+        cy.get("#cardTypeSwitcher").should("have.text", "task")
+        cy.get("#cardTypeSwitcher").click()
+        cy.get("#cardTypeSwitcherBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 3) // confirm added
+                cy.get("div").eq(2).click()
+            })
+        })
+
+        const CTestUrl1 = cy.url()
+        CTestUrl1.should("not.eq", taskUrl)
+        cy.get("#cardTypeName").should("have.text", "CTest")
+
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#btnDecrRowNumber").should("not.be.disabled")
+                cy.get("#cardTabRowNumber").should("have.text", "2")
+
+                cy.get("#btnDecrRowNumber").click()
+                cy.get("#cardTabRowNumber").should("have.text", "1")
+                cy.get("#btnDecrRowNumber").should("be.disabled")
+
+            })
+        })
+        cy.contains("button", "Save changes").click()
+
+        const CTestUrl2 = cy.url()
+        CTestUrl2.should("not.eq", CTestUrl1)
+        CTestUrl2.should("not.eq", taskUrl)
+
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#cardTabRowNumber").should("have.text", "1")
+                cy.get("#btnDecrRowNumber").should("be.disabled")
+
+            })
+        })
+
+        cy.get("#cardTypeSwitcher").click()
+        cy.get("#cardTypeSwitcherBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 3) // confirm added
+                cy.get("div").eq(0).click()
+            })
+        })
+        cy.get("#cardTypeSwitcher").should("have.text", "task")
+        cy.url().then((url) => {
+            taskUrl.should("eq", url)
+            CTestUrl1.should("not.eq", url)
+            CTestUrl2.should("not.eq", url)
+        })
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#btnDecrRowNumber").should("not.be.disabled")
+                cy.get("#cardTabRowNumber").should("have.text", "2")
+            })
+        })
+        cy.deleteKanban(testname)
+    })
 })
+
+// it('', () => {
+//     cy.viewport(1920, 1080)
+//     cy.createKanbanAndNavigate(testname)
+
+
+//     cy.deleteKanban(testname)
+// })

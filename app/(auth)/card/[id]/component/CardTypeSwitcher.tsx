@@ -36,6 +36,7 @@ export const CardTypeSwitcher = ({ currentCardType, cardTypes }: prop) => {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
+                    id="cardTypeSwitcher"
                     variant="outline"
                     role="combobox"
                     className={cn(
@@ -47,7 +48,10 @@ export const CardTypeSwitcher = ({ currentCardType, cardTypes }: prop) => {
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent
+                id="cardTypeSwitcherBox"
+                className="w-[200px] p-0"
+            >
                 <Command>
                     <CommandInput
                         placeholder="Search..."
