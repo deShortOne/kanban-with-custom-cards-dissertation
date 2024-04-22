@@ -19,14 +19,13 @@ describe('as a logged in user', () => {
         cy.setCookie("next-auth.session-token", Cypress.env('TESTING_CYPRESS_TOKEN'))
     })
 
-    const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
-
     it('create a new kanban board and verify everything is there with new test card and everything', () => {
         cy.viewport(1920, 1080)
         cy.visit(Cypress.env('URL') + "select-board")
         cy.get("#createNewKanbanBtn").click()
 
         cy.url().should("eq", Cypress.env('URL') + "select-board/new")
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.get("#name").type(testname)
         cy.get("#createKanbanBtn").click()
 
@@ -753,6 +752,7 @@ describe('as a logged in user', () => {
 
     it('card type add and removal', () => {
         cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.createKanbanAndNavigate(testname)
 
         cy.get("#btnOpenAllCards").click()
@@ -844,6 +844,7 @@ describe('as a logged in user', () => {
 
     it('Switch card types and confirm card types don\'t mix', () => {
         cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.createKanbanAndNavigate(testname)
 
         cy.get("#btnOpenAllCards").click()
@@ -965,6 +966,7 @@ describe('as a logged in user', () => {
 
 // it('', () => {
 //     cy.viewport(1920, 1080)
+//     const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
 //     cy.createKanbanAndNavigate(testname)
 
 
