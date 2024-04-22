@@ -29,12 +29,13 @@ import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBran
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { CardData } from "@/app/types/CardContents"
+import { prop } from "./ModalProvider";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
 let cardIdsLoaded: number = -1
 
-export const CardModal = () => {
+export const CardModal = ({ updateCardTitle }: prop) => {
     const cardModal = useCardModal()
     const id = cardModal.id
     const isOpen = cardModal.isOpen
@@ -166,6 +167,8 @@ export const CardModal = () => {
                 ...values,
             }),
         })
+
+        updateCardTitle(cardData?.id as number, values["title" + cardData?.id] as string)
     }
 
     const onError = (errors: any, e: any) => {

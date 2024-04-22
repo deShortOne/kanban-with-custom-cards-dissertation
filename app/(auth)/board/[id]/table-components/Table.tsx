@@ -1,4 +1,7 @@
 'use client'
+
+import update from 'immutability-helper'
+
 import { KanbanColumn, KanbanSwimLane, Role } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -27,6 +30,7 @@ import {
     useQueryClient,
 } from '@tanstack/react-query'
 import { BoardApiData, BoardHeaderType, CardProps } from "@/app/types/Board"
+import { ModalProvider } from "./card-modal/ModalProvider"
 
 interface TableInformationProps {
     id: number
@@ -297,6 +301,15 @@ export const Table = ({
         setCard(updatedCards)
     }
 
+    const updateCardTitle = async (cardId: number, newTitle: string) => {
+        const newCardData = [...cardsInfo]
+        const pos = newCardData.findIndex(i => i.id = cardId)
+        if (pos !== -1) {
+            newCardData[pos].title = newTitle
+            setCard(newCardData)
+        }
+    }
+
     // tracks changes from cardModal hook
     const cardModal = useCardModal()
     useEffect(() => {
@@ -309,6 +322,7 @@ export const Table = ({
 
     return (
         <div>
+            <ModalProvider updateCardTitle={updateCardTitle} />
             <AlertDialog open={alertMsgOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
