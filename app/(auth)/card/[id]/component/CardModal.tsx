@@ -15,12 +15,11 @@ import { Switch } from "@/components/ui/switch"
 
 import Image from "next/image"
 import { DefaultDate } from "./card-modal-components/DefaultDate"
+import { CardEditCommonProps } from "../MainContent";
 
-interface prop {
+interface prop extends CardEditCommonProps {
     data: string
     fieldType: FieldTypeProp
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
     position: number[]
 }
 

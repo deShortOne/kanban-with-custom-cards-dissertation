@@ -11,10 +11,9 @@ import { Button } from '@/components/ui/button'
 import { CardTypePicker } from './CardTypePicker'
 import { CardTypeSwitcher } from './CardTypeSwitcher'
 import { DataProp, CardType, Tab } from "@/app/types/CardContents"
+import { CardEditCommonProps } from '../MainContent'
 
-interface prop {
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
+interface prop extends CardEditCommonProps {
     tabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
     saveDataToDB: () => Promise<void>
