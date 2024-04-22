@@ -47,7 +47,7 @@ declare namespace Cypress {
             errorMessage?: string): Chainable<any>;
         createKanbanAndNavigate(title: string): Chainable<any>;
         navigateToKanban(title: string): Chainable<any>;
-        deleteKanban(title: string): Chainable<any>;
+        deleteKanban(title: string, onKanbanBoard?: boolean): Chainable<any>;
     }
 }
 
@@ -112,8 +112,9 @@ Cypress.Commands.add('navigateToKanban', (title: string) => {
     cy.get("#kanbanTitle").should("have.text", title)
 })
 
-Cypress.Commands.add('deleteKanban', (title: string) => {
-    cy.navigateToKanban(title)
+Cypress.Commands.add('deleteKanban', (title: string, onKanbanBoard = false) => {
+    if (!onKanbanBoard)
+        cy.navigateToKanban(title)
 
     cy.contains("button", "Setting").click()
     cy.contains("button", "Advanced").click()
