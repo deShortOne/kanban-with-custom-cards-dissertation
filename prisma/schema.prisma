@@ -146,10 +146,12 @@ model CardTemplateTab {
 }
 
 model CardTemplateTabField {
-    id   Int    @id @default(autoincrement())
-    data String
-    posX Int
-    posY Int
+    id                   Int     @id @default(autoincrement())
+    title                String  @default("")
+    isRequired           Boolean @default(false)
+    requiredErrorMessage String? @default("")
+    posX                 Int
+    posY                 Int
 
     fieldTypeId       Int
     fieldType         FieldType       @relation(fields: [fieldTypeId], references: [id], onDelete: Cascade)
@@ -157,21 +159,20 @@ model CardTemplateTabField {
     cardTemplateTab   CardTemplateTab @relation(fields: [cardTemplateTabId], references: [id], onDelete: Cascade)
 
     cardTemplateTabField CardTabField[]
+    customFieldData      CardTemplateTabFieldData[]
 
     @@index([fieldTypeId])
     @@index([cardTemplateTabId])
 }
 
-model CardTabField {
-    id   Int    @id @default(autoincrement())
-    data String
+model CardTemplateTabFieldData {
+    dataType String
+    data     String
 
-    cardId                 Int
-    card                   Card                 @relation(fields: [cardId], references: [id], onDelete: Cascade)
     cardTemplateTabFieldId Int
     cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id], onDelete: Cascade)
 
-    @@index([cardId])
+    @@unique([dataType, cardTemplateTabFieldId])
     @@index([cardTemplateTabFieldId])
 }
 
@@ -196,6 +197,19 @@ model Card {
     @@index([swimLaneId])
     @@index([kanbanId])
     @@index([cardTemplateId])
+}
+
+model CardTabField {
+    id   Int    @id @default(autoincrement())
+    data String
+
+    cardId                 Int
+    card                   Card                 @relation(fields: [cardId], references: [id], onDelete: Cascade)
+    cardTemplateTabFieldId Int
+    cardTemplateTabField   CardTemplateTabField @relation(fields: [cardTemplateTabFieldId], references: [id], onDelete: Cascade)
+
+    @@index([cardId])
+    @@index([cardTemplateTabFieldId])
 }
 
 model TrackChanges {
