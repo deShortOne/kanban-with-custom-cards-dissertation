@@ -267,6 +267,11 @@ export const SideBar = ({
                     </li>
                 </ul>
                 <div className="flex-1" />
+                <a href={"/board/" + kanbanId}>
+                    <Button variant={"outline"}>
+                        Go back to kanban board
+                    </Button>
+                </a>
                 <span>Switch card type</span>
                 <CardTypeSwitcher
                     cardTypes={cardTypes}
