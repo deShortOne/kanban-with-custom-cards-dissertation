@@ -35,7 +35,7 @@ import { prop } from "./ModalProvider";
 // Check is used to prevent overwriting of new user input
 let cardIdsLoaded: number = -1
 
-export const CardModal = ({ updateCardTitle }: prop) => {
+export const CardModal = ({ updateCardTitle, removeCard }: prop) => {
     const cardModal = useCardModal()
     const id = cardModal.id
     const isOpen = cardModal.isOpen
@@ -220,7 +220,7 @@ export const CardModal = ({ updateCardTitle }: prop) => {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <Button
                             onClick={() => {
-                                cardModal.setDeletedId(id!)
+                                removeCard(id!)
                                 onClose()
                             }}
                             variant="destructive"

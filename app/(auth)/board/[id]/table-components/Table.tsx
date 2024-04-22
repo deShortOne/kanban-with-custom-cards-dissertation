@@ -310,19 +310,9 @@ export const Table = ({
         }
     }
 
-    // tracks changes from cardModal hook
-    const cardModal = useCardModal()
-    useEffect(() => {
-        if (cardModal.deletedId !== -1) {
-            removeCard(cardModal.deletedId)
-            cardModal.setDeletedId(-1)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cardModal.deletedId])
-
     return (
         <div>
-            <ModalProvider updateCardTitle={updateCardTitle} />
+            <ModalProvider updateCardTitle={updateCardTitle} removeCard={removeCard} />
             <AlertDialog open={alertMsgOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
