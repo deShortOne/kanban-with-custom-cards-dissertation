@@ -75,10 +75,6 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
 
     const [branches, setBranches] = useState<string[]>([])
     const getBranches = async () => {
-        if (branches.length !== 0) {
-            return
-        }
-
         const response = await fetch('/api/github/branch/all?' +
             new URLSearchParams({
                 ownerRepo: getValues()[name].repo,
