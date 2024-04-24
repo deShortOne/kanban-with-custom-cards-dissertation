@@ -19,11 +19,10 @@ import {
 import { Card } from "@/components/ui/card"
 import { DataProp, FieldProp, FieldTypeProp } from "@/app/types/CardContents"
 import { CardTemplateTabFieldModal } from "./CardModal"
+import { CardEditCommonProps } from "../MainContent";
 
-interface prop {
+interface prop extends CardEditCommonProps {
     allFieldTypes: FieldTypeProp[]
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
     position: number[]
     fieldData: FieldProp
 }

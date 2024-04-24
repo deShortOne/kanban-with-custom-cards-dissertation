@@ -19,14 +19,13 @@ describe('as a logged in user', () => {
         cy.setCookie("next-auth.session-token", Cypress.env('TESTING_CYPRESS_TOKEN'))
     })
 
-    const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
-
     it('create a new kanban board and verify everything is there with new test card and everything', () => {
         cy.viewport(1920, 1080)
         cy.visit(Cypress.env('URL') + "select-board")
         cy.get("#createNewKanbanBtn").click()
 
         cy.url().should("eq", Cypress.env('URL') + "select-board/new")
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.get("#name").type(testname)
         cy.get("#createKanbanBtn").click()
 
@@ -753,6 +752,7 @@ describe('as a logged in user', () => {
 
     it('card type add and removal', () => {
         cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.createKanbanAndNavigate(testname)
 
         cy.get("#btnOpenAllCards").click()
@@ -844,6 +844,7 @@ describe('as a logged in user', () => {
 
     it('Switch card types and confirm card types don\'t mix', () => {
         cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.createKanbanAndNavigate(testname)
 
         cy.get("#btnOpenAllCards").click()
@@ -961,10 +962,31 @@ describe('as a logged in user', () => {
         })
         cy.deleteKanban(testname)
     })
+
+    it('card title change responsiveness', () => {
+        // could go with the first test but the shorter the tests the better
+        cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
+        cy.createKanbanAndNavigate(testname)
+
+        cy.get(".bg-card").should("have.length", 1)
+        cy.contains(".bg-card", "Start here").click()
+        cy.get("[name^='title']").should("have.value", "Start here")
+
+        const newTitle = `A very new title ${Cypress._.random(0, 1e6)}`
+        cy.get("[name^='title']").type(newTitle)
+        cy.contains("button", "Save").click()
+        cy.contains("button", "Close").click()
+        cy.contains(".bg-card", newTitle)
+
+        cy.deleteKanban(testname, true)
+    })
+
 })
 
 // it('', () => {
 //     cy.viewport(1920, 1080)
+//     const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
 //     cy.createKanbanAndNavigate(testname)
 
 

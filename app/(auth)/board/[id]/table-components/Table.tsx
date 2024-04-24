@@ -1,4 +1,7 @@
 'use client'
+
+import update from 'immutability-helper'
+
 import { KanbanColumn, KanbanSwimLane, Role } from "@prisma/client"
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -27,6 +30,7 @@ import {
     useQueryClient,
 } from '@tanstack/react-query'
 import { BoardApiData, BoardHeaderType, CardProps } from "@/app/types/Board"
+import { ModalProvider } from "./card-modal/ModalProvider"
 
 interface TableInformationProps {
     id: number
@@ -247,6 +251,7 @@ export const Table = ({
         setCard(prevCards)
     }
 
+    const cardModal = useCardModal()
     // new card
     const addCard = async (cardTemplateId: number, cardTypeName: string) => {
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
@@ -263,8 +268,10 @@ export const Table = ({
         })
 
         const updatedCards = [...cardsInfo]
+        const id = await response.json()
+        cardModal.onOpen(id)
         updatedCards.push({
-            id: await response.json(),
+            id: id,
             title: "To be updated",
             order: orderPos,
             columnId: -1,
@@ -297,18 +304,18 @@ export const Table = ({
         setCard(updatedCards)
     }
 
-    // tracks changes from cardModal hook
-    const cardModal = useCardModal()
-    useEffect(() => {
-        if (cardModal.deletedId !== -1) {
-            removeCard(cardModal.deletedId)
-            cardModal.setDeletedId(-1)
+    const updateCardTitle = async (cardId: number, newTitle: string) => {
+        const newCardData = [...cardsInfo]
+        const pos = newCardData.findIndex(i => i.id = cardId)
+        if (pos !== -1) {
+            newCardData[pos].title = newTitle
+            setCard(newCardData)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cardModal.deletedId])
+    }
 
     return (
         <div>
+            <ModalProvider updateCardTitle={updateCardTitle} removeCard={removeCard} />
             <AlertDialog open={alertMsgOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

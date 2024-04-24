@@ -20,10 +20,9 @@ import { Dispatch, SetStateAction, useState } from "react"
 import { CardType, DataProp } from "@/app/types/CardContents"
 import { Separator } from "@radix-ui/react-select"
 import { CardTypeModal } from "./card-type-modal/Modal"
+import { CardEditCommonProps } from "../MainContent"
 
-interface prop {
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
+interface prop extends CardEditCommonProps {
     currentCardType: number
     cardTypes: CardType[]
     setCardTypes: Dispatch<SetStateAction<CardType[]>>

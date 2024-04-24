@@ -9,11 +9,10 @@ import { DataProp, FieldProp, FieldTypeProp } from "@/app/types/CardContents"
 import { Card } from "@/components/ui/card"
 import { FieldCell } from "./FieldCell"
 import Image from "next/image";
+import { CardEditCommonProps } from "../MainContent";
 
-interface prop {
+interface prop extends CardEditCommonProps {
     allFieldTypes: FieldTypeProp[]
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
     currTabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
 }

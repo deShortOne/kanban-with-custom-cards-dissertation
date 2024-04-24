@@ -29,12 +29,13 @@ import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBran
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { CardData } from "@/app/types/CardContents"
+import { prop } from "./ModalProvider";
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input
 let cardIdsLoaded: number = -1
 
-export const CardModal = () => {
+export const CardModal = ({ updateCardTitle, removeCard }: prop) => {
     const cardModal = useCardModal()
     const id = cardModal.id
     const isOpen = cardModal.isOpen
@@ -166,6 +167,8 @@ export const CardModal = () => {
                 ...values,
             }),
         })
+
+        updateCardTitle(cardData?.id as number, values["title" + cardData?.id] as string)
     }
 
     const onError = (errors: any, e: any) => {
@@ -217,7 +220,7 @@ export const CardModal = () => {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <Button
                             onClick={() => {
-                                cardModal.setDeletedId(id!)
+                                removeCard(id!)
                                 onClose()
                             }}
                             variant="destructive"
@@ -232,13 +235,12 @@ export const CardModal = () => {
                         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
                             <div className="flex justify-between">
                                 <Title fieldTypeData={cardData.title} name={"title" + cardData.id} />
-
                                 <div className="flex px-5">
                                     {
                                         serverHasNewData
                                             ?
                                             <button
-                                                className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                                className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 mx-2 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 min-w-[125px]"
                                                 onClick={() => setFieldData()}
                                                 type="button"
                                             >
@@ -249,26 +251,27 @@ export const CardModal = () => {
                                                 Click to update
                                             </button>
                                             :
-                                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                            <span className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 mx-2 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 min-w-[95px]">
                                                 <span className="w-2 h-2 me-1 rounded-full bg-green-500" />
                                                 Up to date
                                             </span>
                                     }
+                                    <Button type="submit" className="bg-cyan-500">
+                                        Save
+                                    </Button>
 
-                                    <Button type="submit" className="bg-cyan-500">Save</Button>
-
-                                    <AlertDialogTrigger asChild>
-                                        <Button type="button" className="bg-rose-600">
+                                    <AlertDialogTrigger asChild className="">
+                                        <Button type="button" className="bg-rose-600 max-w-[75px]">
+                                            <p className="hidden sm:block">Delete</p>
                                             <Image
                                                 src="/delete.svg"
                                                 alt="delete card"
-                                                width={24}
-                                                height={24}
-                                                className="invert dark:invert-0"
+                                                width={0}
+                                                height={0}
+                                                className="block sm:hidden invert dark:invert-0 min-w-8 min-h-8"
                                             />
                                         </Button>
                                     </AlertDialogTrigger>
-
                                 </div>
                             </div>
 
