@@ -251,6 +251,7 @@ export const Table = ({
         setCard(prevCards)
     }
 
+    const cardModal = useCardModal()
     // new card
     const addCard = async (cardTemplateId: number, cardTypeName: string) => {
         const orderPos = cardsInfo.filter(i => i.columnId === -1).length + 1
@@ -267,8 +268,10 @@ export const Table = ({
         })
 
         const updatedCards = [...cardsInfo]
+        const id = await response.json()
+        cardModal.onOpen(id)
         updatedCards.push({
-            id: await response.json(),
+            id: id,
             title: "To be updated",
             order: orderPos,
             columnId: -1,
