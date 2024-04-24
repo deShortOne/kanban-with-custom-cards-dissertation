@@ -16,11 +16,11 @@ export async function GET(request: Request) {
             githubId: session.user.id
         },
         include: {
-            UserToken: true
+            userToken: true
         }
     })
 
-    if (user.UserToken !== null && user.UserToken.expiresAt && user.UserToken.expiresAt > new Date()) {
+    if (user.userToken !== null && user.userToken.expiresAt && user.userToken.expiresAt > new Date()) {
         return Response.json("Ok")
     }
 

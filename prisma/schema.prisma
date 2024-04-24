@@ -18,8 +18,8 @@ model User {
     githubId Int     @unique
 
     kanbans      UserRoleKanban[] @relation("AvailableKanbans")
-    UserToken    UserToken?
-    TrackChanges TrackChanges[]
+    userToken    UserToken?
+    trackChanges TrackChanges[]
 }
 
 model UserToken {
@@ -39,12 +39,13 @@ model Kanban {
     title String
     users UserRoleKanban[] @relation("KanbanHasUsers")
 
-    KanbanColumns    KanbanColumn[]
-    KanbanSwimLanes  KanbanSwimLane[]
-    Cards            Card[]
-    CardTemplate     CardTemplate[]
-    TrackChanges     TrackChanges[]
-    LastKanbanUpdate LastKanbanUpdate[]
+    kanbanColumns    KanbanColumn[]
+    kanbanSwimLanes  KanbanSwimLane[]
+    cards            Card[]
+    cardTemplate     CardTemplate[]
+    trackChanges     TrackChanges[]
+    lastKanbanUpdate LastKanbanUpdate?
+    activeCardTypes  ActiveCardTypes[]
 }
 
 enum Role {
@@ -105,23 +106,25 @@ model CardType {
     id   Int    @id @default(autoincrement())
     name String
 
-    cards CardTemplate[]
+    cards           CardTemplate[]
+    activeCardTypes ActiveCardTypes[]
 }
 
 model CardTemplate {
-    id        Int     @id @default(autoincrement())
-    name      String
-    version   Int
-    isDefault Boolean @default(false)
+    id      Int    @id @default(autoincrement())
+    name    String
+    version Int
 
     cardTypeId Int
     cardType   CardType @relation(fields: [cardTypeId], references: [id], onDelete: Cascade)
     kanbanId   Int
     kanban     Kanban   @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
-    tabs CardTemplateTab[]
-    Card Card[]
+    tabs            CardTemplateTab[]
+    card            Card[]
+    activeCardTypes ActiveCardTypes?
 
+    @@unique([version, cardTypeId, kanbanId])
     @@index([cardTypeId])
     @@index([kanbanId])
 }
@@ -173,10 +176,9 @@ model CardTabField {
 }
 
 model Card {
-    id          Int     @id @default(autoincrement())
-    title       String
-    order       Int
-    description String? @db.Text
+    id    Int    @id @default(autoincrement())
+    title String
+    order Int
 
     columnId       Int
     column         KanbanColumn   @relation(fields: [columnId], references: [id], onDelete: Cascade)
@@ -188,7 +190,7 @@ model Card {
     cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id], onDelete: Cascade)
 
     allTabsFieldInformation CardTabField[]
-    TrackChanges            TrackChanges[]
+    trackChanges            TrackChanges[]
 
     @@index([columnId])
     @@index([swimLaneId])
@@ -230,5 +232,21 @@ view LastKanbanUpdate {
 
     kanban Kanban @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
+    @@index([kanbanId])
+}
+
+model ActiveCardTypes {
+    isDefault Boolean @default(false)
+
+    version      Int
+    cardTemplate CardTemplate @relation(fields: [version, cardTypeId, kanbanId], references: [version, cardTypeId, kanbanId], onDelete: Cascade)
+    cardTypeId   Int
+    cardType     CardType     @relation(fields: [cardTypeId], references: [id])
+    kanbanId     Int
+    kanban       Kanban       @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
+
+    @@id([cardTypeId, kanbanId])
+    @@unique([version, cardTypeId, kanbanId])
+    @@index([cardTypeId])
     @@index([kanbanId])
 }

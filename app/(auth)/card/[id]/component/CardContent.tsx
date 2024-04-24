@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
 import { TabsList } from "@radix-ui/react-tabs"
-import { DataProp, FieldProp, FieldTypeProp } from "./Base"
+import { DataProp, FieldProp, FieldTypeProp } from "@/app/types/CardContents"
 import { Card } from "@/components/ui/card"
 import { FieldCell } from "./FieldCell"
 import Image from "next/image";
+import { CardEditCommonProps } from "../MainContent";
 
-interface prop {
+interface prop extends CardEditCommonProps {
     allFieldTypes: FieldTypeProp[]
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
     currTabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
 }

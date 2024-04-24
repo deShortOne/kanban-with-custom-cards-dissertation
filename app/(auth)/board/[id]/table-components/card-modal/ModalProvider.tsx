@@ -3,20 +3,25 @@
 import { useEffect, useState } from "react";
 import { CardModal } from "./CardModal";
 
-export const ModalProvider = () => {
-  const [isMounted, setIsMounted] = useState(false);
+export interface prop {
+    updateCardTitle: (cardId: number, newTitle: string) => Promise<void>
+    removeCard: (cardTypeId: number) => Promise<void>
+}
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+export const ModalProvider = ({ updateCardTitle, removeCard }: prop) => {
+    const [isMounted, setIsMounted] = useState(false);
 
-  if (!isMounted) {
-    return null;
-  }
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
-  return (
-    <>
-      <CardModal />
-    </>
-  )
+    if (!isMounted) {
+        return null;
+    }
+
+    return (
+        <>
+            <CardModal updateCardTitle={updateCardTitle} removeCard={removeCard} />
+        </>
+    )
 }

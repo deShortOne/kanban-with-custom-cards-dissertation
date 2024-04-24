@@ -2,22 +2,39 @@
 
 import { useState } from "react"
 import { SideBar } from "./component/SideBar"
-import { DataProp, FieldTypeProp } from "./component/Base"
+import { CardType, DataProp, FieldTypeProp } from "@/app/types/CardContents"
 import { CardContent } from "./component/CardContent"
+
+export interface CardEditCommonProps {
+    cardData: DataProp
+    setData: (newData: DataProp) => void
+}
 
 interface props {
     cardTemplate: DataProp
     fieldTypes: FieldTypeProp[]
+    cardTypes: CardType[]
+    kanbanId: number
+    initialCardTypeId: number
 }
 
 const UpdateCardMain = ({
-    cardTemplate, fieldTypes
+    initialCardTypeId, cardTemplate, fieldTypes, cardTypes, kanbanId
 }: props) => {
+
     const [data, setData] = useState<DataProp>(cardTemplate)
     const [currentTabIdx, setCurrentTabIdx] = useState<number>(0)
+    const [availableCardTypes, setAvailableCardTypes] = useState(cardTypes)
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [mode, setMode] = useState<"Card contents" | "Card display">()
 
+    const setDataAndSetUnsaved = (newData: DataProp) => {
+        setData(newData)
+        setHasUnsavedChanges(true)
+    }
+
     const saveDataToDB = async () => {
+        setHasUnsavedChanges(false)
         const response = await fetch('/api/card/template', {
             method: 'POST',
             headers: {
@@ -34,15 +51,20 @@ const UpdateCardMain = ({
         <main className="min-h-[90vh] flex">
             <SideBar
                 cardData={data as DataProp}
-                setData={setData}
+                setData={setDataAndSetUnsaved}
                 tabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
                 saveDataToDB={saveDataToDB}
+                cardTypes={availableCardTypes}
+                setCardTypes={setAvailableCardTypes}
+                kanbanId={kanbanId}
+                initialCardTypeId={initialCardTypeId}
+                hasUnsavedChanges={hasUnsavedChanges}
             />
             <CardContent
                 allFieldTypes={fieldTypes}
                 cardData={data as DataProp}
-                setData={setData}
+                setData={setDataAndSetUnsaved}
                 currTabIdx={currentTabIdx}
                 setCurrentTabIdx={setCurrentTabIdx}
             />

@@ -80,7 +80,6 @@ async function main() {
         },
         {
             name: "Task card 1.1",
-            isDefault: true,
             cardTypeId: 1,
             version: 3,
             kanbanId: 1,
@@ -97,6 +96,30 @@ async function main() {
         skipDuplicates: true,
     })
     console.log("Card template added: ", cardTemplateData.length == cardTemplate.count)
+
+    const activeCardTypeData = [
+        {
+            version: 3,
+            isDefault: true,
+            cardTypeId: 1,
+            kanbanId: 1,
+        },
+        {
+            version: 1,
+            cardTypeId: 2,
+            kanbanId: 1,
+        },
+        {
+            version: 1,
+            cardTypeId: 3,
+            kanbanId: 1,
+        }
+    ]
+    const activeCardType = await prisma.activeCardTypes.createMany({
+        data: activeCardTypeData,
+        skipDuplicates: true,
+    })
+    console.log("Active card types for templates added: ", activeCardTypeData.length == activeCardType.count)
 
     const cardTemplateTabData = [
         {

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import EditableText from './EditableText'
-import { KanbanColumn, Role } from '@prisma/client'
+import { Role } from '@prisma/client'
 import Image from 'next/image'
+import { BoardHeaderType } from '@/app/types/Board'
 
 interface DraggableHeaderProps {
     item: {
@@ -13,7 +14,7 @@ interface DraggableHeaderProps {
     }
     index: number
     role: Role
-    typeName: string
+    typeName: BoardHeaderType
     moveHeader: (dragIndex: number, hoverIndex: number) => void
     removeHeader: (headerId: number, headerOrder: number) => void
 }

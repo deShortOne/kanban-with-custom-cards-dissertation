@@ -15,7 +15,7 @@ export async function GET() {
             githubId: session.user.id
         },
         include: {
-            UserToken: true,
+            userToken: true,
         }
     })
 
@@ -29,7 +29,7 @@ export async function GET() {
         auth: {
             clientId: process.env.GITHUB_ID!,
             clientSecret: process.env.GITHUB_SECRET!,
-            token: user?.UserToken?.token!,
+            token: user?.userToken?.token!,
         },
     })
 
