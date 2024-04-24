@@ -489,9 +489,6 @@ describe('as a logged in user', () => {
             cy.get("[role='menuitem']").eq(2).click()
         })
 
-        cy.get(".bg-card").should("have.length", 2)
-        cy.get(".bg-card").eq(1).click()
-
         cy.contains("button", "Save").click()
         cy.get("#cardContents").within(() => {
             cy.get("[role='tablist']").within(() => {
@@ -732,7 +729,7 @@ describe('as a logged in user', () => {
             })
         })
 
-        cy.get("[alt='delete card']").click()
+        cy.contains("button", "Delete").click()
         cy.get("[role='alertdialog']").within(() => {
             cy.get("h2").should("have.text", "Are you absolutely sure?")
             cy.get("p").should("have.text", "Are you sure you want to delete this card? This action is irreversable!")
