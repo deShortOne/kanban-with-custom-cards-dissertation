@@ -2,7 +2,16 @@ import type { FC } from 'react'
 
 import { Card } from '@/components/ui/card'
 import { CardClassName, CardDisplay } from '../CardDisplay'
-import { CardPropsLimited } from './CustomDragLayer'
+
+interface CardPropsLimited {
+    id: number
+    title: string
+    cardTemplate: {
+        cardType: {
+            name: string
+        }
+    }
+}
 
 export const BoxDragPreview: FC<CardPropsLimited> = ({ id, title, cardTemplate }) => {
     return (

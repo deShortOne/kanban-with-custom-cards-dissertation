@@ -23,7 +23,7 @@ export async function submitFormAA(formData: FormData) {
         }
     })
 
-    insertNewKanban(kanban.id)
+    await insertNewKanban(kanban.id)
 
     redirect("/board/" + kanban.id)
 }
@@ -31,9 +31,9 @@ export async function submitFormAA(formData: FormData) {
 async function setBoardInitialData(name: string) {
     const kanban = await prisma.kanban.create({
         include: {
-            KanbanColumns: true,
-            KanbanSwimLanes: true,
-            CardTemplate: {
+            kanbanColumns: true,
+            kanbanSwimLanes: true,
+            cardTemplate: {
                 include: {
                     tabs: {
                         include: {
@@ -49,7 +49,7 @@ async function setBoardInitialData(name: string) {
         },
         data: {
             title: name,
-            KanbanColumns: {
+            kanbanColumns: {
                 createMany: {
                     data: [
                         { title: "To do", order: 1, },
@@ -58,7 +58,7 @@ async function setBoardInitialData(name: string) {
                     ],
                 }
             },
-            KanbanSwimLanes: {
+            kanbanSwimLanes: {
                 createMany: {
                     data: [
                         { title: "Team 1", order: 1, },
@@ -66,12 +66,22 @@ async function setBoardInitialData(name: string) {
                     ]
                 }
             },
-            CardTemplate: {
+            activeCardTypes: {
+                create: [{
+                    version: 1,
+                    cardTypeId: 1,
+                    isDefault: true,
+                }, {
+                    version: 1,
+                    cardTypeId: 2,
+                    isDefault: true,
+                }]
+            },
+            cardTemplate: {
                 create: [{
                     name: "task",
                     version: 1,
                     cardTypeId: 1,
-                    isDefault: true,
                     tabs: {
                         create: [{
                             name: "Base information",
@@ -155,19 +165,19 @@ async function setBoardInitialData(name: string) {
             title: "Start here",
             columnId: -1,
             swimLaneId: -1,
-            cardTemplateId: kanban.CardTemplate[0].id,
+            cardTemplateId: kanban.cardTemplate[0].id,
             order: 1,
             allTabsFieldInformation: {
                 create: [{
-                    cardTemplateTabFieldId: kanban.CardTemplate[0].tabs[0].tabFields[0].id,
+                    cardTemplateTabFieldId: kanban.cardTemplate[0].tabs[0].tabFields[0].id,
                     data: "Create new cards by clicking New Task above the card"
                 },
                 {
-                    cardTemplateTabFieldId: kanban.CardTemplate[0].tabs[0].tabFields[1].id,
+                    cardTemplateTabFieldId: kanban.cardTemplate[0].tabs[0].tabFields[1].id,
                     data: "You can create Bug cards by clicking on the down arrow next to New Task\nAlternatively, you can customise the cards as you see fit!"
                 },
                 {
-                    cardTemplateTabFieldId: kanban.CardTemplate[0].tabs[1].tabFields[0].id,
+                    cardTemplateTabFieldId: kanban.cardTemplate[0].tabs[1].tabFields[0].id,
                     data: "This is to be implemented in the future"
                 }]
             }

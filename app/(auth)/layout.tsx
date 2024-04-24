@@ -18,7 +18,6 @@ export default async function RootLayout({
     return (
         <Provider session={session}>
             <QueryProvider>
-                <ModalProvider />
                 <NavBar session={session} />
                 {children}
             </QueryProvider>

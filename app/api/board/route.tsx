@@ -35,9 +35,9 @@ export async function GET(request: Request) {
             id: parseInt(kanbanId),
         },
         include: {
-            KanbanColumns: orderByOrder,
-            KanbanSwimLanes: orderByOrder,
-            Cards: {
+            kanbanColumns: orderByOrder,
+            kanbanSwimLanes: orderByOrder,
+            cards: {
                 ...orderByOrder,
                 include: {
                     cardTemplate: {
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
                     }
                 },
             },
-            LastKanbanUpdate: {
+            lastKanbanUpdate: {
                 select: {
                     lastChange: true
                 }
@@ -60,14 +60,14 @@ export async function GET(request: Request) {
     if (lastTime === "0") {
         const response: BoardApiData = {
             updateCardPositions: true,
-            Cards: kanban.Cards,
+            cards: kanban.cards,
 
             updateColumnPositions: true,
-            KanbanColumns: kanban.KanbanColumns,
+            kanbanColumns: kanban.kanbanColumns,
             updateSwimLanePositions: true,
-            KanbanSwimLanes: kanban.KanbanSwimLanes,
+            kanbanSwimLanes: kanban.kanbanSwimLanes,
 
-            LastKanbanUpdate: kanban.LastKanbanUpdate[0].lastChange,
+            lastKanbanUpdate: kanban.lastKanbanUpdate?.lastChange ?? -1,
 
             updateCardTemplates: true,
 
@@ -100,41 +100,41 @@ export async function GET(request: Request) {
         if (changes.length === 0) {
             const response: BoardApiData = {
                 updateCardPositions: false,
-                Cards: [],
+                cards: [],
 
                 updateColumnPositions: false,
-                KanbanColumns: [],
+                kanbanColumns: [],
 
                 updateSwimLanePositions: false,
-                KanbanSwimLanes: [],
+                kanbanSwimLanes: [],
 
                 updateCardTemplates: false,
 
                 updateCardData: false,
                 updatedCardIds: [],
 
-                LastKanbanUpdate: kanban.LastKanbanUpdate[0].lastChange,
+                lastKanbanUpdate: kanban.lastKanbanUpdate?.lastChange ?? -1,
             }
             return Response.json(response)
         }
 
         const response: BoardApiData = {
             updateCardPositions: falseIfNullOrFalse(changes[0]._max.updateCardPositions),
-            Cards: falseIfNullOrFalse(changes[0]._max.updateCardPositions) ? kanban.Cards : [],
+            cards: falseIfNullOrFalse(changes[0]._max.updateCardPositions) ? kanban.cards : [],
 
             updateColumnPositions: falseIfNullOrFalse(changes[0]._max.updateColumnPositions),
-            KanbanColumns: falseIfNullOrFalse(changes[0]._max.updateColumnPositions) ? kanban.KanbanColumns : [],
+            kanbanColumns: falseIfNullOrFalse(changes[0]._max.updateColumnPositions) ? kanban.kanbanColumns : [],
 
             updateSwimLanePositions: falseIfNullOrFalse(changes[0]._max.updateSwimLanePositions),
-            KanbanSwimLanes:
-                falseIfNullOrFalse(changes[0]._max.updateColumnPositions) ? kanban.KanbanSwimLanes : [],
+            kanbanSwimLanes:
+                falseIfNullOrFalse(changes[0]._max.updateColumnPositions) ? kanban.kanbanSwimLanes : [],
 
             updateCardTemplates: falseIfNullOrFalse(changes[0]._max.updateCardTemplates),
 
             updateCardData: falseIfNullOrFalse(changes[0]._max.updateCardData),
             updatedCardIds: [],
 
-            LastKanbanUpdate: kanban.LastKanbanUpdate[0].lastChange,
+            lastKanbanUpdate: kanban.lastKanbanUpdate?.lastChange ?? -1,
         }
 
         if (response.updateCardData) {

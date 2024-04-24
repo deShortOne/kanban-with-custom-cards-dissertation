@@ -32,10 +32,8 @@ services:
     container_name: cache
     image: 'redis:7.2.4'
     restart: always
-    environment:
-      - REDIS_URL=${DOCKER_REDIS_URL}
     ports:
-      - '${REDIS_PORT}:6379'
+      - '${DOCKER_REDIS_PORT}:6379'
     command: redis-server --save 20 1 --loglevel warning --requirepass ${DOCKER_REDIS_PASSWORD}
     networks:
       - default
@@ -56,6 +54,7 @@ services:
       - .env
     environment:
       - DATABASE_URL=${DOCKER_DATABASE_URL}
+      - REDIS_URL=${DOCKER_REDIS_URL}
     networks:
       - default
     extra_hosts:

@@ -19,14 +19,13 @@ describe('as a logged in user', () => {
         cy.setCookie("next-auth.session-token", Cypress.env('TESTING_CYPRESS_TOKEN'))
     })
 
-    const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
-
     it('create a new kanban board and verify everything is there with new test card and everything', () => {
         cy.viewport(1920, 1080)
         cy.visit(Cypress.env('URL') + "select-board")
         cy.get("#createNewKanbanBtn").click()
 
         cy.url().should("eq", Cypress.env('URL') + "select-board/new")
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
         cy.get("#name").type(testname)
         cy.get("#createKanbanBtn").click()
 
@@ -181,14 +180,24 @@ describe('as a logged in user', () => {
         cy.url().should("contain", Cypress.env('URL') + "card/")
 
         cy.get("#asideCardSideBar").within(() => {
-            cy.get("li").should("have.length", 8)
-            cy.get("li").eq(0).within(() => {
+            cy.get("li").should("have.length", 9)
+            let i = 0
+            cy.get("li").eq(i).within(() => {
                 cy.get("#cardName").should("have.value", "task")
             })
-            cy.get("li").eq(2).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
+                cy.get("#cardTypeName").should("have.text", "task")
+            })
+
+            i += 2
+            cy.get("li").eq(i).within(() => {
                 cy.get("#cardTabName").should("have.value", "Base information")
             })
-            cy.get("li").eq(3).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrPosition").should("be.disabled")
                 cy.get("#tabPositionNumber").should("have.text", "1")
                 cy.get("#btnIncrPosition").should("not.be.disabled")
@@ -203,7 +212,9 @@ describe('as a logged in user', () => {
                 cy.get("#tabPositionNumber").should("have.text", "1")
                 cy.get("#btnIncrPosition").should("not.be.disabled")
             })
-            cy.get("li").eq(4).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrRowNumber").should("not.be.disabled")
                 cy.get("#cardTabRowNumber").should("have.text", "2")
 
@@ -215,7 +226,9 @@ describe('as a logged in user', () => {
                 cy.get("#btnDecrRowNumber").should("not.be.disabled")
                 cy.get("#cardTabRowNumber").should("have.text", "2")
             })
-            cy.get("li").eq(5).within(() => {
+
+            i++
+            cy.get("li").eq(i).within(() => {
                 cy.get("#btnDecrColNumber").should("be.disabled")
                 cy.get("#cardTabColNumber").should("have.text", "1")
 
@@ -275,6 +288,40 @@ describe('as a logged in user', () => {
         })
 
         cy.get("#cardName").type("{selectall}{backspace}Test")
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            cy.get("div").should("have.length", 4)
+            cy.get("div").eq(0).within(() => {
+                cy.get("h2").should("have.text", "Edit Card Types")
+                cy.get("p").should("have.text", "Add, remove or edit card types")
+            })
+            cy.get("div").eq(1).get("section").should("have.length", 2)
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).should("have.text", "Add new card type")
+                cy.get("button").eq(0).click()
+            })
+            cy.get("div").should("have.length", 4)
+            cy.get("div").eq(1).get("section").should("have.length", 3)
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).should("have.text", "Save changes")
+                cy.get("button").eq(1).click()
+            })
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6)
+                cy.get("div").eq(2).click()
+            })
+        })
 
         cy.get("#divCardContent").get("div[role='tablist']").within(() => {
             cy.contains("button", "Github").click()
@@ -429,8 +476,18 @@ describe('as a logged in user', () => {
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).click()
 
-        cy.get("#btnCreateDefaultCard").should("have.text", "Test")
-        cy.get("#btnCreateDefaultCard").click()
+        cy.get("#btnCreateDefaultCard").should("have.text", "task")
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").should("have.length", 4)
+            cy.get("[role='menuitem']").eq(0).should("have.text", "tasktask") // FIXME
+            cy.get("[role='menuitem']").eq(1).should("have.text", "bugbug")
+            cy.get("[role='menuitem']").eq(2).should("have.text", "TestCTest")
+            cy.get("[role='menuitem']").eq(3).should("have.text", "Update cards")
+
+            cy.get("[role='menuitem']").eq(2).click()
+        })
 
         cy.get(".bg-card").should("have.length", 2)
         cy.get(".bg-card").eq(1).click()
@@ -692,4 +749,246 @@ describe('as a logged in user', () => {
         cy.visit(Cypress.env('URL') + "select-board")
         cy.contains("a", testname).should("not.exist")
     })
+
+    it('card type add and removal', () => {
+        cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
+        cy.createKanbanAndNavigate(testname)
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").eq(2).click()
+        })
+
+        cy.get("#dialogKanbanSettings").within(() => {
+            cy.get("#tabSettingCards").within(() => {
+                cy.get("[role='radiogroup']").within(() => {
+                    cy.get("table").within(() => {
+                        cy.get("tbody").within(() => {
+                            cy.get("tr").eq(0).get("td").eq(3).click()
+                        })
+                    })
+                })
+            })
+        })
+
+        cy.url().should("contain", Cypress.env('URL') + "card/")
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm added
+                cy.get("div").eq(2).should("have.text", "CTest")
+                cy.get("div").eq(4).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("button").click() // delete
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5) // confirm deleted
+                cy.get("div").eq(3).click()
+            })
+        })
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest") // readd with the same name
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+            // this can cause issue where it attempts to add a card template with the duplicated (wrt previous) information
+        })
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm readded with no error server side
+            })
+        })
+
+        cy.deleteKanban(testname)
+    })
+
+    it('Switch card types and confirm card types don\'t mix', () => {
+        cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
+        cy.createKanbanAndNavigate(testname)
+
+        cy.get("#btnOpenAllCards").click()
+        cy.get("#divAllCardsDisplay").within(() => {
+            cy.get("[role='menuitem']").eq(2).click()
+        })
+
+        cy.get("#dialogKanbanSettings").within(() => {
+            cy.get("#tabSettingCards").within(() => {
+                cy.get("[role='radiogroup']").within(() => {
+                    cy.get("table").within(() => {
+                        cy.get("tbody").within(() => {
+                            cy.get("tr").eq(0).get("td").eq(3).click()
+                        })
+                    })
+                })
+            })
+        })
+
+        cy.url().should("contain", Cypress.env('URL') + "card/")
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 5)
+                cy.get("div").eq(3).click()
+            })
+        })
+
+        cy.get("#cardTypeEditModal").within(() => {
+            // add new card type
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(0).click()
+            })
+            // type in name
+            cy.get("div").eq(1).get("section").eq(2).within(() => {
+                cy.get("input").type("CTest")
+            })
+            // save
+            cy.get("div").eq(2).within(() => {
+                cy.get("button").eq(1).click()
+            })
+        })
+
+        // refresh page
+        cy.url().then(url => {
+            cy.visit(url)
+        })
+
+        cy.get("#cardTypeName").click()
+        cy.get("#cardTypeSelectorBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 6) // confirm added
+                cy.get("div").eq(2).should("have.text", "CTest")
+            })
+        })
+        const taskUrl = cy.url()
+
+        cy.get("#cardTypeSwitcher").should("have.text", "task")
+        cy.get("#cardTypeSwitcher").click()
+        cy.get("#cardTypeSwitcherBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 3) // confirm added
+                cy.get("div").eq(2).click()
+            })
+        })
+
+        const CTestUrl1 = cy.url()
+        CTestUrl1.should("not.eq", taskUrl)
+        cy.get("#cardTypeName").should("have.text", "CTest")
+
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#btnDecrRowNumber").should("not.be.disabled")
+                cy.get("#cardTabRowNumber").should("have.text", "2")
+
+                cy.get("#btnDecrRowNumber").click()
+                cy.get("#cardTabRowNumber").should("have.text", "1")
+                cy.get("#btnDecrRowNumber").should("be.disabled")
+
+            })
+        })
+        cy.contains("button", "Save changes").click()
+
+        const CTestUrl2 = cy.url()
+        CTestUrl2.should("not.eq", CTestUrl1)
+        CTestUrl2.should("not.eq", taskUrl)
+
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#cardTabRowNumber").should("have.text", "1")
+                cy.get("#btnDecrRowNumber").should("be.disabled")
+
+            })
+        })
+
+        cy.get("#cardTypeSwitcher").click()
+        cy.get("#cardTypeSwitcherBox").within(() => {
+            cy.get("div[role='group']").within(() => {
+                cy.get("div").should("have.length", 3) // confirm added
+                cy.get("div").eq(0).click()
+            })
+        })
+        cy.get("#cardTypeSwitcher").should("have.text", "task")
+        cy.url().then((url) => {
+            taskUrl.should("eq", url)
+            CTestUrl1.should("not.eq", url)
+            CTestUrl2.should("not.eq", url)
+        })
+        cy.get("#asideCardSideBar").within(() => {
+            cy.get("li").eq(5).within(() => {
+                cy.get("#btnDecrRowNumber").should("not.be.disabled")
+                cy.get("#cardTabRowNumber").should("have.text", "2")
+            })
+        })
+        cy.deleteKanban(testname)
+    })
+
+    it('card title change responsiveness', () => {
+        // could go with the first test but the shorter the tests the better
+        cy.viewport(1920, 1080)
+        const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
+        cy.createKanbanAndNavigate(testname)
+
+        cy.get(".bg-card").should("have.length", 1)
+        cy.contains(".bg-card", "Start here").click()
+        cy.get("[name^='title']").should("have.value", "Start here")
+
+        const newTitle = `A very new title ${Cypress._.random(0, 1e6)}`
+        cy.get("[name^='title']").type(newTitle)
+        cy.contains("button", "Save").click()
+        cy.contains("button", "Close").click()
+        cy.contains(".bg-card", newTitle)
+
+        cy.deleteKanban(testname, true)
+    })
+
 })
+
+// it('', () => {
+//     cy.viewport(1920, 1080)
+//     const testname = `test kanban name ${Cypress._.random(0, 1e6)}`
+//     cy.createKanbanAndNavigate(testname)
+
+
+//     cy.deleteKanban(testname)
+// })

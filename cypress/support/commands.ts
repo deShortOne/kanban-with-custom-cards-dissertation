@@ -45,6 +45,9 @@ declare namespace Cypress {
         checkCardField(label: string,
             hasError: boolean,
             errorMessage?: string): Chainable<any>;
+        createKanbanAndNavigate(title: string): Chainable<any>;
+        navigateToKanban(title: string): Chainable<any>;
+        deleteKanban(title: string, onKanbanBoard?: boolean): Chainable<any>;
     }
 }
 
@@ -90,4 +93,32 @@ Cypress.Commands.add('checkCardField', (label: string, hasError: boolean, errorM
             return classList.includes('text-destructive')
         })
     }
+})
+
+Cypress.Commands.add('createKanbanAndNavigate', (title: string) => {
+    cy.visit(Cypress.env('URL') + "select-board")
+    cy.get("#createNewKanbanBtn").click()
+
+    cy.get("#name").type(title)
+    cy.get("#createKanbanBtn").click()
+
+    cy.get("#kanbanTitle").should("have.text", title)
+})
+
+Cypress.Commands.add('navigateToKanban', (title: string) => {
+    cy.visit(Cypress.env('URL') + "select-board")
+    cy.contains("a", title).click()
+
+    cy.get("#kanbanTitle").should("have.text", title)
+})
+
+Cypress.Commands.add('deleteKanban', (title: string, onKanbanBoard = false) => {
+    if (!onKanbanBoard)
+        cy.navigateToKanban(title)
+
+    cy.contains("button", "Setting").click()
+    cy.contains("button", "Advanced").click()
+    cy.contains("button", "Delete kanban board").click()
+    cy.visit(Cypress.env('URL') + "select-board")
+    cy.contains("a", title).should("not.exist")
 })

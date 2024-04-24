@@ -30,7 +30,6 @@ export async function POST(req: Request) {
         data: {
             title: "To be updated",
             order: data.order,
-            description: null,
             columnId: -1,
             swimLaneId: -1,
             kanbanId: data.boardId,

@@ -31,11 +31,15 @@ export async function GET(request: Request) {
         select: {
             id: true,
             name: true,
-            isDefault: true,
             cardType: {
                 select: {
                     id: true,
-                    name: true
+                    name: true,
+                }
+            },
+            activeCardTypes: {
+                select: {
+                    isDefault: true
                 }
             }
         }
@@ -50,21 +54,24 @@ export async function POST(req: Request) {
     const kanbanId = parseInt(data.kanbanId)
     const defaultCardId = parseInt(data.isDefault)
 
-    await prisma.cardTemplate.updateMany({
+    await prisma.activeCardTypes.updateMany({
         where: {
-            kanbanId: kanbanId,
+            kanbanId: kanbanId
         },
         data: {
-            isDefault: false,
+            isDefault: false
         }
     })
 
-    await prisma.cardTemplate.update({
+    await prisma.activeCardTypes.update({
         where: {
-            id: defaultCardId,
+            cardTypeId_kanbanId: {
+                cardTypeId: defaultCardId,
+                kanbanId: kanbanId,
+            }
         },
         data: {
-            isDefault: true,
+            isDefault: true
         }
     })
 

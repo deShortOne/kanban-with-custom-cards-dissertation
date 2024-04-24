@@ -4,20 +4,39 @@ import update from 'immutability-helper'
 
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
-import { DataProp, EmptyTab, NewField, Tab } from "./Base"
+import { EmptyTab, NewField } from "./Base"
 import { Dispatch, SetStateAction, useEffect } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { CardTypePicker } from './CardTypePicker'
+import { CardTypeSwitcher } from './CardTypeSwitcher'
+import { DataProp, CardType, Tab } from "@/app/types/CardContents"
+import { CardEditCommonProps } from '../MainContent'
+import UnsavedChangesModal from '@/app/(auth)/components/UnsavedChanges'
 
-interface prop {
-    cardData: DataProp
-    setData: Dispatch<SetStateAction<DataProp>>
+interface prop extends CardEditCommonProps {
     tabIdx: number
     setCurrentTabIdx: Dispatch<SetStateAction<number>>
     saveDataToDB: () => Promise<void>
+    cardTypes: CardType[]
+    setCardTypes: Dispatch<SetStateAction<CardType[]>>
+    kanbanId: number
+    initialCardTypeId: number
+    hasUnsavedChanges: boolean
 }
 
-export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataToDB }: prop) => {
+export const SideBar = ({
+    cardData,
+    setData,
+    tabIdx,
+    setCurrentTabIdx,
+    saveDataToDB,
+    cardTypes,
+    setCardTypes,
+    kanbanId,
+    initialCardTypeId,
+    hasUnsavedChanges,
+}: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -135,6 +154,17 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                         />
                     </li>
                     <li>
+                        <span className="inline-block align-middle">Card type</span>
+                        <CardTypePicker
+                            cardData={cardData}
+                            setData={setData}
+                            currentCardType={cardData.cardTypeId}
+                            cardTypes={cardTypes}
+                            setCardTypes={setCardTypes}
+                            kanbanId={kanbanId}
+                        />
+                    </li>
+                    <li>
                         <Separator />
                     </li>
                     <li>
@@ -239,7 +269,17 @@ export const SideBar = ({ cardData, setData, tabIdx, setCurrentTabIdx, saveDataT
                     </li>
                 </ul>
                 <div className="flex-1" />
-                <Button variant={"outline"} onClick={() => saveDataToDB()}>
+                <UnsavedChangesModal
+                    url={"/board/" + kanbanId}
+                    intercept={hasUnsavedChanges}
+                    text="Go back to kanban board"
+                />
+                <span>Switch card type</span>
+                <CardTypeSwitcher
+                    cardTypes={cardTypes}
+                    currentCardType={initialCardTypeId}
+                />
+                <Button variant={"outline"} onClick={() => saveDataToDB()} className='mt-2'>
                     Save changes
                 </Button>
             </div>
