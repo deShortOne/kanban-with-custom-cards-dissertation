@@ -59,6 +59,7 @@ const UpdateCardMain = ({
                 setCardTypes={setAvailableCardTypes}
                 kanbanId={kanbanId}
                 initialCardTypeId={initialCardTypeId}
+                hasUnsavedChanges={hasUnsavedChanges}
             />
             <CardContent
                 allFieldTypes={fieldTypes}

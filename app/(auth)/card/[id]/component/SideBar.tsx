@@ -12,6 +12,7 @@ import { CardTypePicker } from './CardTypePicker'
 import { CardTypeSwitcher } from './CardTypeSwitcher'
 import { DataProp, CardType, Tab } from "@/app/types/CardContents"
 import { CardEditCommonProps } from '../MainContent'
+import UnsavedChangesModal from '@/app/(auth)/components/UnsavedChanges'
 
 interface prop extends CardEditCommonProps {
     tabIdx: number
@@ -21,6 +22,7 @@ interface prop extends CardEditCommonProps {
     setCardTypes: Dispatch<SetStateAction<CardType[]>>
     kanbanId: number
     initialCardTypeId: number
+    hasUnsavedChanges: boolean
 }
 
 export const SideBar = ({
@@ -33,6 +35,7 @@ export const SideBar = ({
     setCardTypes,
     kanbanId,
     initialCardTypeId,
+    hasUnsavedChanges,
 }: prop) => {
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
@@ -266,11 +269,11 @@ export const SideBar = ({
                     </li>
                 </ul>
                 <div className="flex-1" />
-                <a href={"/board/" + kanbanId}>
-                    <Button variant={"outline"}>
-                        Go back to kanban board
-                    </Button>
-                </a>
+                <UnsavedChangesModal
+                    url={"/board/" + kanbanId}
+                    intercept={hasUnsavedChanges}
+                    text="Go back to kanban board"
+                />
                 <span>Switch card type</span>
                 <CardTypeSwitcher
                     cardTypes={cardTypes}
