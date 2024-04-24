@@ -61,7 +61,18 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
         }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
-    const refreshBranchStatuses = () => {
+    const refreshBranchStatuses = async () => {
+        if (fields.length === 0) {
+            const response = await fetch('/api/github/token/status', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            setTokenStatus(await response.json())
+            return
+        }
+
         updateBranchStatuses({})
         setNumberOfCurrentlyFetchingStatus(0)
         fields.forEach(async (i, idx) =>
