@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useCardModal } from "./useDialog"
-import { CardData } from "./field-type/Base"
 import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { TextField, TextArea, Title } from "./field-type/Basic"
@@ -29,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GitHubBranchTracker } from "./field-type/GitHubBranchTracker/GitHubBranchTracker"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { CardData } from "@/app/types/CardContents"
 
 // This is used to check if fields for card has already been input
 // Check is used to prevent overwriting of new user input

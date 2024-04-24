@@ -3,16 +3,6 @@ import { useDragLayer } from 'react-dnd'
 
 import { BoxDragPreview } from './BoxDragPreview'
 
-export interface CardPropsLimited {
-    id: number
-    title: string
-    cardTemplate: {
-        cardType: {
-            name: string
-        }
-    }
-}
-
 function getItemStyles(
     initialOffset: XYCoord | null,
     currentOffset: XYCoord | null,

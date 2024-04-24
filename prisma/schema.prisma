@@ -18,8 +18,8 @@ model User {
     githubId Int     @unique
 
     kanbans      UserRoleKanban[] @relation("AvailableKanbans")
-    UserToken    UserToken?
-    TrackChanges TrackChanges[]
+    userToken    UserToken?
+    trackChanges TrackChanges[]
 }
 
 model UserToken {
@@ -39,13 +39,13 @@ model Kanban {
     title String
     users UserRoleKanban[] @relation("KanbanHasUsers")
 
-    KanbanColumns    KanbanColumn[]
-    KanbanSwimLanes  KanbanSwimLane[]
-    Cards            Card[]
-    CardTemplate     CardTemplate[]
-    TrackChanges     TrackChanges[]
-    LastKanbanUpdate LastKanbanUpdate[]
-    ActiveCardTypes  ActiveCardTypes[]
+    kanbanColumns    KanbanColumn[]
+    kanbanSwimLanes  KanbanSwimLane[]
+    cards            Card[]
+    cardTemplate     CardTemplate[]
+    trackChanges     TrackChanges[]
+    lastKanbanUpdate LastKanbanUpdate?
+    activeCardTypes  ActiveCardTypes[]
 }
 
 enum Role {
@@ -107,7 +107,7 @@ model CardType {
     name String
 
     cards           CardTemplate[]
-    ActiveCardTypes ActiveCardTypes[]
+    activeCardTypes ActiveCardTypes[]
 }
 
 model CardTemplate {
@@ -121,8 +121,8 @@ model CardTemplate {
     kanban     Kanban   @relation(fields: [kanbanId], references: [id], onDelete: Cascade)
 
     tabs            CardTemplateTab[]
-    Card            Card[]
-    ActiveCardTypes ActiveCardTypes?
+    card            Card[]
+    activeCardTypes ActiveCardTypes?
 
     @@unique([version, cardTypeId, kanbanId])
     @@index([cardTypeId])
@@ -176,10 +176,9 @@ model CardTabField {
 }
 
 model Card {
-    id          Int     @id @default(autoincrement())
-    title       String
-    order       Int
-    description String? @db.Text
+    id    Int    @id @default(autoincrement())
+    title String
+    order Int
 
     columnId       Int
     column         KanbanColumn   @relation(fields: [columnId], references: [id], onDelete: Cascade)
@@ -191,7 +190,7 @@ model Card {
     cardTemplate   CardTemplate   @relation(fields: [cardTemplateId], references: [id], onDelete: Cascade)
 
     allTabsFieldInformation CardTabField[]
-    TrackChanges            TrackChanges[]
+    trackChanges            TrackChanges[]
 
     @@index([columnId])
     @@index([swimLaneId])

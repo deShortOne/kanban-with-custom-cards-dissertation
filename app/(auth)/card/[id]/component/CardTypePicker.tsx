@@ -17,7 +17,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Dispatch, SetStateAction, useState } from "react"
-import { CardType, DataProp } from "./Base"
+import { CardType, DataProp } from "@/app/types/CardContents"
 import { Separator } from "@radix-ui/react-select"
 import { CardTypeModal } from "./card-type-modal/Modal"
 

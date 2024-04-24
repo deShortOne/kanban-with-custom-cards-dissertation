@@ -16,16 +16,16 @@ export const CheckToken = async ({ githubId }: prop) => {
             githubId: githubId
         },
         include: {
-            UserToken: true
+            userToken: true
         }
     })
 
-    if (user.UserToken === null || user.UserToken.token === null) {
+    if (user.userToken === null || user.userToken.token === null) {
         return ({
             isGood: false,
             errorMessage: "No token found"
         })
-    } else if (user.UserToken.expiresAt !== null && user.UserToken.expiresAt < new Date()) {
+    } else if (user.userToken.expiresAt !== null && user.userToken.expiresAt < new Date()) {
         return ({
             isGood: false,
             errorMessage: "Token expired"
@@ -34,6 +34,6 @@ export const CheckToken = async ({ githubId }: prop) => {
 
     return ({
         isGood: true,
-        token: user.UserToken.token
+        token: user.userToken.token
     })
 }

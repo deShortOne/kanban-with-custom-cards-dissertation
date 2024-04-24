@@ -26,17 +26,16 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query'
-import { BoardApiData, CardProps } from "@/app/types/Board"
-import { Button } from "@/components/ui/button"
+import { BoardApiData, BoardHeaderType, CardProps } from "@/app/types/Board"
 
 interface TableInformationProps {
     id: number
     role: Role
 
-    Cards: CardProps[]
-    KanbanColumns: KanbanColumn[]
-    KanbanSwimLanes: KanbanSwimLane[]
-    LastKanbanUpdate: number
+    cards: CardProps[]
+    kanbanColumns: KanbanColumn[]
+    kanbanSwimLanes: KanbanSwimLane[]
+    lastKanbanUpdate: number
 }
 
 function sortCardPropsByOrder(a: CardProps, b: CardProps) {
@@ -44,13 +43,14 @@ function sortCardPropsByOrder(a: CardProps, b: CardProps) {
 }
 
 export const Table = ({
-    id, role, Cards, KanbanColumns, KanbanSwimLanes, LastKanbanUpdate
+    id, role, cards, kanbanColumns, kanbanSwimLanes, lastKanbanUpdate
 }: TableInformationProps) => {
     const boardId = id
     const queryClient = useQueryClient()
-    const LastKanbanUpdateServer = useRef(LastKanbanUpdate);
+    const LastKanbanUpdateServer = useRef(lastKanbanUpdate);
 
     const [alertMsg, setAlertMsg] = useState("")
+    const [alertMsgOpen, setAlertMsgOpen] = useState(false)
 
     const { status, data, error, isFetching } = useQuery<BoardApiData>({
         queryKey: ['todos'],
@@ -74,11 +74,11 @@ export const Table = ({
         if (!data)
             return
         if (data.updateCardPositions)
-            setCard(data.Cards)
+            setCard(data.cards)
         if (data.updateColumnPositions)
-            setColumns(data.KanbanColumns)
+            setColumns(data.kanbanColumns)
         if (data.updateSwimLanePositions)
-            setSwimLanes(data.KanbanSwimLanes)
+            setSwimLanes(data.kanbanSwimLanes)
         if (data.updateCardTemplates)
             queryClient.invalidateQueries({ queryKey: ["addNewCard"] })
         if (data.updateCardData) {
@@ -88,12 +88,12 @@ export const Table = ({
             })
         }
 
-        LastKanbanUpdateServer.current = data.LastKanbanUpdate
+        LastKanbanUpdateServer.current = data.lastKanbanUpdate
     }, [isFetching, data, queryClient])
 
     /* COLUMN */
     // move column
-    const [stateColumns, setColumns] = useState<KanbanColumn[]>(KanbanColumns)
+    const [stateColumns, setColumns] = useState<KanbanColumn[]>(kanbanColumns)
     const moveColumn = (dragIndex: number, hoverIndex: number) => {
         const draggedColumn = stateColumns[dragIndex]
         const newColumns = [...stateColumns]
@@ -102,36 +102,14 @@ export const Table = ({
 
         setColumns(newColumns)
 
-        fetch('/api/headers/reorder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                boardId: boardId,
-                type: "COLUMN",
-                headers: newColumns.map(cell => cell.id)
-            }),
-        })
+        moveHeader(boardId, "COLUMN", newColumns.map(cell => cell.id))
     }
 
     // add column
     const addColumn = async () => {
-        const response = await fetch('/api/headers/new', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "COLUMN",
-                order: stateColumns.length + 1,
-                boardId: boardId,
-            }),
-        })
-
         const newColumns = [...stateColumns]
         newColumns.push({
-            id: await response.json(),
+            id: await addHeaderAndGetId(boardId, "COLUMN", stateColumns.length + 1),
             title: "New Column",
             order: newColumns.length + 1,
             boardId: boardId,
@@ -147,26 +125,16 @@ export const Table = ({
 
             newColumns.splice(headerOrder, 1)
             setColumns(newColumns)
-
-            fetch('/api/headers/remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: headerId,
-                    type: "COLUMN",
-                    boardId: boardId,
-                }),
-            })
+            removeHeader(boardId, "COLUMN", headerId)
         } else {
             setAlertMsg("Remove all cards from this column")
+            setAlertMsgOpen(true)
         }
     }
 
     /* SWIM LANE */
     // move swim lane
-    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(KanbanSwimLanes)
+    const [stateSwimLanes, setSwimLanes] = useState<KanbanSwimLane[]>(kanbanSwimLanes)
     const moveSwimLane = (dragIndex: number, hoverIndex: number) => {
         const draggedSwimLane = stateSwimLanes[dragIndex]
         const newSwimLanes = [...stateSwimLanes]
@@ -175,36 +143,14 @@ export const Table = ({
 
         setSwimLanes(newSwimLanes)
 
-        fetch('/api/headers/reorder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                boardId: boardId,
-                type: "SWIMLANE",
-                headers: newSwimLanes.map(cell => cell.id)
-            }),
-        })
+        moveHeader(boardId, "SWIMLANE", newSwimLanes.map(cell => cell.id))
     }
 
     // add swim lane
     const addSwimLane = async () => {
-        const response = await fetch('/api/headers/new', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "SWIMLANE",
-                order: stateSwimLanes.length + 1,
-                boardId: boardId,
-            }),
-        })
-
         const draggedSwimLane = [...stateSwimLanes]
         draggedSwimLane.push({
-            id: await response.json(),
+            id: await addHeaderAndGetId(boardId, "SWIMLANE", stateSwimLanes.length + 1),
             title: "New Swimlane",
             order: draggedSwimLane.length + 1,
             boardId: boardId,
@@ -220,56 +166,25 @@ export const Table = ({
 
             newSwimLane.splice(headerOrder, 1)
             setSwimLanes(newSwimLane)
-
-            fetch('/api/headers/remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: headerId,
-                    type: "SWIMLANE",
-                    boardId: boardId,
-                }),
-            })
+            removeHeader(boardId, "SWIMLANE", headerId)
         } else {
             setAlertMsg("Remove all cards from this swim lane")
+            setAlertMsgOpen(true)
         }
     }
 
     /* CARD */
     // move card
-    const [cardsInfo, setCard] = useState<CardProps[]>(Cards)
+    const [cardsInfo, setCard] = useState<CardProps[]>(cards)
     const [dragCardId, setDragCardId] = useState<number>(-1)
     const handleCardDrop = (cardId: number, columnId: number, rowId: number) => {
-
-        const lisOfCardsInCell = cardsInfo.filter(i => i.columnId === columnId && i.swimLaneId === rowId)
-        const orderIds = new Set(lisOfCardsInCell)
-
-        let orderPos: number;
-        if (lisOfCardsInCell.length === 0) {
-            orderPos = 1
-        } else if (lisOfCardsInCell.length !== orderIds.size) {
-            orderPos = lisOfCardsInCell.length + 1
-        } else {
-            orderPos = (cardsInfo.find(i => i.id === cardId) as CardProps).order
-        }
-
-        const updatedCard = cardsInfo.map((card) =>
-            card.id === cardId ? { ...card, columnId: columnId, swimLaneId: rowId, order: orderPos } : card
-        )
-
-        updatedCard.sort(sortCardPropsByOrder)
-        setCard(updatedCard)
-        setDragCardId(-1)
-
         fetch('/api/card/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                cardList: updatedCard.map(i => ({
+                cardList: cardsInfo.map(i => ({
                     id: i.id,
                     title: i.title,
                     columnId: i.columnId,
@@ -352,7 +267,6 @@ export const Table = ({
             id: await response.json(),
             title: "To be updated",
             order: orderPos,
-            description: null,
             columnId: -1,
             swimLaneId: -1,
             kanbanId: boardId,
@@ -395,7 +309,7 @@ export const Table = ({
 
     return (
         <div>
-            <AlertDialog open={alertMsg !== ""}>
+            <AlertDialog open={alertMsgOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Error!</AlertDialogTitle>
@@ -404,12 +318,9 @@ export const Table = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <Button
-                            onClick={() => { setAlertMsg("") }}
-                            variant="outline"
-                        >
+                        <AlertDialogAction onClick={() => setAlertMsgOpen(false)}>
                             Ok
-                        </Button>
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -432,8 +343,10 @@ export const Table = ({
                                             key={"-1 -1"}
                                             className="absolute h-full min-w-[220px] max-w-[400px] align-top p-1"
                                         >
-                                            {cardsInfo.map((card) =>
-                                                card.columnId === -1 && card.swimLaneId === -1 ? (
+                                            {cardsInfo
+                                                .filter(card => card.columnId === -1
+                                                    && card.swimLaneId === -1)
+                                                .map((card) =>
                                                     <CardInfoProvider
                                                         {...card}
                                                         key={card.id}
@@ -441,8 +354,7 @@ export const Table = ({
                                                         dragCardId={dragCardId}
                                                         setDragCardId={setDragCardId}
                                                     />
-                                                ) : null
-                                            )}
+                                                )}
                                         </TableCell>
                                     </tr>
                                 </tbody>
@@ -499,8 +411,10 @@ export const Table = ({
                                                 onHover={(item) => moveCardCell(item.id, cell.id, swimLane.id)}
                                                 key={cell.id + " " + swimLane.id}
                                             >
-                                                {cardsInfo.map((card) =>
-                                                    card.columnId === cell.id && card.swimLaneId === swimLane.id ? (
+                                                {cardsInfo
+                                                    .filter(card => card.columnId === cell.id
+                                                        && card.swimLaneId === swimLane.id)
+                                                    .map((card) =>
                                                         <CardInfoProvider
                                                             {...card}
                                                             key={card.id}
@@ -508,8 +422,7 @@ export const Table = ({
                                                             dragCardId={dragCardId}
                                                             setDragCardId={setDragCardId}
                                                         />
-                                                    ) : null
-                                                )}
+                                                    )}
                                             </TableCell>
                                         ))}
                                     </tr>
@@ -535,4 +448,48 @@ export const Table = ({
             </DndProvider>
         </div >
     )
+}
+
+function moveHeader(boardId: number, type: BoardHeaderType, headers: number[]) {
+    fetch('/api/headers/reorder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            boardId: boardId,
+            type: type,
+            headers: headers
+        }),
+    })
+}
+
+async function addHeaderAndGetId(boardId: number, type: BoardHeaderType, order: number) {
+    const data = await fetch('/api/headers/new', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: type,
+            order: order,
+            boardId: boardId,
+        }),
+    })
+
+    return await data.json()
+}
+
+function removeHeader(boardId: number, type: BoardHeaderType, headerId: number) {
+    fetch('/api/headers/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: headerId,
+            type: type,
+            boardId: boardId,
+        }),
+    })
 }

@@ -1,4 +1,4 @@
-import { DataProp } from "@/app/(auth)/card/[id]/component/Base"
+import { DataProp } from "@/app/types/CardContents"
 import { prisma } from "@/lib/prisma"
 
 export async function insertTemplateTabsAndFields(data: DataProp, cardTemplateId: number) {

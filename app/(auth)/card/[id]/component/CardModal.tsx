@@ -8,7 +8,7 @@ import update from 'immutability-helper'
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { DataProp, FieldTypeProp } from "./Base"
+import { DataProp, FieldTypeProp } from "@/app/types/CardContents"
 import { useFieldArray, useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
