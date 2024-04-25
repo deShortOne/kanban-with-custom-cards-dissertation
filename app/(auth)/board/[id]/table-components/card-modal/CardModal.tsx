@@ -103,6 +103,8 @@ export const CardModal = ({ updateCardTitle, removeCard }: prop) => {
         if (!cardData)
             return
         setServerHasNewData(false)
+        if (!form.getValues()["title" + cardData.id])
+            form.setValue("title" + cardData.id, cardData.title)
         cardData.allTabsFieldInformation.forEach(item => {
             const dict = fieldIdAndType?.find(i => i.key === item.cardTemplateTabFieldId)
             if (dict) {

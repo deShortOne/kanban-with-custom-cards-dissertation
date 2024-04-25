@@ -56,10 +56,8 @@ export const TextArea = ({ fieldTypeData, name }: FieldTypeProp) => {
     )
 }
 
-export const Title = ({ fieldTypeData, name }: FieldTypeProp) => {
+export const Title = ({ name }: FieldTypeProp) => {
     const form = useFormContext()
-    if (!form.getValues()[name])
-        form.setValue(name, fieldTypeData)
 
     return (
         <FormField
@@ -68,7 +66,7 @@ export const Title = ({ fieldTypeData, name }: FieldTypeProp) => {
             render={({ field }) => (
                 <FormItem className="w-full">
                     <FormControl>
-                        <Input placeholder="shadcn" {...field}
+                        <Input placeholder="Insert title here" {...field}
                             className="block p-4 text-gray-900 rounded-lg sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-background text-xl" />
                     </FormControl>
                     <FormMessage />
