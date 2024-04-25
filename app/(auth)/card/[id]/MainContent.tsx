@@ -35,6 +35,9 @@ const UpdateCardMain = ({
 
     const saveDataToDB = async () => {
         setHasUnsavedChanges(false)
+        if (data.name === "") {
+            data.name = cardTemplate.name
+        }
         const response = await fetch('/api/card/template', {
             method: 'POST',
             headers: {
@@ -60,6 +63,7 @@ const UpdateCardMain = ({
                 kanbanId={kanbanId}
                 initialCardTypeId={initialCardTypeId}
                 hasUnsavedChanges={hasUnsavedChanges}
+                title={cardTemplate.name}
             />
             <CardContent
                 allFieldTypes={fieldTypes}

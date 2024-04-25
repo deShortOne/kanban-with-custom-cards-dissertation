@@ -23,6 +23,7 @@ interface prop extends CardEditCommonProps {
     kanbanId: number
     initialCardTypeId: number
     hasUnsavedChanges: boolean
+    title: string
 }
 
 export const SideBar = ({
@@ -36,6 +37,7 @@ export const SideBar = ({
     kanbanId,
     initialCardTypeId,
     hasUnsavedChanges,
+    title,
 }: prop) => {
     const [prevTabName, setPrevTabName] = useState(cardData.tabs[tabIdx].name)
 
@@ -162,6 +164,7 @@ export const SideBar = ({
                             className="inline-block align-middle"
                             defaultValue={cardData.name}
                             onBlur={(e) => updateCardName(e.target.value)}
+                            placeholder={title}
                         />
                     </li>
                     <li>
