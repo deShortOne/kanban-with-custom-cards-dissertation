@@ -5,7 +5,7 @@ import update from 'immutability-helper'
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react"
 import { EmptyTab, NewField } from "./Base"
-import { Dispatch, SetStateAction, useEffect } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { CardTypePicker } from './CardTypePicker'
@@ -37,6 +37,7 @@ export const SideBar = ({
     initialCardTypeId,
     hasUnsavedChanges,
 }: prop) => {
+    const [prevTabName, setPrevTabName] = useState(cardData.tabs[tabIdx].name)
 
     const updateNumber = (value: number, type: ("ROW" | "COL")) => {
 
@@ -136,6 +137,21 @@ export const SideBar = ({
         setData(newCardData)
     }
 
+    const confirmTabName = (name: string) => {
+        if (name !== "") {
+            setPrevTabName(name)
+            return
+        }
+        const cardDataTabs: Tab[] = JSON.parse(JSON.stringify(cardData["tabs"]))
+        cardDataTabs[tabIdx].name = prevTabName
+        const newCardData = update(cardData, {
+            tabs: {
+                $set: cardDataTabs
+            },
+        })
+        setData(newCardData)
+    }
+
     return (
         <aside
             id="asideCardSideBar"
@@ -174,6 +190,8 @@ export const SideBar = ({
                             className="inline-block align-middle"
                             value={cardData.tabs[tabIdx].name}
                             onChange={(e) => updateTabName(e.target.value)}
+                            onBlur={(e) => confirmTabName(e.target.value)}
+                            placeholder={prevTabName}
                         />
                     </li>
                     <li className="flex justify-between">
