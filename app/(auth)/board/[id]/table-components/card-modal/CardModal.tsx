@@ -89,7 +89,7 @@ export const CardModal = ({ updateCardTitle, removeCard }: prop) => {
         .reduce((obj: any, item) => (
             obj["a" + templateFieldIdToDataId[item.key]] = fieldTypeToZodType(item.value, item.data), obj), {})
         : { empty: -1 }
-    schemaForFields["title" + cardData?.id] = z.string()
+    schemaForFields["title" + cardData?.id] = z.string().min(1, "Please enter a title")
 
     const formSchema = z.object(
         schemaForFields
