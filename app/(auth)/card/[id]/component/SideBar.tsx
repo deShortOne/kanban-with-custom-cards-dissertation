@@ -127,11 +127,13 @@ export const SideBar = ({
     }
 
     const updateTabName = (name: string) => {
-        const cardDataTabs: Tab[] = JSON.parse(JSON.stringify(cardData["tabs"]))
-        cardDataTabs[tabIdx].name = name
         const newCardData = update(cardData, {
             tabs: {
-                $set: cardDataTabs
+                [tabIdx]: {
+                    name: {
+                        $set: name
+                    }
+                }
             },
         })
         setData(newCardData)
@@ -140,16 +142,9 @@ export const SideBar = ({
     const confirmTabName = (name: string) => {
         if (name !== "") {
             setPrevTabName(name)
-            return
+        } else {
+            updateTabName(prevTabName)
         }
-        const cardDataTabs: Tab[] = JSON.parse(JSON.stringify(cardData["tabs"]))
-        cardDataTabs[tabIdx].name = prevTabName
-        const newCardData = update(cardData, {
-            tabs: {
-                $set: cardDataTabs
-            },
-        })
-        setData(newCardData)
     }
 
     return (
