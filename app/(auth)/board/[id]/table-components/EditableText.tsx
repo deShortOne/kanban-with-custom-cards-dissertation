@@ -1,6 +1,6 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import React, { useState } from 'react';
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import React, { useState } from 'react'
 
 interface prop {
     headerItem: header,
@@ -9,26 +9,32 @@ interface prop {
 }
 
 type header = {
-    id: number;
-    title: string;
-    order: number;
-    boardId: number;
+    id: number
+    title: string
+    order: number
+    boardId: number
 }
 
 const EditableText = ({ headerItem, type, setDrag }: prop) => {
-    const [isEditing, setIsEditing] = useState(headerItem.id === -1);
-    const [text, setText] = useState(headerItem.title);
+    const [isEditing, setIsEditing] = useState(headerItem.id === -1)
+    const [text, setText] = useState(headerItem.title)
+    const [prevText, setPrevText] = useState(headerItem.title)
 
     const handleDoubleClick = () => {
         setDrag(false)
         setIsEditing(true)
     }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setText(event.target.value);
+        setText(event.target.value)
     }
     const handleBlur = async () => {
         setDrag(true)
         setIsEditing(false)
+        if (text === "") {
+            setText(prevText)
+            return
+        }
+
         await fetch('/api/headers/update', {
             method: 'POST',
             headers: {
@@ -41,7 +47,8 @@ const EditableText = ({ headerItem, type, setDrag }: prop) => {
                 order: headerItem.order,
                 boardId: headerItem.boardId
             }),
-        });
+        })
+        setPrevText(text)
     }
 
     return (
@@ -53,6 +60,7 @@ const EditableText = ({ headerItem, type, setDrag }: prop) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="text-lg"
+                    placeholder={prevText}
                 />
             ) : (
                 <Label className="text-lg cursor-move">{text}</Label>
@@ -61,4 +69,4 @@ const EditableText = ({ headerItem, type, setDrag }: prop) => {
     )
 }
 
-export default EditableText;
+export default EditableText
