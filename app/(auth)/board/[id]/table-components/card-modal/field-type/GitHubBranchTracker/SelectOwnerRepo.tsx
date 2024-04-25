@@ -7,7 +7,7 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { FieldValues, UseFormSetValue } from "react-hook-form"
 
 
@@ -17,10 +17,12 @@ interface prop {
     isDisabled: boolean
 
     setValue: UseFormSetValue<FieldValues>
+    setTokenStatus: Dispatch<SetStateAction<"connecting" | "connected" | "invalid token">>
 }
 
-export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
+export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue, setTokenStatus }: prop) => {
     const [repoData, setRepoData] = useState<string[]>([])
+    const [errorMsg, setErrorMsg] = useState<string>()
     const openRepoDropDown = async () => {
         if (repoData.length !== 0) {
             return
@@ -34,7 +36,13 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
         })
 
         const res = await response.json()
-        setRepoData(res)
+        if (!response.ok) {
+            setErrorMsg(res)
+            setTokenStatus("invalid token")
+        } else {
+            setRepoData(res)
+            setTokenStatus("connected")
+        }
     }
 
     return (
@@ -48,31 +56,42 @@ export const SelectOwnerRepo = ({ name, repo, isDisabled, setValue }: prop) => {
                 <SelectTrigger className="w-96">
                     <SelectValue placeholder="Select repo" />
                 </SelectTrigger>
-                <SelectContent>
-                    {
-                        repoData.length === 0
-                            ?
-                            (
-                                <div>
-                                    <SelectItem value={repo == "" ? "__" : repo}>
-                                        {repo}
-                                    </SelectItem>
-                                    <Skeleton className="my-2 h-2 w-[250px]" />
-                                    <Skeleton className="my-2 h-2 w-[250px]" />
-                                </div>
-                            )
-                            :
+                {
+                    errorMsg ?
+                        <SelectContent>
                             <SelectGroup>
-                                {
-                                    repoData.map(i =>
-                                        <SelectItem value={i} key={i}>
-                                            {i}
-                                        </SelectItem>
-                                    )
-                                }
+                                <SelectItem value={"ERROR MSG"}>
+                                    {errorMsg}
+                                </SelectItem>
                             </SelectGroup>
-                    }
-                </SelectContent>
+                        </SelectContent>
+                        :
+                        <SelectContent>
+                            {
+                                repoData.length === 0
+                                    ?
+                                    (
+                                        <div>
+                                            <SelectItem value={repo == "" ? "__" : repo}>
+                                                {repo}
+                                            </SelectItem>
+                                            <Skeleton className="my-2 h-2 w-[250px]" />
+                                            <Skeleton className="my-2 h-2 w-[250px]" />
+                                        </div>
+                                    )
+                                    :
+                                    <SelectGroup>
+                                        {
+                                            repoData.map(i =>
+                                                <SelectItem value={i} key={i}>
+                                                    {i}
+                                                </SelectItem>
+                                            )
+                                        }
+                                    </SelectGroup>
+                            }
+                        </SelectContent>
+                }
             </Select>
         </div >
     )

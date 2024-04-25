@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 const loadingText = "...loading..."
 
 export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
-    const [tokenIsValid, setTokenIsValid] = useState<"connecting" | "connected" | "invalid token">("connecting")
+    const [tokenIsValid, setTokenStatus] = useState<"connecting" | "connected" | "invalid token">("connecting")
     const [numberOfCurrentlyFetchingStatus, setNumberOfCurrentlyFetchingStatus] = useState(0)
 
     const data = fieldTypeData.split(";")
@@ -51,17 +51,28 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
         })
 
         if (response.status === 498) {
-            setTokenIsValid("invalid token")
+            setTokenStatus("invalid token")
             setNumberOfCurrentlyFetchingStatus(0)
         } else {
             const data = await response.json()
             updateBranchStatuses((prevInfo: any) => ({ ...prevInfo, [convertIdToString(id)]: data }))
-            setTokenIsValid("connected")
+            setTokenStatus("connected")
             setNumberOfCurrentlyFetchingStatus(numberOfCurrentlyFetchingStatus - 1)
         }
     }
     const [branchStatus, updateBranchStatuses] = useState<any>({ "a": "b" })
-    const refreshBranchStatuses = () => {
+    const refreshBranchStatuses = async () => {
+        if (fields.length === 0) {
+            const response = await fetch('/api/github/token/status', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            setTokenStatus(await response.json())
+            return
+        }
+
         updateBranchStatuses({})
         setNumberOfCurrentlyFetchingStatus(0)
         fields.forEach(async (i, idx) =>
@@ -75,10 +86,6 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
 
     const [branches, setBranches] = useState<string[]>([])
     const getBranches = async () => {
-        if (branches.length !== 0) {
-            return
-        }
-
         const response = await fetch('/api/github/branch/all?' +
             new URLSearchParams({
                 ownerRepo: getValues()[name].repo,
@@ -90,7 +97,7 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
         })
 
         if (response.status === 498) {
-            setTokenIsValid("invalid token")
+            setTokenStatus("invalid token")
         } else {
             const data = await response.json()
             setBranches(data)
@@ -143,6 +150,7 @@ export const GitHubBranchTracker = ({ fieldTypeData, name }: FieldTypeProp) => {
                     repo={getValues()[name].repo}
                     isDisabled={getValues()[name].branches?.length !== 0}
                     setValue={setValue}
+                    setTokenStatus={setTokenStatus}
                 />
                 <TooltipProvider>
                     <Tooltip>
