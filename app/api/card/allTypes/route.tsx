@@ -3,7 +3,6 @@ import { NextResponse } from "next/server"
 import { insertTemplateTabsAndFields } from "../template/actions"
 import { insertUpdateCardTemplates } from "../../commonFunctions/Base"
 import { CardType } from "@/app/types/CardContents"
-import { createSearchParamsBailoutProxy } from "next/dist/client/components/searchparams-bailout-proxy"
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
@@ -42,151 +41,21 @@ export async function POST(req: Request) {
         }
     })
 
-    const a = new Promise((resolve) => {
-        Object.entries(data).forEach(async ([a, b], index) => {
-            const key = parseInt(a)
-            const value = b as string
-
-            if (key <= 0) {
-                if (index === Object.keys(data).length - 1) {
-                    resolve(true)
-                }
-                return
-            }
-            const cardType = cardTypes.find(i => i.id === key)
-            if (cardType == null || cardType.name === value) {
-                res.push({
-                    id: key,
-                    name: value,
-                    cardTemplateId: -1
-                })
-                if (index === Object.keys(data).length - 1) {
-                    resolve(true)
-                }
-                return
-            }
-
-            let newCardId = -1
-            const preexistingCardType = await prisma.cardType.findFirst({
-                where: {
-                    name: value as string
-                }
-            })
-
-            // If name was not the same as before but there already exists a name for this card type, then change to that name
-            if (preexistingCardType === null) {
-                const newCardType = await prisma.cardType.create({
-                    data: {
-                        name: value
-                    }
-                })
-                newCardId = newCardType.id
-            } else {
-                newCardId = preexistingCardType.id
-            }
-
-            await prisma.cardTemplate.updateMany({
-                where: {
-                    kanbanId: kanbanId,
-                    cardTypeId: key
-                },
-                data: {
-                    cardTypeId: newCardId
-                }
-            })
-            await prisma.activeCardTypes.update({
-                where: {
-                    cardTypeId_kanbanId: {
-                        cardTypeId: key,
-                        kanbanId: kanbanId,
-                    }
-                },
-                data: {
-                    cardTypeId: newCardId
-                }
-            })
-
-            res.push({
-                id: newCardId,
-                name: value,
-                cardTemplateId: -1
-            })
-            if (index === Object.keys(data).length - 1) {
-                resolve(true)
-            }
+    const aa = Object.entries(data)
+        .filter(key_value => parseInt(key_value[0]) > 0)
+        .map(async ([a, b]) => {
+            dealWithOldCardTypes(parseInt(a),
+                b as string,
+                kanbanId,
+                cardTypes,
+                res
+            )
         })
-    })
 
-    const b = new Promise((resolve) => {
-        if (newCardTypes.length === 0) {
-            resolve(true)
-        }
-        newCardTypes.forEach(async (cardType, index) => {
-            const preexistingCardType = await prisma.cardType.findFirst({
-                where: {
-                    name: cardType
-                }
-            })
-            let newCardTypeId = -1
-            if (preexistingCardType === null) {
-                const newCardType = await prisma.cardType.create({
-                    data: {
-                        name: cardType
-                    }
-                })
-                newCardTypeId = newCardType.id
-            } else {
-                newCardTypeId = preexistingCardType.id
-            }
+    const bb = newCardTypes.map(i => dealWithNewCardTypes(i, kanbanId, cardTemplateData, res))
 
-            const isTherePreviousVersion = await prisma.cardTemplate.groupBy({
-                by: ["cardTypeId"],
-                where: {
-                    kanbanId: kanbanId,
-                    cardTypeId: newCardTypeId,
-                },
-                _max: {
-                    version: true
-                }
-            })
-
-            let newVersion = 0
-            if (isTherePreviousVersion.length === 1) {
-                newVersion = isTherePreviousVersion[0]._max.version ?? 0
-            }
-
-            const { id: newCardTemplateId } = await prisma.cardTemplate.create({
-                data: {
-                    name: cardTemplateData.name,
-                    version: newVersion + 1,
-                    cardTypeId: newCardTypeId,
-                    kanbanId: kanbanId,
-                }
-            })
-            await prisma.activeCardTypes.create({
-                data: {
-                    cardTypeId: newCardTypeId,
-                    kanbanId: kanbanId,
-                    version: newVersion + 1
-                }
-            })
-
-            insertTemplateTabsAndFields(cardTemplateData, newCardTemplateId)
-
-            res.push({
-                id: newCardTypeId,
-                name: cardType,
-                cardTemplateId: newCardTemplateId
-            })
-
-            if (index === newCardTypes.length - 1) {
-                resolve(true)
-            }
-        })
-    })
-
-    await a
-    await b
+    await Promise.all(aa)
+    await Promise.all(bb)
 
     const cardTypesToCheck = res.filter(i => i.cardTemplateId === -1)
     const query = `
@@ -218,6 +87,8 @@ export async function POST(req: Request) {
     })
     await c
 
+    insertUpdateCardTemplates(kanbanId)
+
     await prisma.activeCardTypes.deleteMany({
         where: {
             kanbanId: kanbanId,
@@ -227,7 +98,142 @@ export async function POST(req: Request) {
         }
     })
 
-    insertUpdateCardTemplates(kanbanId)
-
     return NextResponse.json(res)
+}
+
+async function dealWithOldCardTypes(
+    key: number,
+    value: string,
+    kanbanId: number,
+    cardTypes: { id: number, name: string }[],
+    res: CardType[],
+) {
+    return new Promise(async (resolve) => {
+        const cardType = cardTypes.find(i => i.id === key)
+        if (cardType == null || cardType.name === value) {
+            res.push({
+                id: key,
+                name: value,
+                cardTemplateId: -1
+            })
+            return
+        }
+
+        let newCardId = -1
+        const preexistingCardType = await prisma.cardType.findFirst({
+            where: {
+                name: value as string
+            }
+        })
+
+        // If name was not the same as before but there already exists a name for this card type, then change to that name
+        if (preexistingCardType === null) {
+            const newCardType = await prisma.cardType.create({
+                data: {
+                    name: value
+                }
+            })
+            newCardId = newCardType.id
+        } else {
+            newCardId = preexistingCardType.id
+        }
+
+        await prisma.cardTemplate.updateMany({
+            where: {
+                kanbanId: kanbanId,
+                cardTypeId: key
+            },
+            data: {
+                cardTypeId: newCardId
+            }
+        })
+        res.push({
+            id: newCardId,
+            name: value,
+            cardTemplateId: -1
+        })
+
+        // This query is throwing an error even though there should be no error
+        await prisma.activeCardTypes.update({
+            where: {
+                cardTypeId_kanbanId: {
+                    cardTypeId: key,
+                    kanbanId: kanbanId,
+                }
+            },
+            data: {
+                cardTypeId: newCardId
+            }
+        })
+
+        resolve(true)
+    })
+}
+
+async function dealWithNewCardTypes(
+    cardType: string,
+    kanbanId: number,
+    cardTemplateData: any,
+    res: CardType[],
+) {
+    return new Promise(async (resolve) => {
+        const preexistingCardType = await prisma.cardType.findFirst({
+            where: {
+                name: cardType
+            }
+        })
+        let newCardTypeId = -1
+        if (preexistingCardType === null) {
+            const newCardType = await prisma.cardType.create({
+                data: {
+                    name: cardType
+                }
+            })
+            newCardTypeId = newCardType.id
+        } else {
+            newCardTypeId = preexistingCardType.id
+        }
+
+        const isTherePreviousVersion = await prisma.cardTemplate.groupBy({
+            by: ["cardTypeId"],
+            where: {
+                kanbanId: kanbanId,
+                cardTypeId: newCardTypeId,
+            },
+            _max: {
+                version: true
+            }
+        })
+
+        let newVersion = 0
+        if (isTherePreviousVersion.length === 1) {
+            newVersion = isTherePreviousVersion[0]._max.version ?? 0
+        }
+
+        const { id: newCardTemplateId } = await prisma.cardTemplate.create({
+            data: {
+                name: cardTemplateData.name,
+                version: newVersion + 1,
+                cardTypeId: newCardTypeId,
+                kanbanId: kanbanId,
+            }
+        })
+        await prisma.activeCardTypes.create({
+            data: {
+                cardTypeId: newCardTypeId,
+                kanbanId: kanbanId,
+                version: newVersion + 1
+            }
+        })
+
+        insertTemplateTabsAndFields(cardTemplateData, newCardTemplateId)
+
+        res.push({
+            id: newCardTypeId,
+            name: cardType,
+            cardTemplateId: newCardTemplateId
+        })
+
+        resolve(true)
+    })
 }
