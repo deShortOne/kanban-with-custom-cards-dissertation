@@ -10,7 +10,31 @@ This will allow different companies and teams to more clearly outline what data 
 ```bash
 docker compose up
 ```
+5) Navigate to localhost:3000/select-board. It will ask you to sign in via GitHub. All data will remain either inside the docker databases, your GitHub account and your GitHub App.
+
 This shouldn't make a difference but I ran docker in Ubuntu 22.04.4 LTS
+
+## Sample data shown at project fair
+To restore the database backup I used during the project fair to showcase my project, first start the application in docker.
+Afer it has started, open a new terminal, naviate to the project then follow the next steps
+1) Run this command to copy the backup file into the docker container
+```bash
+docker cp database-backup/backup.sql database:/backup.sql
+```
+2) Then run this command to enter the docker container
+```bash
+docker exec -it database sh
+```
+3) Then run this command to run the sql file in the database, making sure to change the values appropriately
+```bash
+mysql -u root -p db < backup.sql
+```
+You will need to replace root with the value set for DOCKER_DB_UNAME in the .env file  
+You will need to replace db with the value set for DOCKER_DB_DATABASE in the .env file  
+After pressing enter, it will ask you for the password, type or paste the value for DOCKER_DB_PWD  
+If you've not edited the bottom half of the .env file, then simply copy and paste the command
+
+Would recommend mainly checking out the board titled Board shown on online brochure
 
 ## Testing
 1) First start the application.
