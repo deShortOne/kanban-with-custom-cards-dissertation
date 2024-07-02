@@ -6,27 +6,11 @@ export async function GET(request: Request) {
     const url = new URL(request.url)
     const kanbanId = parseInt(url.searchParams.get("kanbanId")!)
 
-    const latestCardTypeWithId = await prisma.cardTemplate.groupBy({
-        by: ["cardTypeId"],
-        where: {
-            kanbanId: kanbanId
-        },
-        _max: {
-            version: true
-        }
-    })
-
-    const latestCardTypeWithIdFlat = latestCardTypeWithId.flatMap(i => {
-        return {
-            kanbanId: kanbanId,
-            cardTypeId: i.cardTypeId,
-            version: i._max.version as number
-        }
-    })
-
     const res = await prisma.cardTemplate.findMany({
         where: {
-            OR: latestCardTypeWithIdFlat
+            activeCardTypes: {
+                kanbanId: kanbanId
+            }
         },
         select: {
             id: true,

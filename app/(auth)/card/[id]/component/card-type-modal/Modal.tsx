@@ -32,9 +32,7 @@ export const CardTypeModal = ({ cardData, kanbanId, cardTypes, setCardTypes }: p
                 ...data
             }),
         })
-        const newCardTypeData = await newCardTypeDataResponse.json() as CardType[]
-        setCardTypes(newCardTypeData)
-        console.log(newCardTypeData)
+        location.reload()
     }
 
     const addCardType = () => {
